@@ -31,6 +31,7 @@
             color: #4b5563;
         }
     </style>
+    <link rel="icon" type="image/jpeg" href="{{ asset('assets/logo.jpeg') }}">
 </head>
 <body>
     <div class="container">

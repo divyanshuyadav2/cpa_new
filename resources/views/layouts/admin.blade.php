@@ -13,6 +13,7 @@
     
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" type="image/jpeg" href="{{ asset('assets/logo.jpeg') }}">
 </head>
 <body class="h-full font-sans antialiased text-slate-800" x-data="{ sidebarOpen: false }">
 
