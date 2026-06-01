@@ -12,7 +12,7 @@
     
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="icon" type="image/jpeg" href="{{ asset('assets/logo.jpeg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 </head>
 <body class="flex flex-col justify-center h-full min-h-screen py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-950 via-slate-900 to-pharma-navy text-slate-100 font-sans antialiased">
 

@@ -13,7 +13,7 @@
     
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="icon" type="image/jpeg" href="{{ asset('assets/logo.jpeg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 </head>
 <body class="flex flex-col h-full font-sans antialiased text-slate-800" x-data="{ cartOpen: false }">
 
