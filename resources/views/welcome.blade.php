@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chitranshu Pharmaceuticals Agency</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Chitranshu Pharmaceuticals Agency | Trusted Wholesale Medical Distribution</title>
+    <meta name="title" content="Chitranshu Pharmaceuticals Agency | Trusted Wholesale Medical Distribution">
+    <meta name="description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines. Discover top healthcare solutions with us.">
+    <meta name="keywords" content="Chitranshu Pharma, Chitranshu Pharmaceuticals Agency, wholesale medicines, pharmaceutical distributor, healthcare solutions, medical distribution, pharmacy">
+    <meta name="author" content="Chitranshu Pharmaceuticals Agency">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Chitranshu Pharmaceuticals Agency">
+    <meta property="og:description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.">
+    <meta property="og:image" content="{{ asset('favicon.svg') }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Chitranshu Pharmaceuticals Agency">
+    <meta property="twitter:description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.">
+    <meta property="twitter:image" content="{{ asset('favicon.svg') }}">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

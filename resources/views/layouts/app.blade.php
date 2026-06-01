@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency'))</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency | Trusted Wholesale Medical Distribution'))</title>
+    <meta name="title" content="@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency | Trusted Wholesale Medical Distribution'))">
+    <meta name="description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines. Discover top healthcare solutions with us.">
+    <meta name="keywords" content="Chitranshu Pharma, Chitranshu Pharmaceuticals Agency, wholesale medicines, pharmaceutical distributor, healthcare solutions, medical distribution, pharmacy">
+    <meta name="author" content="Chitranshu Pharmaceuticals Agency">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency'))">
+    <meta property="og:description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.">
+    <meta property="og:image" content="{{ asset('favicon.svg') }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency'))">
+    <meta property="twitter:description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.">
+    <meta property="twitter:image" content="{{ asset('favicon.svg') }}">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
