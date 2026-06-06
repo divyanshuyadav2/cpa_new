@@ -8,18 +8,10 @@
     </div>
     
     <div class="flex flex-wrap gap-3">
-        <!-- Bulk CSV Import Form -->
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2">
-            <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
-                @csrf
-                <div class="relative">
-                    <input type="file" name="csv_file" required accept=".csv" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border file:border-slate-300 file:text-[10px] file:font-semibold file:bg-slate-50 hover:file:bg-slate-100 cursor-pointer">
-                </div>
-                <button type="submit" class="px-3 py-1 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded transition">
-                    Bulk Import (CSV)
-                </button>
-            </form>
-        </div>
+        <!-- Dynamic CSV Import Button -->
+        <a href="{{ route('products.import.index') }}" class="px-5 py-3 bg-slate-800 text-white font-bold text-sm rounded-xl hover:bg-slate-900 transition shadow-md flex items-center">
+            <i class="fas fa-file-csv mr-2"></i> Import Products (CSV)
+        </a>
 
         <a href="{{ route('products.create') }}" class="px-5 py-3 bg-pharma-accent text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition shadow-md flex items-center">
             + Add New Product

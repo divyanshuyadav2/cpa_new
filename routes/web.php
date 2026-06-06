@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ApplicationController;
+use App\Http\Controllers\Admin\ProductImportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,7 +61,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::resource('salts', SaltController::class);
     
     // Products resource with bulk import
-    Route::post('products/import', [AdminProductController::class, 'import'])->name('products.import');
+    Route::get('products/import', [ProductImportController::class, 'index'])->name('products.import.index');
+    Route::post('products/import/upload', [ProductImportController::class, 'upload'])->name('products.import.upload');
+    Route::post('products/import/process', [ProductImportController::class, 'process'])->name('products.import.process');
     Route::resource('products', AdminProductController::class);
     
     // Orders resource with status updates & WhatsApp confirmation
