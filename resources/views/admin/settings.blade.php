@@ -9,7 +9,7 @@
 <div class="max-w-4xl bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
     <div class="p-6 sm:p-8">
         
-        <form action="{{ route('admin.settings.update') }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -73,6 +73,22 @@
                         <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
+
+            <!-- Site Logo -->
+            <div class="mt-6 border-t border-slate-100 pt-6">
+                <label for="site_logo" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Site Logo</label>
+                @if(setting('site_logo'))
+                    <div class="mb-3">
+                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Site Logo" class="h-16 w-auto object-contain rounded border border-slate-200 bg-white p-1">
+                    </div>
+                @endif
+                <input type="file" name="site_logo" id="site_logo" accept="image/*"
+                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('site_logo') border-red-500 @enderror">
+                <span class="text-[10px] text-slate-400 mt-1 block">Upload a high-quality logo image (Max 2MB). Leave empty to keep current logo.</span>
+                @error('site_logo')
+                    <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Address -->

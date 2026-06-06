@@ -33,10 +33,14 @@
             <!-- Branding -->
             <div class="flex items-center justify-between px-6 py-5 bg-slate-950/20 border-b border-slate-800/60">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2">
-                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-pharma-gold/20 text-pharma-gold font-extrabold text-base border border-pharma-gold/10">A</div>
+                    @if(setting('site_logo'))
+                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="w-8 h-8 object-contain">
+                    @else
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-pharma-gold/20 text-pharma-gold font-extrabold text-base border border-pharma-gold/10">A</div>
+                    @endif
                     <div>
                         <span class="block text-sm font-bold text-white tracking-wider uppercase leading-none">CPA Admin</span>
-                        <span class="text-[9px] text-slate-400 font-semibold tracking-wider">Chitranshu Pharma</span>
+                        <span class="text-[9px] text-slate-400 font-semibold tracking-wider">{{ setting('company_name', 'Chitranshu Pharma') }}</span>
                     </div>
                 </a>
                 <!-- Close sidebar (Mobile) -->

@@ -55,9 +55,13 @@
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
                 <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                    <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-pharma-accent to-pharma-navy text-white shadow-md">
-                        <span class="text-xl sm:text-2xl font-bold font-display">C</span>
-                    </div>
+                    @if(setting('site_logo'))
+                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain">
+                    @else
+                        <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-pharma-accent to-pharma-navy text-white shadow-md">
+                            <span class="text-xl sm:text-2xl font-bold font-display">C</span>
+                        </div>
+                    @endif
                     <div>
                         <span class="block text-lg sm:text-xl font-bold tracking-tight text-pharma-navy leading-none">Chitranshu</span>
                         <span class="text-[10px] sm:text-xs text-pharma-gold font-semibold uppercase tracking-wider">Pharmaceuticals</span>
@@ -154,7 +158,11 @@
                 <!-- Branding -->
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pharma-accent to-pharma-navy text-white font-bold">C</div>
+                        @if(setting('site_logo'))
+                            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="h-8 w-auto object-contain">
+                        @else
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pharma-accent to-pharma-navy text-white font-bold">C</div>
+                        @endif
                         <span class="text-lg font-bold text-white tracking-wider">{{ setting('company_name', 'Chitranshu Pharmaceuticals Agency') }}</span>
                     </div>
                     <p class="text-sm text-slate-400 leading-relaxed">

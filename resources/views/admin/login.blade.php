@@ -18,9 +18,13 @@
 
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <!-- Logo Icon -->
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-pharma-gold text-slate-900 font-extrabold text-3xl shadow-lg border border-pharma-gold/30">
-            A
-        </div>
+        @if(setting('site_logo'))
+            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="mx-auto h-16 w-auto object-contain mb-4">
+        @else
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-pharma-gold text-slate-900 font-extrabold text-3xl shadow-lg border border-pharma-gold/30">
+                A
+            </div>
+        @endif
         <h2 class="mt-6 text-3xl font-extrabold tracking-tight text-white font-display">
             Admin Panel Login
         </h2>

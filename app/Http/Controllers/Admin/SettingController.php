@@ -29,12 +29,22 @@ class SettingController extends Controller
             'email' => 'required|email|max:255',
             'address' => 'required|string',
             'gst_number' => 'required|string|max:50',
+            'site_logo' => 'nullable|image|max:2048',
         ]);
 
         foreach ($validated as $key => $value) {
+            if ($key === 'site_logo') continue;
             Setting::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]
+            );
+        }
+
+        if ($request->hasFile('site_logo')) {
+            $logoPath = $request->file('site_logo')->store('settings', 'public');
+            Setting::updateOrCreate(
+                ['key' => 'site_logo'],
+                ['value' => $logoPath]
             );
         }
 
