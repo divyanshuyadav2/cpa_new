@@ -239,7 +239,8 @@
                                     <!-- Image (if any) -->
                                     <div class="w-16 h-16 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center text-slate-400 overflow-hidden border border-slate-200">
                                         @if($item['image'])
-                                            <img src="{{ asset('storage/' . $item['image']) }}" class="w-full h-full object-cover">
+                                            @php $drawerImgSrc = filter_var($item['image'], FILTER_VALIDATE_URL) ? $item['image'] : asset('storage/' . $item['image']); @endphp
+                                            <img src="{{ $drawerImgSrc }}" class="w-full h-full object-cover">
                                         @else
                                             💊
                                         @endif

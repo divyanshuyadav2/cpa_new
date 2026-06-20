@@ -91,7 +91,8 @@
                                 <!-- Header Badge & Image -->
                                 <div class="h-44 bg-slate-50 border-b border-slate-100 flex items-center justify-center text-4xl relative">
                                     @if($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                        @php $pImgSrc = filter_var($product->image, FILTER_VALIDATE_URL) ? $product->image : asset('storage/' . $product->image); @endphp
+                                        <img src="{{ $pImgSrc }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                                     @else
                                         💊
                                     @endif
