@@ -74,7 +74,7 @@
             <div x-show="mode === 'url'" x-transition>
                 <div class="mb-3 w-24 h-24 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-3xl overflow-hidden shadow-sm"
                      x-show="urlPreview">
-                    <img :src="urlPreview" alt="URL Preview" class="w-full h-full object-cover" @error="urlPreview = ''">
+                    <img :src="urlPreview" alt="URL Preview" class="w-full h-full object-cover" @@error="urlPreview = ''">
                 </div>
                 <div x-show="!urlPreview" class="mb-3 w-24 h-24 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-3xl shadow-sm">🏢</div>
                 @php $logoUrlDefault = old('logo_url', $isUrl ? $existingLogo : ''); @endphp

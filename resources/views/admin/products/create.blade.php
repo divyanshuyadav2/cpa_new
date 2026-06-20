@@ -170,7 +170,7 @@
                 <!-- URL Panel -->
                 <div x-show="mode === 'url'" x-transition>
                     <div class="mb-2 w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl overflow-hidden" x-show="urlPreview">
-                        <img :src="urlPreview" alt="Preview" class="w-full h-full object-cover" @error="urlPreview = ''">
+                        <img :src="urlPreview" alt="Preview" class="w-full h-full object-cover" @@error="urlPreview = ''">
                     </div>
                     <input type="url" name="image_url" id="image_url" placeholder="https://example.com/product.jpg"
                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white"

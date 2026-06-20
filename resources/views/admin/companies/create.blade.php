@@ -62,7 +62,7 @@
             <div x-show="mode === 'url'" x-transition>
                 <!-- Preview -->
                 <div class="mb-3 w-24 h-24 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-3xl overflow-hidden shadow-sm" x-show="urlPreview">
-                    <img :src="urlPreview" alt="Preview" class="w-full h-full object-cover" @error="urlPreview = ''">
+                    <img :src="urlPreview" alt="Preview" class="w-full h-full object-cover" @@error="urlPreview = ''">
                 </div>
                 <input type="url" name="logo_url" id="logo_url" placeholder="https://example.com/logo.png"
                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white"
