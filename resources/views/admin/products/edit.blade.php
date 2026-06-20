@@ -183,9 +183,10 @@
                         <img :src="urlPreview" alt="Preview" class="w-full h-full object-cover" @error="urlPreview = ''">
                     </div>
                     <div x-show="!urlPreview" class="mb-2 w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl">💊</div>
+                    @php $imgUrlDefault = old('image_url', $isImgUrl ? $existingImg : ''); @endphp
                     <input type="url" name="image_url" id="image_url"
                            placeholder="https://example.com/product.jpg"
-                           value="{{ old('image_url', $isImgUrl ? $existingImg : '') }}"
+                           value="{{ $imgUrlDefault }}"
                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white"
                            @input.debounce.500ms="urlPreview = $event.target.value">
                     <p class="text-[10px] text-slate-400 mt-1">Paste a direct image URL. Preview will appear above.</p>

@@ -77,9 +77,10 @@
                     <img :src="urlPreview" alt="URL Preview" class="w-full h-full object-cover" @error="urlPreview = ''">
                 </div>
                 <div x-show="!urlPreview" class="mb-3 w-24 h-24 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-3xl shadow-sm">🏢</div>
+                @php $logoUrlDefault = old('logo_url', $isUrl ? $existingLogo : ''); @endphp
                 <input type="url" name="logo_url" id="logo_url"
                        placeholder="https://example.com/logo.png"
-                       value="{{ old('logo_url', $isUrl ? $existingLogo : '') }}"
+                       value="{{ $logoUrlDefault }}"
                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white"
                        @input.debounce.500ms="urlPreview = $event.target.value">
                 <p class="text-[10px] text-slate-400 mt-1">Paste a direct image URL. Preview will appear above.</p>
