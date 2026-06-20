@@ -34,6 +34,7 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:companies,name',
             'logo' => 'nullable|image|max:2048', // max 2MB
+            'logo_url' => 'nullable|url|max:2048',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
         ]);
@@ -42,8 +43,12 @@ class CompanyController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('logo')) {
+            // File upload takes priority
             $logoPath = $request->file('logo')->store('companies', 'public');
             $data['logo'] = $logoPath;
+        } elseif ($request->filled('logo_url')) {
+            // Store URL directly
+            $data['logo'] = $request->input('logo_url');
         }
 
         Company::create($data);
@@ -67,6 +72,7 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:companies,name,' . $company->id,
             'logo' => 'nullable|image|max:2048',
+            'logo_url' => 'nullable|url|max:2048',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
         ]);
@@ -75,12 +81,18 @@ class CompanyController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('logo')) {
-            // Delete old logo
-            if ($company->logo) {
+            // Delete old logo if it was a stored file (not a URL)
+            if ($company->logo && !filter_var($company->logo, FILTER_VALIDATE_URL)) {
                 Storage::disk('public')->delete($company->logo);
             }
             $logoPath = $request->file('logo')->store('companies', 'public');
             $data['logo'] = $logoPath;
+        } elseif ($request->filled('logo_url')) {
+            // Delete old file if switching to URL
+            if ($company->logo && !filter_var($company->logo, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($company->logo);
+            }
+            $data['logo'] = $request->input('logo_url');
         }
 
         $company->update($data);
@@ -93,8 +105,8 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        // Delete logo file
-        if ($company->logo) {
+        // Delete logo file only if it's a stored file (not a URL)
+        if ($company->logo && !filter_var($company->logo, FILTER_VALIDATE_URL)) {
             Storage::disk('public')->delete($company->logo);
         }
 

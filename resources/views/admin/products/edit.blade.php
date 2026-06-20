@@ -131,24 +131,68 @@
                 @enderror
             </div>
 
-            <!-- Image preview & Upload -->
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Current Formulation Image</label>
-                <div class="w-24 h-24 mb-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-3xl overflow-hidden shadow-sm">
-                    @if($product->image)
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                    @else
-                        💊
-                    @endif
+            <!-- Image Upload / URL -->
+            @php
+                $existingImg = $product->image;
+                $isImgUrl = $existingImg && filter_var($existingImg, FILTER_VALIDATE_URL);
+                $imgSrc = $existingImg ? ($isImgUrl ? $existingImg : asset('storage/' . $existingImg)) : null;
+                $imgInitMode = $isImgUrl ? 'url' : 'upload';
+                $imgInitUrl = $isImgUrl ? $existingImg : '';
+            @endphp
+            <div x-data="imageInput('image', '{{ $imgInitMode }}', '{{ $imgSrc }}', '{{ $imgInitUrl }}')" class="space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Product Formulation Image</label>
+
+                <!-- Tab Toggle -->
+                <div class="flex rounded-xl overflow-hidden border border-slate-200 w-fit text-xs font-semibold">
+                    <button type="button"
+                        @click="mode = 'upload'; clearUrl()"
+                        :class="mode === 'upload' ? 'bg-pharma-accent text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                        class="px-4 py-2 transition">
+                        📁 Upload File
+                    </button>
+                    <button type="button"
+                        @click="mode = 'url'; clearFile()"
+                        :class="mode === 'url' ? 'bg-pharma-accent text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                        class="px-4 py-2 transition border-l border-slate-200">
+                        🔗 Image URL
+                    </button>
                 </div>
 
-                <label for="image" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Upload New Formulation Image</label>
-                <input type="file" name="image" id="image" accept="image/*"
-                       class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-pharma-light file:text-pharma-navy hover:file:bg-blue-100 transition">
-                <span class="text-[10px] text-slate-400 mt-1 block">Leave empty to keep current image. Max 2MB.</span>
-                @error('image')
-                    <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
-                @enderror
+                <!-- Upload Panel -->
+                <div x-show="mode === 'upload'" x-transition>
+                    <div class="mb-2 w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl overflow-hidden"
+                         x-show="preview || existingImageSrc">
+                        <img :src="preview || existingImageSrc" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+                    <div x-show="!preview && !existingImageSrc" class="mb-2 w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl">💊</div>
+                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-pharma-accent hover:bg-blue-50/50 transition">
+                        <span class="text-xl mb-1">🖼️</span>
+                        <span class="text-xs text-slate-500 font-semibold" x-text="fileName || 'Click to replace image (Max 2MB)'"></span>
+                        <input type="file" name="image" id="image" accept="image/*" class="hidden"
+                               @change="handleFile($event)">
+                    </label>
+                    <p class="text-[10px] text-slate-400 mt-1">Leave empty to keep current image. Supports JPG, PNG, WEBP, GIF.</p>
+                    @error('image')
+                        <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- URL Panel -->
+                <div x-show="mode === 'url'" x-transition>
+                    <div class="mb-2 w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl overflow-hidden" x-show="urlPreview">
+                        <img :src="urlPreview" alt="Preview" class="w-full h-full object-cover" @error="urlPreview = ''">
+                    </div>
+                    <div x-show="!urlPreview" class="mb-2 w-20 h-20 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl">💊</div>
+                    <input type="url" name="image_url" id="image_url"
+                           placeholder="https://example.com/product.jpg"
+                           value="{{ old('image_url', $isImgUrl ? $existingImg : '') }}"
+                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white"
+                           @input.debounce.500ms="urlPreview = $event.target.value">
+                    <p class="text-[10px] text-slate-400 mt-1">Paste a direct image URL. Preview will appear above.</p>
+                    @error('image_url')
+                        <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <!-- Active Toggle -->
@@ -208,6 +252,35 @@
                     });
             }
         }
+    }
+
+    function imageInput(fieldName, initMode, existingImageSrc, initUrlPreview) {
+        return {
+            mode: initMode || 'upload',
+            preview: null,
+            urlPreview: initUrlPreview || '',
+            existingImageSrc: existingImageSrc || '',
+            fileName: '',
+            handleFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                this.fileName = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => { this.preview = e.target.result; };
+                reader.readAsDataURL(file);
+            },
+            clearFile() {
+                this.preview = null;
+                this.fileName = '';
+                const inp = document.getElementById(fieldName);
+                if (inp) inp.value = '';
+            },
+            clearUrl() {
+                this.urlPreview = '';
+                const inp = document.getElementById(fieldName + '_url');
+                if (inp) inp.value = '';
+            }
+        };
     }
 </script>
 @endsection

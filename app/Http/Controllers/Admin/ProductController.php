@@ -81,15 +81,20 @@ class ProductController extends Controller
             'pts' => 'required|numeric|min:0',
             'stock_qty' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
+            'image_url' => 'nullable|url|max:2048',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->except(['image', 'is_active']);
+        $data = $request->except(['image', 'image_url', 'is_active']);
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('image')) {
+            // File upload takes priority
             $imagePath = $request->file('image')->store('products', 'public');
             $data['image'] = $imagePath;
+        } elseif ($request->filled('image_url')) {
+            // Store URL directly
+            $data['image'] = $request->input('image_url');
         }
 
         Product::create($data);
@@ -129,19 +134,26 @@ class ProductController extends Controller
             'pts' => 'required|numeric|min:0',
             'stock_qty' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
+            'image_url' => 'nullable|url|max:2048',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->except(['image', 'is_active']);
+        $data = $request->except(['image', 'image_url', 'is_active']);
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($product->image) {
+            // Delete old image if it was a stored file (not a URL)
+            if ($product->image && !filter_var($product->image, FILTER_VALIDATE_URL)) {
                 Storage::disk('public')->delete($product->image);
             }
             $imagePath = $request->file('image')->store('products', 'public');
             $data['image'] = $imagePath;
+        } elseif ($request->filled('image_url')) {
+            // Delete old file if switching to URL
+            if ($product->image && !filter_var($product->image, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $data['image'] = $request->input('image_url');
         }
 
         $product->update($data);
@@ -154,8 +166,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete image file
-        if ($product->image) {
+        // Delete image file only if it's a stored file (not a URL)
+        if ($product->image && !filter_var($product->image, FILTER_VALIDATE_URL)) {
             Storage::disk('public')->delete($product->image);
         }
 

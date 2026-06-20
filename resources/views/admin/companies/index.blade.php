@@ -35,11 +35,12 @@
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-4">
                                 <div class="w-10 h-10 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-lg overflow-hidden flex-shrink-0">
-                                    @if($company->logo)
-                                        <img src="{{ asset('storage/' . $company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-cover">
-                                    @else
-                                        🏢
-                                    @endif
+                            @if($company->logo)
+                                @php $logoSrc = filter_var($company->logo, FILTER_VALIDATE_URL) ? $company->logo : asset('storage/' . $company->logo); @endphp
+                                <img src="{{ $logoSrc }}" alt="{{ $company->name }}" class="w-full h-full object-cover">
+                            @else
+                                🏢
+                            @endif
                                 </div>
                             </td>
                             <td class="p-4 font-bold text-slate-900">{{ $company->name }}</td>
