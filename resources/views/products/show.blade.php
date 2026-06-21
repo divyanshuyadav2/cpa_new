@@ -5,7 +5,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Back Link -->
-        <a href="{{ route('products.index') }}" class="inline-flex items-center text-sm font-bold text-pharma-accent hover:text-pharma-navy mb-6">
+        <a href="{{ route('public.products.index') }}" class="inline-flex items-center text-sm font-bold text-pharma-accent hover:text-pharma-navy mb-6">
             &larr; Back to Catalog
         </a>
 
@@ -124,13 +124,13 @@
                             <div class="p-4 flex-grow flex flex-col">
                                 <span class="text-[9px] font-bold text-pharma-gold uppercase tracking-wider">{{ $rel->company->name }}</span>
                                 <h4 class="text-sm font-bold text-slate-800 mt-1 truncate">
-                                    <a href="{{ route('products.show', $rel->id) }}" class="hover:text-pharma-accent">{{ $rel->name }}</a>
+                                    <a href="{{ route('public.products.show', $rel->id) }}" class="hover:text-pharma-accent">{{ $rel->name }}</a>
                                 </h4>
                                 <p class="text-xs text-slate-400 mt-1 italic">Packing: {{ $rel->packing }}</p>
                                 
                                 <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center mt-auto">
                                     <span class="text-sm font-extrabold text-pharma-navy">₹{{ number_format($rel->mrp, 2) }}</span>
-                                    <a href="{{ route('products.show', $rel->id) }}" class="text-xs font-bold text-pharma-accent hover:text-pharma-navy">
+                                    <a href="{{ route('public.products.show', $rel->id) }}" class="text-xs font-bold text-pharma-accent hover:text-pharma-navy">
                                         View Details &rarr;
                                     </a>
                                 </div>

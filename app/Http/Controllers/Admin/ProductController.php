@@ -204,4 +204,45 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('error', 'Failed to read CSV file.');
     }
+    public function export(Request $request)
+    {
+        $products = Product::with(['company', 'division', 'salt'])->get();
+
+        $filename = "products_export_" . date('Ymd_His') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID', 'Name', 'Company', 'Division', 'Salt', 'Composition', 'Packing', 'MRP', 'PTR', 'PTS', 'Stock Qty', 'Active'];
+
+        $callback = function() use($products, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($products as $product) {
+                $row['ID']  = $product->id;
+                $row['Name']    = $product->name;
+                $row['Company']  = $product->company ? $product->company->name : '';
+                $row['Division']  = $product->division ? $product->division->name : '';
+                $row['Salt']  = $product->salt ? $product->salt->name : '';
+                $row['Composition']  = $product->composition;
+                $row['Packing']  = $product->packing;
+                $row['MRP']  = $product->mrp;
+                $row['PTR']  = $product->ptr;
+                $row['PTS']  = $product->pts;
+                $row['Stock Qty']  = $product->stock_qty;
+                $row['Active']  = $product->is_active ? 'Yes' : 'No';
+
+                fputcsv($file, array($row['ID'], $row['Name'], $row['Company'], $row['Division'], $row['Salt'], $row['Composition'], $row['Packing'], $row['MRP'], $row['PTR'], $row['PTS'], $row['Stock Qty'], $row['Active']));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

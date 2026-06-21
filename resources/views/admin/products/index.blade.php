@@ -9,6 +9,10 @@
     
     <div class="flex flex-wrap gap-3">
         <!-- Dynamic CSV Import Button -->
+        <a href="{{ route('products.export') }}" class="px-5 py-3 bg-green-600 text-white font-bold text-sm rounded-xl hover:bg-green-700 transition shadow-md flex items-center">
+            <i class="fas fa-file-export mr-2"></i> Export Products (CSV)
+        </a>
+
         <a href="{{ route('products.import.index') }}" class="px-5 py-3 bg-slate-800 text-white font-bold text-sm rounded-xl hover:bg-slate-900 transition shadow-md flex items-center">
             <i class="fas fa-file-csv mr-2"></i> Import Products (CSV)
         </a>

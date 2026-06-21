@@ -12,7 +12,7 @@
                 <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-6 text-4xl mx-auto">🛒</div>
                 <h2 class="text-xl font-bold text-slate-800">Your shopping cart is empty</h2>
                 <p class="text-sm text-slate-500 mt-2">There are currently no products added to your cart. Explore our catalog and add items to request quotation or place orders.</p>
-                <a href="{{ route('products.index') }}" class="inline-block mt-8 px-6 py-3 bg-pharma-accent text-white font-bold rounded-xl text-sm hover:bg-pharma-navy transition shadow-md">
+                <a href="{{ route('public.products.index') }}" class="inline-block mt-8 px-6 py-3 bg-pharma-accent text-white font-bold rounded-xl text-sm hover:bg-pharma-navy transition shadow-md">
                     Browse Products Catalog
                 </a>
             </div>

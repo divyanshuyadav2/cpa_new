@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::post('/about', [HomeController::class, 'submitAbout'])->name('about.submit');
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products', [ProductController::class, 'index'])->name('public.products.index');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('public.products.show');
 
 // Cart operations
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
@@ -64,6 +64,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('products/import', [ProductImportController::class, 'index'])->name('products.import.index');
     Route::post('products/import/upload', [ProductImportController::class, 'upload'])->name('products.import.upload');
     Route::post('products/import/process', [ProductImportController::class, 'process'])->name('products.import.process');
+    Route::get('products/export', [AdminProductController::class, 'export'])->name('products.export');
     Route::resource('products', AdminProductController::class);
     
     // Orders resource with status updates & WhatsApp confirmation

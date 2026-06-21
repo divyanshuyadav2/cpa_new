@@ -19,7 +19,7 @@
             
             <!-- Filters Sidebar -->
             <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
-                <form action="{{ route('products.index') }}" method="GET" id="filter-form">
+                <form action="{{ route('public.products.index') }}" method="GET" id="filter-form">
                     
                     <!-- Search Keyword -->
                     <div class="mb-6">
@@ -29,7 +29,7 @@
                                    placeholder="Name, composition, salt..." 
                                    class="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white shadow-inner">
                             @if(request('search'))
-                                <a href="{{ route('products.index', request()->except('search')) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-red-500 font-bold">×</a>
+                                <a href="{{ route('public.products.index', request()->except('search')) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-red-500 font-bold">×</a>
                             @endif
                         </div>
                     </div>
@@ -64,7 +64,7 @@
 
                     <!-- Reset Button -->
                     @if(request()->anyFilled(['search', 'company_id', 'division_id']))
-                        <a href="{{ route('products.index') }}" class="block text-center py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                        <a href="{{ route('public.products.index') }}" class="block text-center py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
                             Clear All Filters
                         </a>
                     @endif
@@ -79,7 +79,7 @@
                         <div class="text-4xl mb-4">💊</div>
                         <h3 class="text-lg font-bold text-slate-800">No products found</h3>
                         <p class="text-sm text-slate-500 mt-2">Try adjusting your filters or search keywords to find what you are looking for.</p>
-                        <a href="{{ route('products.index') }}" class="inline-block mt-6 px-5 py-2.5 bg-pharma-accent text-white text-sm font-semibold rounded-xl hover:bg-pharma-navy transition">
+                        <a href="{{ route('public.products.index') }}" class="inline-block mt-6 px-5 py-2.5 bg-pharma-accent text-white text-sm font-semibold rounded-xl hover:bg-pharma-navy transition">
                             Clear Filters
                         </a>
                     </div>
@@ -107,7 +107,7 @@
                                     <span class="text-[9px] font-bold text-pharma-gold uppercase tracking-wider">{{ $product->company->name }} | {{ $product->division->name }}</span>
                                     
                                     <h3 class="text-base font-bold text-slate-800 mt-1 truncate">
-                                        <a href="{{ route('products.show', $product->id) }}" class="hover:text-pharma-accent transition">{{ $product->name }}</a>
+                                        <a href="{{ route('public.products.show', $product->id) }}" class="hover:text-pharma-accent transition">{{ $product->name }}</a>
                                     </h3>
                                     
                                     <p class="text-xs text-slate-500 font-semibold mt-1">Composition: {{ Str::limit($product->composition, 40) }}</p>

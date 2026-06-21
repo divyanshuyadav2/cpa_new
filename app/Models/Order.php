@@ -10,6 +10,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'customer_name',
         'phone',
         'total',
@@ -21,4 +22,9 @@ class Order extends Model
         'cart' => 'array',
         'total' => 'decimal:2',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

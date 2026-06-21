@@ -71,7 +71,7 @@
                 <!-- Desktop Nav Links -->
                 <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
                     <a href="{{ route('home') }}" class="hover:text-pharma-accent transition">Home</a>
-                    <a href="{{ route('products.index') }}" class="hover:text-pharma-accent transition">Products Catalog</a>
+                    <a href="{{ route('public.products.index') }}" class="hover:text-pharma-accent transition">Products Catalog</a>
                     <a href="{{ route('about') }}" class="hover:text-pharma-accent transition">About & Contact</a>
                     <a href="{{ route('cart.view') }}" class="hover:text-pharma-accent transition">Review Cart</a>
                 </nav>
@@ -79,7 +79,7 @@
                 <!-- Action Buttons -->
                 <div class="flex items-center space-x-3 sm:space-x-4">
                     <!-- Products Search Button (Mobile Shortcut) -->
-                    <a href="{{ route('products.index') }}" class="p-2 text-slate-400 hover:text-pharma-accent md:hidden" title="Search Products">
+                    <a href="{{ route('public.products.index') }}" class="p-2 text-slate-400 hover:text-pharma-accent md:hidden" title="Search Products">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </a>
 
@@ -116,7 +116,7 @@
         <div x-show="mobileMenuOpen" x-transition.opacity class="md:hidden border-t border-slate-200 bg-white" style="display: none;">
             <div class="px-4 pt-2 pb-4 space-y-1">
                 <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Home</a>
-                <a href="{{ route('products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Products Catalog</a>
+                <a href="{{ route('public.products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Products Catalog</a>
                 <a href="{{ route('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">About & Contact</a>
                 <a href="{{ route('cart.view') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Review Cart</a>
             </div>
@@ -174,7 +174,7 @@
                     <h3 class="text-sm font-semibold uppercase tracking-wider text-pharma-gold mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-sm">
                         <li><a href="{{ route('home') }}" class="hover:text-white transition">Home</a></li>
-                        <li><a href="{{ route('products.index') }}" class="hover:text-white transition">Products Catalog</a></li>
+                        <li><a href="{{ route('public.products.index') }}" class="hover:text-white transition">Products Catalog</a></li>
                         <li><a href="{{ route('about') }}" class="hover:text-white transition">About & Contact</a></li>
                         <li><a href="{{ route('cart.view') }}" class="hover:text-white transition">Review Shopping Cart</a></li>
                     </ul>
@@ -228,7 +228,7 @@
                             <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-4 text-3xl">🛒</div>
                             <h3 class="text-lg font-bold text-slate-700">Your cart is empty</h3>
                             <p class="text-sm text-slate-500 mt-1 max-w-xs">Explore our catalog and add products to start compiling your order.</p>
-                            <a href="{{ route('products.index') }}" @click="cartOpen = false" class="mt-6 px-5 py-2.5 bg-pharma-accent text-white rounded-xl text-sm font-semibold hover:bg-pharma-navy transition">Browse Products</a>
+                            <a href="{{ route('public.products.index') }}" @click="cartOpen = false" class="mt-6 px-5 py-2.5 bg-pharma-accent text-white rounded-xl text-sm font-semibold hover:bg-pharma-navy transition">Browse Products</a>
                         </div>
                     @else
                         <div class="divide-y divide-slate-100">

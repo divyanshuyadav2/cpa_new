@@ -24,7 +24,7 @@
 
         <!-- Search Bar -->
         <div class="max-w-2xl mx-auto bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 shadow-xl">
-            <form action="{{ route('products.index') }}" method="GET" class="flex flex-col sm:flex-row gap-2">
+            <form action="{{ route('public.products.index') }}" method="GET" class="flex flex-col sm:flex-row gap-2">
                 <div class="relative flex-grow">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
                         💊
@@ -50,7 +50,7 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             @foreach($companies as $company)
-                <a href="{{ route('products.index', ['company_id' => $company->id]) }}" class="group block bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-pharma-gold hover:shadow-lg transition duration-200 text-center">
+                <a href="{{ route('public.products.index', ['company_id' => $company->id]) }}" class="group block bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-pharma-gold hover:shadow-lg transition duration-200 text-center">
                     <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-pharma-light to-white rounded-xl flex items-center justify-center font-bold text-xl text-pharma-navy border border-slate-200 group-hover:scale-105 transition">
                         @if($company->logo)
                             <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-cover rounded-xl">
@@ -77,7 +77,7 @@
                 <h2 class="text-3xl font-extrabold text-pharma-navy text-center sm:text-left">Featured Formulations</h2>
                 <p class="text-sm text-slate-500 mt-1 text-center sm:text-left">Browse through popular listings in active distribution stock.</p>
             </div>
-            <a href="{{ route('products.index') }}" class="mt-4 sm:mt-0 px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-semibold text-sm rounded-xl hover:bg-slate-100 hover:text-pharma-accent transition shadow-sm">
+            <a href="{{ route('public.products.index') }}" class="mt-4 sm:mt-0 px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-semibold text-sm rounded-xl hover:bg-slate-100 hover:text-pharma-accent transition shadow-sm">
                 Explore Full Catalog
             </a>
         </div>
@@ -103,7 +103,7 @@
                     <div class="p-6 flex-grow flex flex-col">
                         <span class="text-[10px] font-bold text-pharma-gold uppercase tracking-wider">{{ $product->company->name }} | {{ $product->division->name }}</span>
                         <h3 class="text-lg font-bold text-slate-800 mt-1 truncate">
-                            <a href="{{ route('products.show', $product->id) }}" class="hover:text-pharma-accent">{{ $product->name }}</a>
+                            <a href="{{ route('public.products.show', $product->id) }}" class="hover:text-pharma-accent">{{ $product->name }}</a>
                         </h3>
                         <p class="text-xs text-slate-500 font-semibold mt-1">Composition: {{ Str::limit($product->composition, 40) }}</p>
                         <p class="text-xs text-slate-400 mt-2 italic">Packing: {{ $product->packing }}</p>
