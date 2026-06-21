@@ -51,9 +51,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             @foreach($companies as $company)
                 <a href="{{ route('public.products.index', ['company_id' => $company->id]) }}" class="group block bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-pharma-gold hover:shadow-lg transition duration-200 text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-pharma-light to-white rounded-xl flex items-center justify-center font-bold text-xl text-pharma-navy border border-slate-200 group-hover:scale-105 transition">
+                    <div class="w-32 h-20 mx-auto mb-4 bg-gradient-to-br from-pharma-light to-white rounded-xl flex items-center justify-center font-bold text-xl text-pharma-navy border border-slate-200 group-hover:scale-105 transition overflow-hidden p-2">
                         @if($company->logo)
-                            <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-cover rounded-xl">
+                            <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-contain">
                         @else
                             🏢
                         @endif
