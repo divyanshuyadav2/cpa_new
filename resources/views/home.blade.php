@@ -52,12 +52,11 @@
             @foreach($companies as $company)
                 <a href="{{ route('products.index', ['company_id' => $company->id]) }}" class="group block bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-pharma-gold hover:shadow-lg transition duration-200 text-center">
                     <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-pharma-light to-white rounded-xl flex items-center justify-center font-bold text-xl text-pharma-navy border border-slate-200 group-hover:scale-105 transition">
-                           @if($company->logo)
-                                @php $logoSrc = filter_var($company->logo, FILTER_VALIDATE_URL) ? $company->logo : asset('storage/' . $company->logo); @endphp
-                                <img src="{{ $logoSrc }}" alt="{{ $company->name }}" class="w-full h-full object-cover">
-                            @else
-                                🏢
-                            @endif
+                        @if($company->logo)
+                            <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-cover rounded-xl">
+                        @else
+                            🏢
+                        @endif
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 group-hover:text-pharma-accent transition">{{ $company->name }}</h3>
                     <p class="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">{{ $company->description }}</p>
@@ -89,8 +88,7 @@
                     <!-- Product Image/Icon -->
                     <div class="h-48 bg-slate-50 border-b border-slate-100 flex items-center justify-center text-5xl relative">
                         @if($product->image)
-                            @php $imgSrc = filter_var($product->image, FILTER_VALIDATE_URL) ? $product->image : asset('storage/' . $product->image); @endphp
-                            <img src="{{ $imgSrc }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            <img src="{{ media_url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                         @else
                             💊
                         @endif
