@@ -91,6 +91,7 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             // File upload takes priority
             $imagePath = $request->file('image')->store('products', 'public');
+            @chmod(public_path('storage/' . $imagePath), 0644);
             $data['image'] = $imagePath;
         } elseif ($request->filled('image_url')) {
             // Store URL directly
@@ -143,14 +144,15 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             // Delete old image if it was a stored file (not a URL)
-            if ($product->image && !filter_var($product->image, FILTER_VALIDATE_URL)) {
+            if ($product->image && !str_starts_with($product->image, 'http')) {
                 Storage::disk('public')->delete($product->image);
             }
             $imagePath = $request->file('image')->store('products', 'public');
+            @chmod(public_path('storage/' . $imagePath), 0644);
             $data['image'] = $imagePath;
         } elseif ($request->filled('image_url')) {
             // Delete old file if switching to URL
-            if ($product->image && !filter_var($product->image, FILTER_VALIDATE_URL)) {
+            if ($product->image && !str_starts_with($product->image, 'http')) {
                 Storage::disk('public')->delete($product->image);
             }
             $data['image'] = $request->input('image_url');

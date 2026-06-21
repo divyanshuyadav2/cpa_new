@@ -45,6 +45,7 @@ class CompanyController extends Controller
         if ($request->hasFile('logo')) {
             // File upload takes priority
             $logoPath = $request->file('logo')->store('companies', 'public');
+            @chmod(public_path('storage/' . $logoPath), 0644);
             $data['logo'] = $logoPath;
         } elseif ($request->filled('logo_url')) {
             // Store URL directly
@@ -82,14 +83,15 @@ class CompanyController extends Controller
 
         if ($request->hasFile('logo')) {
             // Delete old logo if it was a stored file (not a URL)
-            if ($company->logo && !filter_var($company->logo, FILTER_VALIDATE_URL)) {
+            if ($company->logo && !str_starts_with($company->logo, 'http')) {
                 Storage::disk('public')->delete($company->logo);
             }
             $logoPath = $request->file('logo')->store('companies', 'public');
+            @chmod(public_path('storage/' . $logoPath), 0644);
             $data['logo'] = $logoPath;
         } elseif ($request->filled('logo_url')) {
             // Delete old file if switching to URL
-            if ($company->logo && !filter_var($company->logo, FILTER_VALIDATE_URL)) {
+            if ($company->logo && !str_starts_with($company->logo, 'http')) {
                 Storage::disk('public')->delete($company->logo);
             }
             $data['logo'] = $request->input('logo_url');
