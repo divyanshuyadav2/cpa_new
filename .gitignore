@@ -1,13 +1,7 @@
 /.phpunit.cache
 /node_modules
 /public/hot
-/public/storage/*
-!/public/storage/companies
-!/public/storage/products
-/public/storage/companies/*
-!/public/storage/companies/.gitkeep
-/public/storage/products/*
-!/public/storage/products/.gitkeep
+/public/storage
 /storage/*.key
 /storage/pail
 /vendor
