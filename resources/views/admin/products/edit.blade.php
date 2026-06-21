@@ -135,7 +135,7 @@
             @php
                 $existingImg = $product->image;
                 $isImgUrl = $existingImg && filter_var($existingImg, FILTER_VALIDATE_URL);
-                $imgSrc = $existingImg ? ($isImgUrl ? $existingImg : asset('storage/' . $existingImg)) : null;
+                $imgSrc = media_url($existingImg);
                 $imgInitMode = $isImgUrl ? 'url' : 'upload';
                 $imgInitUrl = $isImgUrl ? $existingImg : '';
             @endphp

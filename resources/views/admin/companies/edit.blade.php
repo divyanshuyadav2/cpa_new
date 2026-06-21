@@ -25,7 +25,7 @@
         @php
             $existingLogo = $company->logo;
             $isUrl = $existingLogo && filter_var($existingLogo, FILTER_VALIDATE_URL);
-            $logoSrc = $existingLogo ? ($isUrl ? $existingLogo : asset('storage/' . $existingLogo)) : null;
+            $logoSrc = media_url($existingLogo);
             $initMode = $isUrl ? 'url' : 'upload';
             $initUrlPreview = $isUrl ? $existingLogo : '';
         @endphp

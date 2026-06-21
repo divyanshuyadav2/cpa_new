@@ -80,7 +80,7 @@
                 <label for="site_logo" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Site Logo</label>
                 @if(setting('site_logo'))
                     <div class="mb-3">
-                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Site Logo" class="h-16 w-auto object-contain rounded border border-slate-200 bg-white p-1">
+                        <img src="{{ media_url(setting('site_logo')) }}" alt="Site Logo" class="h-16 w-auto object-contain rounded border border-slate-200 bg-white p-1">
                     </div>
                 @endif
                 <input type="file" name="site_logo" id="site_logo" accept="image/*"

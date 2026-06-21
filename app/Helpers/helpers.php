@@ -34,7 +34,6 @@ if (!function_exists('media_url')) {
             return $path;
         }
 
-        // Stored file → asset() uses ASSET_URL if set, otherwise APP_URL
-        return asset('storage/' . $path);
+        return asset('uploads/' . $path);
     }
 }

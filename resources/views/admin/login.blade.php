@@ -19,7 +19,7 @@
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <!-- Logo Icon -->
         @if(setting('site_logo'))
-            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="mx-auto h-16 w-auto object-contain mb-4">
+            <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-16 w-auto object-contain mb-4">
         @else
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-pharma-gold text-slate-900 font-extrabold text-3xl shadow-lg border border-pharma-gold/30">
                 A

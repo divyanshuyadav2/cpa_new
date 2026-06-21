@@ -56,7 +56,7 @@
                 <!-- Logo -->
                 <a href="{{ route('home') }}" class="flex items-center space-x-2">
                     @if(setting('site_logo'))
-                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain">
+                        <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain">
                     @else
                         <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-pharma-accent to-pharma-navy text-white shadow-md">
                             <span class="text-xl sm:text-2xl font-bold font-display">C</span>
@@ -159,7 +159,7 @@
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         @if(setting('site_logo'))
-                            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" class="h-8 w-auto object-contain">
+                            <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-8 w-auto object-contain">
                         @else
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pharma-accent to-pharma-navy text-white font-bold">C</div>
                         @endif

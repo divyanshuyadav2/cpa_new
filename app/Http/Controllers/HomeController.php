@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $companies = Company::where('is_active', true)->take(6)->get();
+        $companies = Company::where('is_active', true)->orderBy('name')->get();
         $products = Product::with(['company', 'division', 'salt'])
             ->where('is_active', true)
             ->inRandomOrder()
