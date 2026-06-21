@@ -32,8 +32,7 @@
                                         <!-- Icon -->
                                         <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-xl flex-shrink-0 flex items-center justify-center text-3xl">
                                         @if($item['image'])
-                                            @php $cartImgSrc = filter_var($item['image'], FILTER_VALIDATE_URL) ? $item['image'] : asset('storage/' . $item['image']); @endphp
-                                            <img src="{{ $cartImgSrc }}" class="w-full h-full object-cover rounded-xl">
+                                            <img src="{{ media_url($item['image']) }}" class="w-full h-full object-cover rounded-xl">
                                         @else
                                             💊
                                         @endif

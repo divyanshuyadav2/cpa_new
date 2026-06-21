@@ -16,8 +16,7 @@
                 <!-- Left: Product Image -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center p-8 text-8xl h-96 relative">
                     @if($product->image)
-                        @php $productImgSrc = filter_var($product->image, FILTER_VALIDATE_URL) ? $product->image : asset('storage/' . $product->image); @endphp
-                        <img src="{{ $productImgSrc }}" alt="{{ $product->name }}" class="w-full h-full object-contain rounded-xl">
+                        <img src="{{ media_url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-contain rounded-xl">
                     @else
                         💊
                     @endif
@@ -117,8 +116,7 @@
                         <div class="flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition">
                             <div class="h-40 bg-slate-50 flex items-center justify-center text-3xl">
                                 @if($rel->image)
-                                    @php $relImgSrc = filter_var($rel->image, FILTER_VALIDATE_URL) ? $rel->image : asset('storage/' . $rel->image); @endphp
-                                    <img src="{{ $relImgSrc }}" class="w-full h-full object-cover">
+                                    <img src="{{ media_url($rel->image) }}" class="w-full h-full object-cover">
                                 @else
                                     💊
                                 @endif

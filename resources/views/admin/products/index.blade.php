@@ -99,8 +99,7 @@
                             <td class="p-4">
                                 <div class="w-10 h-10 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-lg overflow-hidden flex-shrink-0">
                                     @if($product->image)
-                                        @php $admImgSrc = filter_var($product->image, FILTER_VALIDATE_URL) ? $product->image : asset('storage/' . $product->image); @endphp
-                                        <img src="{{ $admImgSrc }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ media_url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                                     @else
                                         💊
                                     @endif
