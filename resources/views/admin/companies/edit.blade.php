@@ -90,6 +90,19 @@
             </div>
         </div>
 
+        <!-- Background Color -->
+        <div>
+            <label for="bg_color" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Background Color (Hex)</label>
+            <div class="flex items-center space-x-3">
+                <input type="color" name="bg_color" id="bg_color" value="{{ old('bg_color', $company->bg_color ?? '#ffffff') }}"
+                       class="h-10 w-14 rounded cursor-pointer border border-slate-200 p-1 bg-white">
+                <span class="text-xs text-slate-500">Pick a background color for the logo container, or leave white.</span>
+            </div>
+            @error('bg_color')
+                <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+            @enderror
+        </div>
+
         <!-- Description -->
         <div>
             <label for="description" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Description</label>

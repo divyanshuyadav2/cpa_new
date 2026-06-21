@@ -35,11 +35,12 @@ class CompanyController extends Controller
             'name' => 'required|string|max:255|unique:companies,name',
             'logo' => 'nullable|image|max:2048', // max 2MB
             'logo_url' => 'nullable|url|max:2048',
+            'bg_color' => 'nullable|string|max:7',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->only(['name', 'description']);
+        $data = $request->only(['name', 'description', 'bg_color']);
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('logo')) {
@@ -74,11 +75,12 @@ class CompanyController extends Controller
             'name' => 'required|string|max:255|unique:companies,name,' . $company->id,
             'logo' => 'nullable|image|max:2048',
             'logo_url' => 'nullable|url|max:2048',
+            'bg_color' => 'nullable|string|max:7',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->only(['name', 'description']);
+        $data = $request->only(['name', 'description', 'bg_color']);
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('logo')) {

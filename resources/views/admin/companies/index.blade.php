@@ -34,7 +34,7 @@
                     @foreach($companies as $company)
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-4">
-                                <div class="w-10 h-10 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-lg overflow-hidden flex-shrink-0">
+                                <div class="w-10 h-10 border border-slate-200 rounded-lg flex items-center justify-center text-lg overflow-hidden flex-shrink-0" style="background-color: {{ $company->bg_color ?? '#f8fafc' }};">
                                 @if($company->logo)
                                     <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-cover rounded-lg">
                                 @else

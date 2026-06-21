@@ -12,6 +12,7 @@ class Company extends Model
     protected $fillable = [
         'name',
         'logo',
+        'bg_color',
         'description',
         'is_active',
     ];
