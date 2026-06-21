@@ -18,7 +18,9 @@ if (!function_exists('media_url')) {
     /**
      * Resolve a media path to a full URL.
      * - If the value is already an external URL (http/https), return it as-is.
-     * - Otherwise treat it as a path stored on the public disk and return its URL.
+     * - Otherwise use asset() which respects ASSET_URL env variable automatically.
+     *   Local:  asset('storage/companies/x.jpg') → http://127.0.0.1:8000/storage/companies/x.jpg
+     *   Server: asset('storage/companies/x.jpg') → https://chitranshupharma.com/cpa/public/storage/companies/x.jpg
      *
      * @param string|null $path
      * @return string|null
@@ -32,7 +34,7 @@ if (!function_exists('media_url')) {
             return $path;
         }
 
-        // Stored file → use Storage disk URL (respects APP_URL + symlink)
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        // Stored file → asset() uses ASSET_URL if set, otherwise APP_URL
+        return asset('storage/' . $path);
     }
 }
