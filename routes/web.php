@@ -23,14 +23,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::post('/about', [HomeController::class, 'submitAbout'])->name('about.submit');
-Route::get('/setup-storage', function() {
-    $target = public_path('storage');
-    if (file_exists($target) && !is_link($target)) {
-        \Illuminate\Support\Facades\File::deleteDirectory($target);
+Route::get('/images/{path}', function($path) {
+    $file = storage_path('app/public/' . $path);
+    if (!file_exists($file)) {
+        abort(404);
     }
-    \Illuminate\Support\Facades\Artisan::call('storage:link');
-    return 'Storage symlink created successfully! You can now safely upload images.';
-});
+    return response()->file($file);
+})->where('path', '.*')->name('images.serve');
 Route::get('/products', [ProductController::class, 'index'])->name('public.products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('public.products.show');
 

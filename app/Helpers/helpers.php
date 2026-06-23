@@ -34,6 +34,6 @@ if (!function_exists('media_url')) {
             return $path;
         }
 
-        return asset('uploads/' . $path);
+        return url('images/' . ltrim($path, '/'));
     }
 }
