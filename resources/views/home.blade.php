@@ -50,18 +50,15 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             @foreach($companies as $company)
-                <a href="{{ route('public.products.index', ['company_id' => $company->id]) }}" class="group block bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-pharma-gold hover:shadow-lg transition duration-200 text-center flex flex-col justify-between h-full">
-                    <div>
-                        <div class="w-32 h-20 mx-auto mb-3 rounded-xl flex items-center justify-center font-bold text-xl text-pharma-navy border border-slate-200 group-hover:scale-105 transition overflow-hidden p-2" style="background-color: {{ $company->bg_color ?? '#ffffff' }};">
-                            @if($company->logo)
-                                <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-contain">
-                            @else
-                                🏢
-                            @endif
-                        </div>
-                        <h3 class="text-base font-bold text-slate-800 group-hover:text-pharma-accent transition leading-tight">{{ $company->name }}</h3>
+                <a href="{{ route('public.products.index', ['company_id' => $company->id]) }}" class="group block text-center flex flex-col justify-center items-center h-full">
+                    <div class="w-48 h-28 mx-auto mb-3 rounded-2xl flex items-center justify-center font-bold text-xl text-pharma-navy border border-slate-200 shadow-sm group-hover:border-pharma-gold group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300 overflow-hidden p-3" style="background-color: {{ $company->bg_color ?? '#ffffff' }};">
+                        @if($company->logo)
+                            <img src="{{ media_url($company->logo) }}" alt="{{ $company->name }}" class="w-full h-full object-contain">
+                        @else
+                            <span class="text-sm px-2 break-words">{{ $company->name }}</span>
+                        @endif
                     </div>
-                    <span class="inline-flex items-center justify-center text-xs font-bold text-pharma-gold group-hover:text-pharma-accent mt-3">
+                    <span class="inline-flex items-center justify-center text-xs font-bold text-pharma-gold group-hover:text-pharma-accent">
                         View Products &rarr;
                     </span>
                 </a>
