@@ -40,7 +40,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => base_path('../cpa_uploads'),
             'url' => rtrim(env('APP_URL'), '/') . '/images',
             'visibility' => 'public',
             'throw' => false,

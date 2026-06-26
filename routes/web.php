@@ -24,7 +24,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::post('/about', [HomeController::class, 'submitAbout'])->name('about.submit');
 Route::get('/images/{path}', function($path) {
-    $file = storage_path('app/public/' . $path);
+    $file = base_path('../cpa_uploads/' . $path);
     if (!file_exists($file)) {
         abort(404);
     }
