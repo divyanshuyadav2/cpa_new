@@ -90,16 +90,11 @@
                         @else
                             💊
                         @endif
-                        @if($product->stock_qty < 10)
-                            <span class="absolute top-3 right-3 bg-red-100 text-red-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-red-200">
-                                Low Stock
-                            </span>
-                        @endif
                     </div>
                     
                     <!-- Content -->
                     <div class="p-6 flex-grow flex flex-col">
-                        <span class="text-[10px] font-bold text-pharma-gold uppercase tracking-wider">{{ $product->company->name }} | {{ $product->division->name }}</span>
+                        <span class="text-[10px] font-bold text-pharma-gold uppercase tracking-wider">{{ $product->company?->name ?? 'N/A' }} | {{ $product->division?->name ?? 'N/A' }}</span>
                         <h3 class="text-lg font-bold text-slate-800 mt-1 truncate">
                             <a href="{{ route('public.products.show', $product->id) }}" class="hover:text-pharma-accent">{{ $product->name }}</a>
                         </h3>
@@ -107,11 +102,13 @@
                         <p class="text-xs text-slate-400 mt-2 italic">Packing: {{ $product->packing }}</p>
 
                         <!-- Salt Badge -->
-                        <div class="mt-3">
-                            <span class="inline-block text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
-                                Salt: {{ $product->salt->name }}
-                            </span>
-                        </div>
+                        @if($product->salt?->name)
+                            <div class="mt-3">
+                                <span class="inline-block text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
+                                    Salt: {{ $product->salt->name }}
+                                </span>
+                            </div>
+                        @endif
 
                         <!-- Footer / Pricing & Cart -->
                         <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
@@ -120,7 +117,6 @@
                                 <span class="text-lg font-extrabold text-pharma-navy">₹{{ number_format($product->mrp, 2) }}</span>
                             </div>
                             
-                            @if($product->stock_qty > 0)
                                 <form action="{{ route('cart.add') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -129,9 +125,6 @@
                                         Add +
                                     </button>
                                 </form>
-                            @else
-                                <span class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-1.5 rounded-lg">Out of Stock</span>
-                            @endif
                         </div>
                     </div>
                 </div>

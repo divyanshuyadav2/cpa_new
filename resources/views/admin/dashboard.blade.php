@@ -121,7 +121,7 @@
                     <div class="p-4 flex justify-between items-center hover:bg-red-50/20 transition">
                         <div>
                             <strong class="block text-sm text-slate-800 leading-tight">{{ $item->name }}</strong>
-                            <span class="text-[10px] text-slate-500">{{ $item->company->name }} &bull; {{ $item->division->name }}</span>
+                            <span class="text-[10px] text-slate-500">{{ $item->company?->name ?? 'N/A' }} &bull; {{ $item->division?->name ?? 'N/A' }}</span>
                         </div>
                         <div class="text-right">
                             <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-black {{ $item->stock_qty == 0 ? 'bg-red-200 text-red-900' : 'bg-orange-100 text-orange-800' }}">

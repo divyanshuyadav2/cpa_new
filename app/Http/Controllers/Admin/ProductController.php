@@ -70,19 +70,23 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'division_id' => 'required|exists:divisions,id',
-            'salt_id' => 'required|exists:salts,id',
-            'composition' => 'required|string|max:255',
-            'packing' => 'required|string|max:255',
-            'mrp' => 'required|numeric|min:0',
-            'ptr' => 'required|numeric|min:0',
-            'pts' => 'required|numeric|min:0',
-            'stock_qty' => 'required|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-            'image_url' => 'nullable|url|max:2048',
-            'is_active' => 'nullable|boolean',
+            'name'        => 'required|string|max:255',
+            'hsn_code'    => 'nullable|string|max:50',
+            'company_id'  => 'nullable|exists:companies,id',
+            'division_id' => 'nullable|exists:divisions,id',
+            'salt_id'     => 'nullable|exists:salts,id',
+            'composition' => 'nullable|string|max:255',
+            'packing'     => 'nullable|string|max:255',
+            'mrp'         => 'required|numeric|min:0',
+            'ptr'         => 'required|numeric|min:0',
+            'pts'         => 'required|numeric|min:0',
+            'tax'         => 'nullable|numeric|min:0',
+            'a_tax'       => 'nullable|numeric|min:0',
+            'pur'         => 'nullable|numeric|min:0',
+            'stock_qty'   => 'required|integer|min:0',
+            'image'       => 'nullable|image|max:2048',
+            'image_url'   => 'nullable|url|max:2048',
+            'is_active'   => 'nullable|boolean',
         ]);
 
         $data = $request->except(['image', 'image_url', 'is_active']);
@@ -124,19 +128,23 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'division_id' => 'required|exists:divisions,id',
-            'salt_id' => 'required|exists:salts,id',
-            'composition' => 'required|string|max:255',
-            'packing' => 'required|string|max:255',
-            'mrp' => 'required|numeric|min:0',
-            'ptr' => 'required|numeric|min:0',
-            'pts' => 'required|numeric|min:0',
-            'stock_qty' => 'required|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-            'image_url' => 'nullable|url|max:2048',
-            'is_active' => 'nullable|boolean',
+            'name'        => 'required|string|max:255',
+            'hsn_code'    => 'nullable|string|max:50',
+            'company_id'  => 'nullable|exists:companies,id',
+            'division_id' => 'nullable|exists:divisions,id',
+            'salt_id'     => 'nullable|exists:salts,id',
+            'composition' => 'nullable|string|max:255',
+            'packing'     => 'nullable|string|max:255',
+            'mrp'         => 'required|numeric|min:0',
+            'ptr'         => 'required|numeric|min:0',
+            'pts'         => 'required|numeric|min:0',
+            'tax'         => 'nullable|numeric|min:0',
+            'a_tax'       => 'nullable|numeric|min:0',
+            'pur'         => 'nullable|numeric|min:0',
+            'stock_qty'   => 'required|integer|min:0',
+            'image'       => 'nullable|image|max:2048',
+            'image_url'   => 'nullable|url|max:2048',
+            'is_active'   => 'nullable|boolean',
         ]);
 
         $data = $request->except(['image', 'image_url', 'is_active']);
@@ -217,27 +225,31 @@ class ProductController extends Controller
             "Expires"             => "0"
         ];
 
-        $columns = ['ID', 'Name', 'Company', 'Division', 'Salt', 'Composition', 'Packing', 'MRP', 'PTR', 'PTS', 'Stock Qty', 'Active'];
+        $columns = ['ID', 'Name', 'HSN Code', 'Company', 'Division', 'Salt', 'Composition', 'Packing', 'MRP', 'PTR', 'PTS', 'Tax', 'A.Tax', 'Pur', 'Stock Qty', 'Active'];
 
         $callback = function() use($products, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
             foreach ($products as $product) {
-                $row['ID']  = $product->id;
-                $row['Name']    = $product->name;
-                $row['Company']  = $product->company ? $product->company->name : '';
-                $row['Division']  = $product->division ? $product->division->name : '';
-                $row['Salt']  = $product->salt ? $product->salt->name : '';
-                $row['Composition']  = $product->composition;
-                $row['Packing']  = $product->packing;
-                $row['MRP']  = $product->mrp;
-                $row['PTR']  = $product->ptr;
-                $row['PTS']  = $product->pts;
-                $row['Stock Qty']  = $product->stock_qty;
-                $row['Active']  = $product->is_active ? 'Yes' : 'No';
-
-                fputcsv($file, array($row['ID'], $row['Name'], $row['Company'], $row['Division'], $row['Salt'], $row['Composition'], $row['Packing'], $row['MRP'], $row['PTR'], $row['PTS'], $row['Stock Qty'], $row['Active']));
+                fputcsv($file, [
+                    $product->id,
+                    $product->name,
+                    $product->hsn_code,
+                    $product->company ? $product->company->name : '',
+                    $product->division ? $product->division->name : '',
+                    $product->salt ? $product->salt->name : '',
+                    $product->composition,
+                    $product->packing,
+                    $product->mrp,
+                    $product->ptr,
+                    $product->pts,
+                    $product->tax,
+                    $product->a_tax,
+                    $product->pur,
+                    $product->stock_qty,
+                    $product->is_active ? 'Yes' : 'No',
+                ]);
             }
 
             fclose($file);

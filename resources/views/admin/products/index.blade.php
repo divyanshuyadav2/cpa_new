@@ -23,6 +23,33 @@
     </div>
 </div>
 
+{{-- Import Result Flash Messages --}}
+@if(session('import_success'))
+    <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-300 text-green-800 text-sm font-medium flex items-start gap-2">
+        <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+        <div>
+            <p>{{ session('import_success') }}</p>
+            @if(session('import_errors') && count(session('import_errors')))
+                <ul class="mt-2 list-disc list-inside text-xs text-red-700 space-y-0.5">
+                    @foreach(session('import_errors') as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    </div>
+@endif
+@if(session('success'))
+    <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-300 text-green-800 text-sm font-medium">
+        ✅ {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="mb-4 p-4 rounded-xl bg-red-50 border border-red-300 text-red-800 text-sm font-medium">
+        ❌ {{ session('error') }}
+    </div>
+@endif
+
 <!-- Filters Bar Card -->
 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6">
     <form action="{{ route('products.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4" id="admin-product-filter">
@@ -89,9 +116,10 @@
                     <tr class="border-b border-slate-200 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
                         <th class="p-4 w-16">Image</th>
                         <th class="p-4">Product Details</th>
-                        <th class="p-4">Company & Division</th>
-                        <th class="p-4">Composition & Salt</th>
-                        <th class="p-4">Pricing (MRP/PTR/PTS)</th>
+                        <th class="p-4">Company &amp; Division</th>
+                        <th class="p-4">Composition &amp; Salt</th>
+                        <th class="p-4">MRP / PTR / PTS</th>
+                        <th class="p-4">Tax &amp; Pur. Price</th>
                         <th class="p-4">Stock</th>
                         <th class="p-4">Status</th>
                         <th class="p-4 text-right">Actions</th>
@@ -111,21 +139,44 @@
                             </td>
                             <td class="p-4">
                                 <strong class="block text-slate-900 leading-tight">{{ $product->name }}</strong>
-                                <span class="text-xs text-slate-400">Packing: {{ $product->packing }}</span>
+                                @if($product->hsn_code)
+                                    <span class="text-[10px] text-indigo-600 font-semibold bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded mt-0.5 inline-block">HSN: {{ $product->hsn_code }}</span>
+                                @endif
+                                @if($product->packing)
+                                    <span class="text-xs text-slate-400 block mt-0.5">Packing: {{ $product->packing }}</span>
+                                @endif
                             </td>
                             <td class="p-4">
-                                <span class="block font-semibold text-slate-700 leading-tight">{{ $product->company->name }}</span>
-                                <span class="text-xs text-slate-500">Div: {{ $product->division->name }}</span>
+                                <span class="block font-semibold text-slate-700 leading-tight">{{ $product->company->name ?? '—' }}</span>
+                                <span class="text-xs text-slate-500">Div: {{ $product->division->name ?? '—' }}</span>
                             </td>
                             <td class="p-4">
-                                <span class="block text-xs font-semibold text-slate-700 leading-tight truncate max-w-[180px]">{{ $product->composition }}</span>
-                                <span class="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 w-fit block mt-1">Salt: {{ $product->salt->name }}</span>
+                                <span class="block text-xs font-semibold text-slate-700 leading-tight truncate max-w-[180px]">{{ $product->composition ?? '—' }}</span>
+                                @if($product->salt)
+                                    <span class="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 w-fit block mt-1">Salt: {{ $product->salt->name }}</span>
+                                @endif
                             </td>
                             <td class="p-4">
                                 <div class="text-xs space-y-0.5 leading-none">
                                     <span class="block text-slate-500">MRP: <strong class="text-slate-800">₹{{ number_format($product->mrp, 2) }}</strong></span>
                                     <span class="block text-slate-500">PTR: <strong class="text-slate-800">₹{{ number_format($product->ptr, 2) }}</strong></span>
                                     <span class="block text-slate-500">PTS: <strong class="text-slate-800">₹{{ number_format($product->pts, 2) }}</strong></span>
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                <div class="text-xs space-y-0.5 leading-none">
+                                    @if($product->tax !== null)
+                                        <span class="block text-slate-500">Tax: <strong class="text-slate-800">{{ number_format($product->tax, 2) }}%</strong></span>
+                                    @endif
+                                    @if($product->a_tax !== null)
+                                        <span class="block text-slate-500">A.Tax: <strong class="text-slate-800">{{ number_format($product->a_tax, 2) }}%</strong></span>
+                                    @endif
+                                    @if($product->pur !== null)
+                                        <span class="block text-emerald-600 font-semibold">Pur: <strong>₹{{ number_format($product->pur, 2) }}</strong></span>
+                                    @endif
+                                    @if($product->tax === null && $product->pur === null)
+                                        <span class="text-slate-400">—</span>
+                                    @endif
                                 </div>
                             </td>
                             <td class="p-4">

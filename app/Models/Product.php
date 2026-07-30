@@ -11,6 +11,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'hsn_code',
         'company_id',
         'division_id',
         'salt_id',
@@ -19,17 +20,23 @@ class Product extends Model
         'mrp',
         'ptr',
         'pts',
+        'tax',
+        'a_tax',
+        'pur',
         'stock_qty',
         'image',
         'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
-        'mrp' => 'decimal:2',
-        'ptr' => 'decimal:2',
-        'pts' => 'decimal:2',
-        'stock_qty' => 'integer',
+        'is_active'  => 'boolean',
+        'mrp'        => 'decimal:2',
+        'ptr'        => 'decimal:2',
+        'pts'        => 'decimal:2',
+        'tax'        => 'decimal:2',
+        'a_tax'      => 'decimal:2',
+        'pur'        => 'decimal:2',
+        'stock_qty'  => 'integer',
     ];
 
     public function company()

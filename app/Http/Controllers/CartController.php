@@ -35,18 +35,12 @@ class CartController extends Controller
         $product = Product::with('company')->findOrFail($request->input('product_id'));
         $qty = (int)$request->input('quantity');
 
-        // Check stock
-        if ($product->stock_qty < $qty) {
-            return redirect()->back()->with('error', "Only {$product->stock_qty} units available in stock.");
-        }
+        $qty = (int)$request->input('quantity');
 
         $cart = session()->get('cart', []);
 
         if (isset($cart[$product->id])) {
             $newQty = $cart[$product->id]['qty'] + $qty;
-            if ($product->stock_qty < $newQty) {
-                return redirect()->back()->with('error', "Cannot add more. Total in cart ({$newQty}) exceeds stock.");
-            }
             $cart[$product->id]['qty'] = $newQty;
         } else {
             $cart[$product->id] = [
@@ -80,9 +74,6 @@ class CartController extends Controller
         $qty = (int)$request->input('quantity');
 
         $product = Product::findOrFail($productId);
-        if ($product->stock_qty < $qty) {
-            return redirect()->back()->with('error', "Only {$product->stock_qty} units available in stock.");
-        }
 
         $cart = session()->get('cart', []);
 
@@ -135,8 +126,8 @@ class CartController extends Controller
         $total = 0;
         foreach ($cart as $item) {
             $product = Product::find($item['id']);
-            if (!$product || $product->stock_qty < $item['qty']) {
-                return redirect()->back()->with('error', "Product {$item['name']} is out of stock or quantity exceeds availability.");
+            if (!$product) {
+                return redirect()->back()->with('error', "Product {$item['name']} is no longer available.");
             }
             $total += $item['qty'] * $item['price'];
         }
@@ -150,13 +141,8 @@ class CartController extends Controller
             'cart' => $cart,
         ]);
 
-        // Deduct product stock
-        foreach ($cart as $item) {
-            $product = Product::find($item['id']);
-            if ($product) {
-                $product->decrement('stock_qty', $item['qty']);
-            }
-        }
+        // Product stock deduction removed as per business rules
+
 
         // Clear Cart
         session()->forget('cart');

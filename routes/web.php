@@ -69,6 +69,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     
     // Products resource with bulk import
     Route::get('products/import', [ProductImportController::class, 'index'])->name('products.import.index');
+    Route::get('products/import/sample', [ProductImportController::class, 'sampleCsv'])->name('products.import.sample');
     Route::post('products/import/upload', [ProductImportController::class, 'upload'])->name('products.import.upload');
     Route::post('products/import/process', [ProductImportController::class, 'process'])->name('products.import.process');
     Route::get('products/export', [AdminProductController::class, 'export'])->name('products.export');

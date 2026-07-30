@@ -21,6 +21,16 @@
                 @enderror
             </div>
 
+            <!-- HSN Code -->
+            <div>
+                <label for="hsn_code" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">HSN Code <span class="font-normal text-slate-400 normal-case">(optional)</span></label>
+                <input type="text" name="hsn_code" id="hsn_code" value="{{ old('hsn_code') }}" placeholder="e.g. 300490" 
+                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('hsn_code') border-red-500 @enderror">
+                @error('hsn_code')
+                    <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Chemical Salt Dropdown -->
             <div>
                 <label for="salt_id" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Salt / Chemical Composition</label>
@@ -83,7 +93,7 @@
             <!-- Packing -->
             <div>
                 <label for="packing" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Packing Size</label>
-                <input type="text" name="packing" id="packing" required value="{{ old('packing') }}" placeholder="e.g. 15 Tablets / 100ml Bottle" 
+                <input type="text" name="packing" id="packing" required value="{{ old('packing', '1*10*10') }}" placeholder="e.g. 1*10*10" 
                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('packing') border-red-500 @enderror">
                 @error('packing')
                     <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
@@ -116,6 +126,36 @@
                 <input type="number" step="0.01" name="pts" id="pts" required value="{{ old('pts') }}" placeholder="0.00" 
                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('pts') border-red-500 @enderror">
                 @error('pts')
+                    <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Tax % -->
+            <div>
+                <label for="tax" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Tax (%) <span class="font-normal text-slate-400 normal-case">(optional)</span></label>
+                <input type="number" step="0.01" min="0" name="tax" id="tax" value="{{ old('tax') }}" placeholder="e.g. 2.50" 
+                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('tax') border-red-500 @enderror">
+                @error('tax')
+                    <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Additional Tax % -->
+            <div>
+                <label for="a_tax" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Additional Tax / A.Tax (%) <span class="font-normal text-slate-400 normal-case">(optional)</span></label>
+                <input type="number" step="0.01" min="0" name="a_tax" id="a_tax" value="{{ old('a_tax') }}" placeholder="e.g. 2.50" 
+                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('a_tax') border-red-500 @enderror">
+                @error('a_tax')
+                    <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Purchase Price -->
+            <div>
+                <label for="pur" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Purchase Price / Pur (₹) <span class="font-normal text-slate-400 normal-case">(optional)</span></label>
+                <input type="number" step="0.01" min="0" name="pur" id="pur" value="{{ old('pur') }}" placeholder="0.00" 
+                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white @error('pur') border-red-500 @enderror">
+                @error('pur')
                     <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
                 @enderror
             </div>
