@@ -19,12 +19,20 @@ class ProductController extends Controller
     {
         $query = Product::with(['company', 'division', 'salt']);
 
-        // Search by keyword
+        // Search by keyword across name, composition, HSN code, packing, company name, or salt name
         if ($request->filled('search')) {
-            $search = $request->input('search');
+            $search = trim($request->input('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('composition', 'like', "%{$search}%");
+                  ->orWhere('composition', 'like', "%{$search}%")
+                  ->orWhere('hsn_code', 'like', "%{$search}%")
+                  ->orWhere('packing', 'like', "%{$search}%")
+                  ->orWhereHas('company', function ($c) use ($search) {
+                      $c->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('salt', function ($s) use ($search) {
+                      $s->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -38,7 +46,27 @@ class ProductController extends Controller
             $query->where('division_id', $request->input('division_id'));
         }
 
-        $products = $query->latest()->paginate(10)->withQueryString();
+        // Filter by active status
+        if ($request->filled('status')) {
+            if ($request->input('status') === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->input('status') === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        // Filter by stock level
+        if ($request->filled('stock')) {
+            if ($request->input('stock') === 'in_stock') {
+                $query->where('stock_qty', '>', 0);
+            } elseif ($request->input('stock') === 'out_of_stock') {
+                $query->where('stock_qty', '<=', 0);
+            } elseif ($request->input('stock') === 'low_stock') {
+                $query->where('stock_qty', '>', 0)->where('stock_qty', '<', 10);
+            }
+        }
+
+        $products = $query->latest()->paginate(15)->withQueryString();
 
         $companies = Company::where('is_active', true)->orderBy('name')->get();
         

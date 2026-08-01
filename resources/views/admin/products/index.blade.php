@@ -52,12 +52,18 @@
 
 <!-- Filters Bar Card -->
 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6">
-    <form action="{{ route('products.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4" id="admin-product-filter">
+    <form action="{{ route('products.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3" id="admin-product-filter">
         <!-- Search Keyword -->
-        <div>
-            <label for="search" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Search Keywords</label>
-            <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Name, composition..."
-                   class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
+        <div class="lg:col-span-2">
+            <label for="search" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Search Products</label>
+            <div class="relative">
+                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Name, HSN, composition, salt..."
+                       class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-8 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
+                <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
+                @if(request('search'))
+                    <a href="{{ route('products.index', request()->except('search')) }}" class="absolute right-3 top-2 text-slate-400 hover:text-slate-600 font-bold text-sm" title="Clear search">×</a>
+                @endif
+            </div>
         </div>
 
         <!-- Company Filter -->
@@ -88,16 +94,46 @@
             </select>
         </div>
 
-        <!-- Reset & Submit buttons -->
-        <div class="flex items-end space-x-2">
-            <button type="submit" class="flex-grow py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition">
-                Apply Filters
-            </button>
-            @if(request()->anyFilled(['search', 'company_id', 'division_id']))
-                <a href="{{ route('products.index') }}" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg border border-red-200 transition">
-                    Reset
-                </a>
-            @endif
+        <!-- Status Filter -->
+        <div>
+            <label for="status" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+            <select name="status" id="status" onchange="document.getElementById('admin-product-filter').submit()"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
+                <option value="">All Statuses</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active Only</option>
+                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive Only</option>
+            </select>
+        </div>
+
+        <!-- Stock Filter & Buttons -->
+        <div>
+            <label for="stock" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Stock Level</label>
+            <select name="stock" id="stock" onchange="document.getElementById('admin-product-filter').submit()"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
+                <option value="">All Stock</option>
+                <option value="in_stock" {{ request('stock') == 'in_stock' ? 'selected' : '' }}>In Stock (>0)</option>
+                <option value="low_stock" {{ request('stock') == 'low_stock' ? 'selected' : '' }}>Low Stock (<10)</option>
+                <option value="out_of_stock" {{ request('stock') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock (0)</option>
+            </select>
+        </div>
+        
+        <!-- Apply / Reset Action buttons -->
+        <div class="lg:col-span-6 flex items-center justify-between pt-2 border-t border-slate-100">
+            <div class="text-xs text-slate-500">
+                @if(request()->anyFilled(['search', 'company_id', 'division_id', 'status', 'stock']))
+                    Showing <strong>{{ $products->total() }}</strong> {{ Str::plural('product', $products->total()) }} matching filter criteria.
+                @endif
+            </div>
+            <div class="flex items-center space-x-2">
+                <button type="submit" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg transition shadow-sm">
+                    Apply Filters
+                </button>
+                @if(request()->anyFilled(['search', 'company_id', 'division_id', 'status', 'stock']))
+                    <a href="{{ route('products.index') }}" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg border border-red-200 transition">
+                        Reset All Filters
+                    </a>
+                @endif
+            </div>
         </div>
     </form>
 </div>
@@ -107,7 +143,12 @@
     @if($products->isEmpty())
         <div class="p-12 text-center text-slate-400">
             <span class="text-4xl block mb-3">💊</span>
-            No products found matching the criteria.
+            @if(request()->anyFilled(['search', 'company_id', 'division_id', 'status', 'stock']))
+                No products found matching your filter criteria. <br>
+                <a href="{{ route('products.index') }}" class="mt-3 inline-block px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition">Reset All Filters</a>
+            @else
+                No products registered yet. Click "+ Add New Product" to get started.
+            @endif
         </div>
     @else
         <div class="overflow-x-auto">

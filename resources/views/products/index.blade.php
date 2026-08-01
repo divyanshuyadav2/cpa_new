@@ -15,30 +15,6 @@
             </div>
         </div>
 
-        <!-- Mobile Quick Search Bar -->
-        <div class="block lg:hidden mb-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-            <form action="{{ route('public.products.index') }}" method="GET" class="flex items-center gap-2">
-                @if(request('company_id'))
-                    <input type="hidden" name="company_id" value="{{ request('company_id') }}">
-                @endif
-                @if(request('division_id'))
-                    <input type="hidden" name="division_id" value="{{ request('division_id') }}">
-                @endif
-                <div class="relative flex-grow">
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                           placeholder="Search product, composition, salt..." 
-                           class="w-full pl-3 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white shadow-inner">
-                    @if(request('search'))
-                        <a href="{{ route('public.products.index', request()->except('search')) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-red-500 font-bold">×</a>
-                    @endif
-                </div>
-                <button type="submit" class="px-4 py-2.5 bg-pharma-accent hover:bg-pharma-navy text-white text-sm font-bold rounded-xl transition shadow-md flex items-center gap-1.5 shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <span>Search</span>
-                </button>
-            </form>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             
             <!-- Filters Sidebar -->

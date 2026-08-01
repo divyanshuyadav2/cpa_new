@@ -12,10 +12,40 @@ class DivisionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $divisions = Division::with('company')->orderBy('name')->paginate(10);
-        return view('admin.divisions.index', compact('divisions'));
+        $query = Division::with('company');
+
+        // Search keyword (name, description, or company name)
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('company', function ($c) use ($search) {
+                      $c->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter by company
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->input('company_id'));
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            if ($request->input('status') === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->input('status') === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        $divisions = $query->orderBy('name')->paginate(15)->withQueryString();
+        $companies = Company::orderBy('name')->get();
+
+        return view('admin.divisions.index', compact('divisions', 'companies'));
     }
 
     /**

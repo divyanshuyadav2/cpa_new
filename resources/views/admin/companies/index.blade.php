@@ -11,12 +11,65 @@
     </a>
 </div>
 
+<!-- Search & Filters Bar Card -->
+<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6">
+    <form action="{{ route('companies.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4" id="admin-company-filter">
+        <!-- Search Keyword -->
+        <div class="md:col-span-2">
+            <label for="search" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Search Companies</label>
+            <div class="relative">
+                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Search by company name or description..."
+                       class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-8 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
+                <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
+                @if(request('search'))
+                    <a href="{{ route('companies.index', request()->except('search')) }}" class="absolute right-3 top-2 text-slate-400 hover:text-slate-600 font-bold text-sm" title="Clear search">×</a>
+                @endif
+            </div>
+        </div>
+
+        <!-- Status Filter & Action Buttons -->
+        <div class="flex items-end space-x-2">
+            <div class="flex-grow">
+                <label for="status" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                <select name="status" id="status" onchange="document.getElementById('admin-company-filter').submit()"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
+                    <option value="">All Statuses</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active Only</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive Only</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg transition shadow-sm">
+                Search
+            </button>
+            @if(request()->anyFilled(['search', 'status']))
+                <a href="{{ route('companies.index') }}" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg border border-red-200 transition">
+                    Reset
+                </a>
+            @endif
+        </div>
+    </form>
+</div>
+
+<!-- Results Indicator -->
+@if(request()->anyFilled(['search', 'status']))
+    <div class="mb-4 text-xs font-medium text-slate-600 flex items-center justify-between">
+        <span>Found <strong>{{ $companies->total() }}</strong> {{ Str::plural('company', $companies->total()) }} matching your filter criteria.</span>
+        <a href="{{ route('companies.index') }}" class="text-pharma-accent hover:underline font-bold text-xs">Clear all filters</a>
+    </div>
+@endif
+
 <!-- Table Card -->
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
     @if($companies->isEmpty())
         <div class="p-12 text-center text-slate-400">
             <span class="text-4xl block mb-3">🏢</span>
-            No companies registered. Add a company to begin building your catalog.
+            @if(request()->anyFilled(['search', 'status']))
+                No companies found matching your search criteria. <br>
+                <a href="{{ route('companies.index') }}" class="mt-3 inline-block px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition">Reset Filters</a>
+            @else
+                No companies registered. Add a company to begin building your catalog.
+            @endif
         </div>
     @else
         <div class="overflow-x-auto">
