@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SalesmanController;
 
 // Authentication
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -27,4 +28,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Salesman APIs
     Route::get('/salesman/retailers', [SalesmanController::class, 'retailers']);
     Route::get('/salesman/orders', [SalesmanController::class, 'orders']);
+    Route::patch('/salesman/orders/{id}/status', [SalesmanController::class, 'updateStatus']);
 });

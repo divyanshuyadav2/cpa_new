@@ -45,4 +45,26 @@ class SalesmanController extends Controller
 
         return response()->json($orders);
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $salesman = $request->user();
+
+        if ($salesman->role !== 'salesman') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:Pending,Confirmed,Dispatched,Delivered',
+        ]);
+
+        $order = Order::findOrFail($id);
+        $oldStatus = $order->status;
+        $order->update(['status' => $request->status]);
+
+        return response()->json([
+            'message' => "Order #{$order->id} status updated from {$oldStatus} to {$order->status}",
+            'order' => $order,
+        ]);
+    }
 }

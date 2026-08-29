@@ -39,8 +39,10 @@
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">Pending</span>
                                 @elseif($order->status == 'Confirmed')
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Confirmed</span>
+                                @elseif($order->status == 'Dispatched')
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Dispatched</span>
                                 @else
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800 border border-green-200">Dispatched</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Delivered</span>
                                 @endif
                             </td>
                             <td class="p-4 text-xs text-slate-500">{{ $order->created_at->format('d-M-Y h:i A') }}</td>

@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\ProductImportController;
+use App\Http\Controllers\Pwa\PwaAuthController;
+use App\Http\Controllers\Pwa\PwaRetailerController;
+use App\Http\Controllers\Pwa\PwaSalesmanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,6 +59,31 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::get('/cart', [CartController::class, 'view'])->name('cart.view');
 Route::post('/cart/whatsapp', [CartController::class, 'whatsapp'])->name('cart.whatsapp');
 Route::get('/cart/whatsapp', [CartController::class, 'whatsapp']); // Fallback support
+
+/*
+|--------------------------------------------------------------------------
+| PWA Routes (Retailer Counter & Salesman App)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('pwa')->group(function () {
+    Route::get('/login', [PwaAuthController::class, 'showLoginForm'])->name('pwa.login');
+    Route::post('/login', [PwaAuthController::class, 'login'])->name('pwa.login.post');
+    Route::get('/register', [PwaAuthController::class, 'showRegisterForm'])->name('pwa.register');
+    Route::post('/register', [PwaAuthController::class, 'register'])->name('pwa.register.post');
+    Route::post('/logout', [PwaAuthController::class, 'logout'])->name('pwa.logout');
+
+    // Protected PWA Routes
+    Route::middleware('auth')->group(function () {
+        // Retailer Catalog & Ordering (No stock restrictions)
+        Route::get('/catalog', [PwaRetailerController::class, 'catalog'])->name('pwa.retailer.catalog');
+        Route::post('/checkout', [PwaRetailerController::class, 'checkout'])->name('pwa.retailer.checkout');
+        Route::get('/orders', [PwaRetailerController::class, 'orders'])->name('pwa.retailer.orders');
+
+        // Salesman Dashboard & Delivery Status Update
+        Route::get('/salesman', [PwaSalesmanController::class, 'dashboard'])->name('pwa.salesman.dashboard');
+        Route::match(['post', 'patch'], '/salesman/orders/{order}/status', [PwaSalesmanController::class, 'updateStatus'])->name('pwa.salesman.order.status');
+    });
+});
 
 /*
 |--------------------------------------------------------------------------

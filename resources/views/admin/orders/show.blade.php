@@ -74,8 +74,10 @@
                         <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">Pending Approval</span>
                     @elseif($order->status == 'Confirmed')
                         <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Confirmed</span>
+                    @elseif($order->status == 'Dispatched')
+                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Dispatched</span>
                     @else
-                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-green-100 text-green-800 border border-green-200">Dispatched</span>
+                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Delivered</span>
                     @endif
                 </div>
             </div>
@@ -96,6 +98,7 @@
                         <option value="Pending" {{ $order->status == 'Pending' ? 'selected' : '' }}>Pending</option>
                         <option value="Confirmed" {{ $order->status == 'Confirmed' ? 'selected' : '' }}>Confirmed</option>
                         <option value="Dispatched" {{ $order->status == 'Dispatched' ? 'selected' : '' }}>Dispatched</option>
+                        <option value="Delivered" {{ $order->status == 'Delivered' ? 'selected' : '' }}>Delivered</option>
                     </select>
                 </div>
 
