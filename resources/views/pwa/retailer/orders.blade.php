@@ -52,8 +52,13 @@
                         @foreach($order->cart as $item)
                             <div class="flex items-center justify-between text-xs bg-slate-900/80 p-2 rounded-xl border border-slate-700">
                                 <div>
-                                    <span class="font-bold text-white block">{{ $item['name'] ?? 'Product' }}</span>
-                                    <span class="text-[10px] text-slate-400">{{ $item['packing'] ?? '' }} x {{ $item['qty'] }}</span>
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="font-bold text-white block">{{ $item['name'] ?? 'Product' }}</span>
+                                        <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded border {{ ($item['unit'] ?? '') === 'Strip' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-sky-500/20 text-sky-300 border-sky-500/30' }}">
+                                            {{ $item['unit'] ?? 'Box' }}
+                                        </span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400">{{ $item['packing'] ?? '' }} • {{ $item['qty'] }} {{ $item['unit'] ?? 'Box' }}(s)</span>
                                 </div>
                                 <span class="font-semibold text-slate-300">₹{{ number_format(($item['price'] ?? 0) * ($item['qty'] ?? 1), 2) }}</span>
                             </div>

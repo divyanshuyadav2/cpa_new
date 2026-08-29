@@ -34,7 +34,12 @@
                                 <span class="text-[9px] text-pharma-gold font-bold uppercase tracking-wider">{{ $item['company'] }}</span>
                             </td>
                             <td class="p-4 text-slate-600 font-semibold">{{ $item['packing'] }}</td>
-                            <td class="p-4 text-center font-bold text-slate-800">{{ $item['qty'] }}</td>
+                            <td class="p-4 text-center font-bold text-slate-800">
+                                {{ $item['qty'] }}
+                                <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded ml-1 {{ ($item['unit'] ?? '') === 'Strip' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-sky-100 text-sky-800 border border-sky-200' }}">
+                                    {{ $item['unit'] ?? 'Box' }}
+                                </span>
+                            </td>
                             <td class="p-4 font-semibold text-slate-700">₹{{ number_format($item['price'], 2) }}</td>
                             <td class="p-4 text-right font-bold text-slate-900">₹{{ number_format($item['qty'] * $item['price'], 2) }}</td>
                         </tr>

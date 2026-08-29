@@ -68,10 +68,15 @@ class PwaRetailerController extends Controller
                 'id' => $item['id'],
                 'name' => $item['name'],
                 'packing' => $item['packing'] ?? '',
+                'unit' => in_array($item['unit'] ?? '', ['Box', 'Strip']) ? $item['unit'] : 'Box',
                 'qty' => (int)$item['qty'],
                 'price' => (float)$item['price'],
                 'subtotal' => $subtotal,
             ];
+        }
+
+        if ($user && empty($user->phone) && \Illuminate\Support\Facades\Schema::hasColumn('users', 'phone')) {
+            $user->update(['phone' => $request->phone]);
         }
 
         $order = Order::create([

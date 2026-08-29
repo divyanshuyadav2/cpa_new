@@ -70,27 +70,40 @@
                         <span>MRP: <del>₹{{ number_format($product->mrp, 2) }}</del></span>
                     </div>
 
-                    <!-- Add to Cart Controls (No Stock Restriction) -->
-                    <div class="mt-3 flex items-center justify-between border-t border-slate-700/60 pt-2.5">
-                        <span class="text-[10px] text-slate-400">PTR: ₹{{ number_format($product->ptr, 2) }}</span>
+                    <!-- Add to Cart & Unit Controls -->
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-700/60 pt-2.5" x-data="{ selectedUnit: 'Box' }">
+                        <!-- Unit Selector (Box Default vs Strip) -->
+                        <div class="flex items-center space-x-1 bg-slate-900/90 border border-slate-700/80 p-0.5 rounded-xl text-[10px] font-bold">
+                            <button type="button" @click="selectedUnit = 'Box'"
+                                    :class="selectedUnit === 'Box' ? 'bg-sky-600 text-white shadow' : 'text-slate-400 hover:text-white'"
+                                    class="px-2 py-1 rounded-lg transition">
+                                📦 Box
+                            </button>
+                            <button type="button" @click="selectedUnit = 'Strip'"
+                                    :class="selectedUnit === 'Strip' ? 'bg-amber-600 text-white shadow' : 'text-slate-400 hover:text-white'"
+                                    class="px-2 py-1 rounded-lg transition">
+                                💊 Strip
+                            </button>
+                        </div>
 
-                        <div class="flex items-center space-x-1.5" x-data="{ qty: getItemQty({{ $product->id }}) }">
-                            <template x-if="getItemQty({{ $product->id }}) > 0">
+                        <!-- Quantity Controls -->
+                        <div class="flex items-center space-x-1.5">
+                            <template x-if="getItemQty({{ $product->id }}, selectedUnit) > 0">
                                 <div class="flex items-center space-x-1 bg-slate-900 border border-slate-700 rounded-xl p-0.5">
-                                    <button @click="updateQty({{ $product->id }}, getItemQty({{ $product->id }}) - 1)"
+                                    <button @click="updateQty({{ $product->id }}, selectedUnit, getItemQty({{ $product->id }}, selectedUnit) - 1)"
                                             class="w-7 h-7 rounded-lg bg-slate-800 text-white font-bold text-sm flex items-center justify-center hover:bg-slate-700 active:scale-95 transition">
                                         -
                                     </button>
-                                    <span class="w-7 text-center font-bold text-xs text-sky-400" x-text="getItemQty({{ $product->id }})"></span>
-                                    <button @click="updateQty({{ $product->id }}, getItemQty({{ $product->id }}) + 1)"
+                                    <span class="w-7 text-center font-bold text-xs text-sky-400" x-text="getItemQty({{ $product->id }}, selectedUnit)"></span>
+                                    <button @click="updateQty({{ $product->id }}, selectedUnit, getItemQty({{ $product->id }}, selectedUnit) + 1)"
                                             class="w-7 h-7 rounded-lg bg-slate-800 text-white font-bold text-sm flex items-center justify-center hover:bg-slate-700 active:scale-95 transition">
                                         +
                                     </button>
                                 </div>
                             </template>
 
-                            <template x-if="getItemQty({{ $product->id }}) === 0">
-                                <button @click="addToCart({ id: {{ $product->id }}, name: '{{ addslashes($product->name) }}', packing: '{{ addslashes($product->packing ?? '') }}', price: {{ $price }} })"
+                            <template x-if="getItemQty({{ $product->id }}, selectedUnit) === 0">
+                                <button @click="addToCart({ id: {{ $product->id }}, name: '{{ addslashes($product->name) }}', packing: '{{ addslashes($product->packing ?? '') }}', price: {{ $price }} }, selectedUnit)"
                                         class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow active:scale-95 transition flex items-center space-x-1">
                                     <span>+ Add Order</span>
                                 </button>
@@ -132,22 +145,27 @@
             <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
                 <div>
                     <h2 class="text-lg font-extrabold text-white">Review Medicine Order</h2>
-                    <p class="text-xs text-slate-400">No stock limit restriction • Direct Order</p>
+                    <p class="text-xs text-slate-400">Direct Order • Box & Strip Units</p>
                 </div>
                 <button @click="showModal = false" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
             </div>
 
             <!-- Cart Items Summary -->
             <div class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar pr-1">
-                <template x-for="item in cart" :key="item.id">
+                <template x-for="item in cart" :key="item.id + '_' + item.unit">
                     <div class="flex items-center justify-between bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-xs">
                         <div class="min-w-0 flex-grow pr-2">
-                            <span class="font-bold text-white block truncate" x-text="item.name"></span>
-                            <span class="text-[10px] text-slate-400" x-text="'₹' + item.price.toFixed(2) + ' x ' + item.qty"></span>
+                            <div class="flex items-center space-x-1.5">
+                                <span class="font-bold text-white block truncate" x-text="item.name"></span>
+                                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded border"
+                                      :class="item.unit === 'Strip' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-sky-500/20 text-sky-300 border-sky-500/30'"
+                                      x-text="item.unit"></span>
+                            </div>
+                            <span class="text-[10px] text-slate-400" x-text="'₹' + item.price.toFixed(2) + ' x ' + item.qty + ' ' + (item.unit || 'Box') + '(s)'"></span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <span class="font-bold text-emerald-400" x-text="'₹' + (item.price * item.qty).toFixed(2)"></span>
-                            <button @click="updateQty(item.id, 0)" class="text-red-400 hover:text-red-300 font-bold px-1.5 py-0.5 rounded bg-red-500/10">✕</button>
+                            <button @click="updateQty(item.id, item.unit, 0)" class="text-red-400 hover:text-red-300 font-bold px-1.5 py-0.5 rounded bg-red-500/10">✕</button>
                         </div>
                     </div>
                 </template>
@@ -159,19 +177,39 @@
                 <span class="text-base text-emerald-400">₹<span x-text="cartTotal.toFixed(2)"></span></span>
             </div>
 
-            <!-- Customer Details Form -->
+            <!-- Customer Details Form (Auto-filled for Logged in Users) -->
             <form @submit.prevent="submitOrder()">
                 <div class="space-y-3 mb-5">
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">Counter / Customer Name</label>
-                        <input type="text" x-model="customerName" required placeholder="Counter / Retailer Shop Name"
-                               class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">Contact Phone</label>
-                        <input type="text" x-model="customerPhone" required placeholder="Mobile Number"
-                               class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
-                    </div>
+                    @auth
+                        <div class="bg-slate-800/90 border border-slate-700 p-3 rounded-xl text-xs space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Ordering Account:</span>
+                                <span class="font-bold text-sky-400" x-text="customerName"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Contact Number:</span>
+                                <span class="font-bold text-emerald-400" x-text="customerPhone || 'Not set'"></span>
+                            </div>
+                        </div>
+                        <template x-if="!customerPhone">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">Contact Phone Number</label>
+                                <input type="text" x-model="customerPhone" required placeholder="Enter Mobile Number"
+                                       class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            </div>
+                        </template>
+                    @else
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">Counter / Customer Name</label>
+                            <input type="text" x-model="customerName" required placeholder="Counter / Retailer Shop Name"
+                                   class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">Contact Phone</label>
+                            <input type="text" x-model="customerPhone" required placeholder="Mobile Number"
+                                   class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        </div>
+                    @endauth
                 </div>
 
                 <button type="submit" :disabled="submitting"
@@ -206,26 +244,26 @@
                 localStorage.setItem('cpa_pwa_cart', JSON.stringify(this.cart));
             },
 
-            getItemQty(id) {
-                const found = this.cart.find(i => i.id === id);
+            getItemQty(id, unit = 'Box') {
+                const found = this.cart.find(i => i.id === id && (i.unit || 'Box') === unit);
                 return found ? found.qty : 0;
             },
 
-            addToCart(item) {
-                const found = this.cart.find(i => i.id === item.id);
+            addToCart(item, unit = 'Box') {
+                const found = this.cart.find(i => i.id === item.id && (i.unit || 'Box') === unit);
                 if (found) {
                     found.qty += 1;
                 } else {
-                    this.cart.push({ ...item, qty: 1 });
+                    this.cart.push({ ...item, unit: unit, qty: 1 });
                 }
                 this.saveCart();
             },
 
-            updateQty(id, newQty) {
+            updateQty(id, unit = 'Box', newQty) {
                 if (newQty <= 0) {
-                    this.cart = this.cart.filter(i => i.id !== id);
+                    this.cart = this.cart.filter(i => !(i.id === id && (i.unit || 'Box') === unit));
                 } else {
-                    const found = this.cart.find(i => i.id === id);
+                    const found = this.cart.find(i => i.id === id && (i.unit || 'Box') === unit);
                     if (found) found.qty = newQty;
                 }
                 this.saveCart();
@@ -242,7 +280,7 @@
             async submitOrder() {
                 if (this.cart.length === 0) return;
                 if (!this.customerName || !this.customerPhone) {
-                    alert('Please enter counter name and contact phone.');
+                    alert('Please enter or confirm contact phone number.');
                     return;
                 }
 
