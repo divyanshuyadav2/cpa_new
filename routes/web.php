@@ -100,7 +100,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::patch('applications/{application}/status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status');
     Route::resource('applications', ApplicationController::class)->only(['index', 'show', 'destroy']);
 
-    // General Settings
+    // General Setting s
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
     Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 });
