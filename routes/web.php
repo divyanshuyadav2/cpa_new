@@ -24,11 +24,15 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::post('/about', [HomeController::class, 'submitAbout'])->name('about.submit');
 Route::get('/images/{path}', function($path) {
-    $file = base_path('../cpa_uploads/' . $path);
-    if (!file_exists($file)) {
-        abort(404);
+    $storageFile = storage_path('app/public/' . $path);
+    if (file_exists($storageFile)) {
+        return response()->file($storageFile);
     }
-    return response()->file($file);
+    $legacyFile = base_path('../cpa_uploads/' . $path);
+    if (file_exists($legacyFile)) {
+        return response()->file($legacyFile);
+    }
+    abort(404);
 })->where('path', '.*')->name('images.serve');
 Route::get('/products', [ProductController::class, 'index'])->name('public.products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('public.products.show');

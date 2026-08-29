@@ -34,6 +34,13 @@ if (!function_exists('media_url')) {
             return $path;
         }
 
-        return url('images/' . ltrim($path, '/'));
+        $cleanPath = ltrim($path, '/');
+
+        // If path already starts with storage/, images/, uploads/, or assets/
+        if (str_starts_with($cleanPath, 'storage/') || str_starts_with($cleanPath, 'images/') || str_starts_with($cleanPath, 'uploads/') || str_starts_with($cleanPath, 'assets/') || str_starts_with($cleanPath, 'assests/')) {
+            return asset($cleanPath);
+        }
+
+        return asset('storage/' . $cleanPath);
     }
 }

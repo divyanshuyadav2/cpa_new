@@ -41,7 +41,12 @@ class SettingController extends Controller
         }
 
         if ($request->hasFile('site_logo')) {
+            $oldLogo = Setting::get('site_logo');
+            if ($oldLogo && !str_starts_with($oldLogo, 'http')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldLogo);
+            }
             $logoPath = $request->file('site_logo')->store('settings', 'public');
+            @chmod(storage_path('app/public/' . $logoPath), 0644);
             Setting::updateOrCreate(
                 ['key' => 'site_logo'],
                 ['value' => $logoPath]

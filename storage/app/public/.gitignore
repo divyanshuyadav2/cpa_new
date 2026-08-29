@@ -1,6 +1,4 @@
 *
 !.gitignore
-!companies/
-!companies/.gitkeep
-!products/
-!products/.gitkeep
+!.gitkeep
+!*/.gitkeep
