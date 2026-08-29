@@ -34,6 +34,18 @@ Route::get('/images/{path}', function($path) {
     }
     abort(404);
 })->where('path', '.*')->name('images.serve');
+
+Route::get('/storage/{path}', function($path) {
+    $storageFile = storage_path('app/public/' . $path);
+    if (file_exists($storageFile)) {
+        return response()->file($storageFile);
+    }
+    $legacyFile = base_path('../cpa_uploads/' . $path);
+    if (file_exists($legacyFile)) {
+        return response()->file($legacyFile);
+    }
+    abort(404);
+})->where('path', '.*')->name('storage.serve');
 Route::get('/products', [ProductController::class, 'index'])->name('public.products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('public.products.show');
 
