@@ -17,15 +17,18 @@ class PwaSalesmanController extends Controller
     {
         $salesman = Auth::user();
 
-        if ($salesman->role !== 'salesman') {
+        if (!isset($salesman->role) || $salesman->role !== 'salesman') {
             return redirect()->route('pwa.retailer.catalog');
         }
 
         // Get retailers assigned to this salesman
-        $retailers = User::where('role', 'retailer')
-                         ->where('salesman_id', $salesman->id)
-                         ->orderBy('company_name')
-                         ->get();
+        $retailers = collect();
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role') && \Illuminate\Support\Facades\Schema::hasColumn('users', 'salesman_id')) {
+            $retailers = User::where('role', 'retailer')
+                             ->where('salesman_id', $salesman->id)
+                             ->orderBy('company_name')
+                             ->get();
+        }
 
         $retailerIds = $retailers->pluck('id');
 

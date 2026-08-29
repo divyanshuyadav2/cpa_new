@@ -63,7 +63,12 @@ class PwaAuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('pwa.retailer.catalog');
         }
-        $salesmen = User::where('role', 'salesman')->where('is_active', true)->orderBy('name')->get();
+
+        $salesmen = collect();
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'role')) {
+            $salesmen = User::where('role', 'salesman')->where('is_active', true)->orderBy('name')->get();
+        }
+
         return view('pwa.register', compact('salesmen'));
     }
 
@@ -83,15 +88,28 @@ class PwaAuthController extends Controller
             'salesman_id' => 'nullable|exists:users,id',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
-        $validated['is_active'] = true; // Active immediately so they can order
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ];
 
-        $user = User::create($validated);
+        foreach (['role', 'phone', 'company_name', 'address', 'is_active', 'salesman_id'] as $col) {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('users', $col) && isset($validated[$col])) {
+                $data[$col] = $validated[$col];
+            }
+        }
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_active')) {
+            $data['is_active'] = true;
+        }
+
+        $user = User::create($data);
 
         Auth::login($user);
         $request->session()->regenerate();
 
-        if ($user->role === 'salesman') {
+        if (isset($user->role) && $user->role === 'salesman') {
             return redirect()->route('pwa.salesman.dashboard')->with('success', 'Registration successful! Welcome Salesman.');
         }
 
