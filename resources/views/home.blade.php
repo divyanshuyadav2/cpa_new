@@ -40,6 +40,31 @@
     </div>
 </div>
 
+<!-- Retailer Counter & Salesman CTA Banner -->
+<div class="bg-gradient-to-r from-sky-950 via-slate-900 to-emerald-950 border-y border-sky-900/50 py-10 text-white relative overflow-hidden shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="text-center md:text-left">
+            <span class="inline-block px-3 py-1 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                📲 Retailers & Salesmen Mobile App
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Retailer Counter Ordering Portal</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
+                Log in or register your medical counter account to place medicine orders directly (without stock locks) and track delivery statuses live.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a href="{{ route('pwa.login') }}" class="px-6 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg shadow-sky-500/20 active:scale-95 transition flex items-center space-x-2">
+                <span>📲 Counter & Salesman Login</span>
+                <span>&rarr;</span>
+            </a>
+            <a href="{{ route('pwa.register') }}" class="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg active:scale-95 transition flex items-center space-x-2">
+                <span>🏪 Register New Counter</span>
+            </a>
+        </div>
+    </div>
+</div>
+
 <!-- Brands Showcase -->
 <div class="py-16 bg-white border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

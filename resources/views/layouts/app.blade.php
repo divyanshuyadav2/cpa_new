@@ -69,11 +69,14 @@
                 </a>
 
                 <!-- Desktop Nav Links -->
-                <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold text-slate-600">
                     <a href="{{ route('home') }}" class="hover:text-pharma-accent transition">Home</a>
                     <a href="{{ route('public.products.index') }}" class="hover:text-pharma-accent transition">Products Catalog</a>
                     <a href="{{ route('about') }}" class="hover:text-pharma-accent transition">About & Contact</a>
                     <a href="{{ route('cart.view') }}" class="hover:text-pharma-accent transition">Review Cart</a>
+                    <a href="{{ route('pwa.login') }}" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold shadow-sm transition">
+                        <span>📲 Retailer Portal</span>
+                    </a>
                 </nav>
 
                 <!-- Action Buttons -->
@@ -119,6 +122,14 @@
                 <a href="{{ route('public.products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Products Catalog</a>
                 <a href="{{ route('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">About & Contact</a>
                 <a href="{{ route('cart.view') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Review Cart</a>
+                <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                    <a href="{{ route('pwa.login') }}" class="block text-center px-4 py-2.5 rounded-xl bg-sky-600 text-white font-bold text-sm shadow">
+                        📲 Retailer / Salesman Login
+                    </a>
+                    <a href="{{ route('pwa.register') }}" class="block text-center px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-sm">
+                        🏪 Register New Counter Account
+                    </a>
+                </div>
             </div>
         </div>
     </header>
