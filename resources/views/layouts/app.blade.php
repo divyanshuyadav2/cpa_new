@@ -50,11 +50,11 @@
     </div>
 
     <!-- Header Navigation -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex items-center space-x-2">
+                <a href="{{ route('home') }}" class="flex items-center space-x-3 shrink-0">
                     @if(setting('site_logo'))
                         <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain">
                     @else
@@ -68,45 +68,62 @@
                     </div>
                 </a>
 
-                <!-- Desktop Nav Links -->
-                <nav class="hidden md:flex items-center space-x-5 text-sm font-semibold text-slate-600">
-                    <a href="{{ route('home') }}" class="hover:text-pharma-accent transition">Home</a>
-                    <a href="{{ route('public.products.index') }}" class="hover:text-pharma-accent transition">Products Catalog</a>
-                    <a href="{{ route('about') }}" class="hover:text-pharma-accent transition">About & Contact</a>
-                    <a href="{{ route('cart.view') }}" class="hover:text-pharma-accent transition">Review Cart</a>
-                    <a href="{{ route('pwa.login') }}" class="px-3.5 py-1.5 text-slate-700 hover:text-pharma-accent font-bold transition">
-                        Login
-                    </a>
-                    <a href="{{ route('pwa.register') }}" class="px-4 py-2 rounded-xl bg-pharma-accent hover:bg-blue-700 text-white font-extrabold shadow-sm transition">
-                        Register
-                    </a>
+                <!-- Desktop Nav Links (Spacious Gap) -->
+                <nav class="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-600">
+                    <a href="{{ route('home') }}" class="hover:text-pharma-accent transition py-1">Home</a>
+                    <a href="{{ route('public.products.index') }}" class="hover:text-pharma-accent transition py-1">Products Catalog</a>
+                    <a href="{{ route('about') }}" class="hover:text-pharma-accent transition py-1">About & Contact</a>
+                    <a href="{{ route('cart.view') }}" class="hover:text-pharma-accent transition py-1">Review Cart</a>
                 </nav>
 
-                <!-- Action Buttons -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
-                    <!-- Products Search Button (Mobile Shortcut) -->
-                    <a href="{{ route('public.products.index') }}" class="p-2 text-slate-400 hover:text-pharma-accent md:hidden" title="Search Products">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                @php
+                    $cart = session()->get('cart', []);
+                    $cartCount = collect($cart)->sum('qty');
+                @endphp
+
+                <!-- Desktop Action & Auth Buttons -->
+                <div class="hidden lg:flex items-center gap-4">
+                    <a href="{{ route('pwa.login') }}" class="text-sm font-bold text-slate-700 hover:text-pharma-accent px-3 py-2 transition">
+                        Login
+                    </a>
+                    <a href="{{ route('pwa.register') }}" class="text-sm font-extrabold text-white bg-pharma-accent hover:bg-blue-700 px-4 py-2 rounded-xl shadow-sm transition">
+                        Register
                     </a>
 
                     <!-- Cart Trigger Button -->
                     <button @click="cartOpen = true" class="relative flex items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition duration-150 group">
-                        <svg class="w-6 h-6 text-slate-600 group-hover:text-pharma-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-slate-600 group-hover:text-pharma-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
-                        @php
-                            $cart = session()->get('cart', []);
-                            $cartCount = collect($cart)->sum('qty');
-                        @endphp
                         @if($cartCount > 0)
                             <span class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-pharma-accent text-[10px] font-bold text-white shadow-sm animate-pulse">
                                 {{ $cartCount }}
                             </span>
                         @endif
                     </button>
+                </div>
+
+                <!-- Mobile/Tablet Action Buttons -->
+                <div class="flex items-center gap-3 lg:hidden">
+                    <!-- Products Search Button -->
+                    <a href="{{ route('public.products.index') }}" class="p-2 text-slate-400 hover:text-pharma-accent lg:hidden" title="Search Products">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </a>
+
+                    <!-- Cart Trigger Button -->
+                    <button @click="cartOpen = true" class="relative flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">
+                        <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        @if($cartCount > 0)
+                            <span class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-pharma-accent text-[10px] font-bold text-white shadow-sm">
+                                {{ $cartCount }}
+                            </span>
+                        @endif
+                    </button>
 
                     <!-- Mobile Menu Toggle Button -->
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-slate-600 hover:text-pharma-accent transition">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 text-slate-600 hover:text-pharma-accent transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!mobileMenuOpen">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -119,7 +136,7 @@
         </div>
 
         <!-- Mobile Menu Dropdown -->
-        <div x-show="mobileMenuOpen" x-transition.opacity class="md:hidden border-t border-slate-200 bg-white" style="display: none;">
+        <div x-show="mobileMenuOpen" x-transition.opacity class="lg:hidden border-t border-slate-200 bg-white" style="display: none;">
             <div class="px-4 pt-2 pb-4 space-y-1">
                 <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Home</a>
                 <a href="{{ route('public.products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Products Catalog</a>
