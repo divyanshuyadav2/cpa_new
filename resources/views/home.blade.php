@@ -40,33 +40,6 @@
     </div>
 </div>
 
-<!-- Retailer Counter & Salesman CTA Banner -->
-<div class="py-10 relative overflow-hidden" style="background-color: #0f172a; color: #ffffff;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-700/80" style="background-color: #1e293b; border-color: #334155;">
-            <div class="text-center md:text-left">
-                <span class="inline-block px-3.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3" style="background-color: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                    📲 Retailers & Salesmen Mobile App
-                </span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: #ffffff;">Retailer Counter Ordering Portal</h2>
-                <p class="text-xs sm:text-sm mt-2 max-w-xl leading-relaxed" style="color: #cbd5e1;">
-                    Log in or register your medical counter account to place medicine orders directly (without stock locks) and track delivery statuses live.
-                </p>
-            </div>
-
-            <div class="flex flex-wrap items-center justify-center gap-3">
-                <a href="{{ route('pwa.login') }}" class="px-6 py-3.5 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg transition active:scale-95 flex items-center space-x-2" style="background-color: #0284c7; color: #ffffff;">
-                    <span>📲 Counter & Salesman Login</span>
-                    <span>&rarr;</span>
-                </a>
-                <a href="{{ route('pwa.register') }}" class="px-6 py-3.5 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg transition active:scale-95 flex items-center space-x-2" style="background-color: #059669; color: #ffffff;">
-                    <span>🏪 Register New Counter</span>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Brands Showcase -->
 <div class="py-16 bg-white border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

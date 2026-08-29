@@ -15,7 +15,7 @@
                 </div>
             @endif
             <h1 class="text-2xl font-extrabold text-white tracking-tight">Sign In to Portal</h1>
-            <p class="text-xs text-slate-400 mt-1">Retailer Counter & Salesman Ordering App</p>
+            <p class="text-xs text-slate-400 mt-1">Retailer Counter Ordering Portal</p>
         </div>
 
         <!-- Login Form -->

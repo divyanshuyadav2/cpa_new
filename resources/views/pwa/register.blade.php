@@ -13,23 +13,8 @@
         <form action="{{ route('pwa.register.post') }}" method="POST" class="space-y-4" x-data="{ role: '{{ old('role', 'retailer') }}' }">
             @csrf
 
-            <!-- Role Selector -->
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Select Account Type</label>
-                <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 border border-slate-700 rounded-xl">
-                    <button type="button" @click="role = 'retailer'"
-                            :class="role === 'retailer' ? 'bg-sky-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'"
-                            class="py-2.5 rounded-lg text-xs transition">
-                        🏪 Retailer Counter
-                    </button>
-                    <button type="button" @click="role = 'salesman'"
-                            :class="role === 'salesman' ? 'bg-amber-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'"
-                            class="py-2.5 rounded-lg text-xs transition">
-                        👔 Salesman
-                    </button>
-                </div>
-                <input type="hidden" name="role" :value="role">
-            </div>
+            <!-- Role (Default Retailer Counter) -->
+            <input type="hidden" name="role" value="retailer">
 
             <!-- Full Name -->
             <div>
