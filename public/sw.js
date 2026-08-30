@@ -1,7 +1,7 @@
-const CACHE_NAME = 'cpa-pwa-cache-v1';
+const CACHE_NAME = 'cpa-pwa-cache-v2';
 const ASSETS_TO_CACHE = [
   '/pwa/login',
-  '/favicon.svg',
+  '/images/logo.png',
   '/manifest.json'
 ];
 
