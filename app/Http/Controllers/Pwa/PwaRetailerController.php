@@ -89,8 +89,12 @@ class PwaRetailerController extends Controller
             'status' => 'Pending',
         ];
 
-        if ($request->filled('notes') && \Illuminate\Support\Facades\Schema::hasColumn('orders', 'notes')) {
-            $orderData['notes'] = $request->input('notes');
+        if ($request->filled('notes')) {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'notes')) {
+                $orderData['notes'] = $request->input('notes');
+            }
+            $formattedCart['_order_notes'] = $request->input('notes');
+            $orderData['cart'] = $formattedCart;
         }
 
         $order = Order::create($orderData);

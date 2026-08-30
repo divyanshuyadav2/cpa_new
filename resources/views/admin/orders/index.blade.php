@@ -32,8 +32,11 @@
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-4 font-bold text-slate-900">
                                 #{{ $order->id }}
-                                @if(!empty($order->notes))
-                                    <span class="block text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200 w-fit mt-1" title="{{ $order->notes }}">📝 Note</span>
+                                @php
+                                    $noteText = !empty($order->notes) ? $order->notes : (is_array($order->cart) ? ($order->cart['_order_notes'] ?? null) : null);
+                                @endphp
+                                @if(!empty($noteText))
+                                    <span class="block text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200 w-fit mt-1" title="{{ $noteText }}">📝 Note</span>
                                 @endif
                             </td>
                             <td class="p-4 font-semibold text-slate-800">{{ $order->customer_name }}</td>

@@ -26,7 +26,8 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm">
-                    @foreach($order->cart as $item)
+                    @foreach($order->cart as $key => $item)
+                        @if($key === '_order_notes' || !is_array($item)) @continue @endif
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-4">
                                 <strong class="block text-slate-900 leading-tight">{{ $item['name'] ?? 'Medicine Product' }}</strong>
@@ -92,14 +93,18 @@
             </div>
         </div>
 
-        @if(!empty($order->notes))
+        @php
+            $noteText = !empty($order->notes) ? $order->notes : (is_array($order->cart) ? ($order->cart['_order_notes'] ?? null) : null);
+        @endphp
+
+        @if(!empty($noteText))
             <!-- Order Notes / Special Instructions -->
             <div class="bg-amber-50/90 p-5 rounded-2xl border border-amber-200 shadow-sm space-y-2">
                 <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center space-x-1">
                     <span>📝 Retailer Order Notes / Instructions</span>
                 </h3>
                 <p class="text-xs text-slate-800 leading-relaxed font-medium bg-white p-3 rounded-xl border border-amber-200/60">
-                    {{ $order->notes }}
+                    {{ $noteText }}
                 </p>
             </div>
         @endif
