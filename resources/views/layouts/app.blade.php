@@ -30,7 +30,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Vite Assets -->
+    <!-- Tailwind CSS CDN & Alpine.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Outfit', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        pharma: {
+                            navy: '#0f172a',
+                            navyLight: '#1e293b',
+                            accent: '#0284c7',
+                            gold: '#d97706',
+                            light: '#f0f9ff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">

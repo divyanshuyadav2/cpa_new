@@ -10,20 +10,42 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Vite Assets -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <!-- Tailwind CSS CDN & Alpine.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Outfit', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        pharma: {
+                            navy: '#0f172a',
+                            navyLight: '#1e293b',
+                            accent: '#0284c7',
+                            gold: '#d97706',
+                            light: '#f0f9ff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
 </head>
-<body class="flex flex-col justify-center h-full min-h-screen py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-950 via-slate-900 to-pharma-navy text-slate-100 font-sans antialiased">
+<body class="flex flex-col justify-center h-full min-h-screen py-12 sm:px-6 lg:px-8 bg-slate-900 text-slate-100 font-sans antialiased">
 
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <!-- Logo Icon -->
         @if(setting('site_logo'))
-            <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-16 w-auto object-contain mb-4">
+            <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-4 rounded-xl bg-white/10 p-2">
         @else
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-pharma-gold text-slate-900 font-extrabold text-3xl shadow-lg border border-pharma-gold/30">
-                A
-            </div>
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-4 rounded-xl bg-white/10 p-2">
         @endif
         <h2 class="mt-6 text-3xl font-extrabold tracking-tight text-white font-display">
             Admin Panel Login
