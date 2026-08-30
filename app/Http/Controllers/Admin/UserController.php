@@ -16,15 +16,19 @@ class UserController extends Controller
     {
         $query = User::query();
 
-        // Safely check if 'role' column exists in database
+        // Safely check schema columns
         $hasRoleCol = Schema::hasColumn('users', 'role');
+        $hasUserIdCol = Schema::hasColumn('orders', 'user_id');
 
         if ($hasRoleCol) {
-            $query->with(['salesman'])->withCount('orders');
+            $query->with(['salesman']);
+        }
+        if ($hasUserIdCol) {
+            $query->withCount('orders');
+        }
 
-            if ($request->filled('role') && in_array($request->role, ['retailer', 'salesman'])) {
-                $query->where('role', $request->role);
-            }
+        if ($hasRoleCol && $request->filled('role') && in_array($request->role, ['retailer', 'salesman'])) {
+            $query->where('role', $request->role);
         }
 
         if ($request->filled('search')) {
@@ -66,11 +70,14 @@ class UserController extends Controller
     public function show(User $user)
     {
         $hasRoleCol = Schema::hasColumn('users', 'role');
-        if ($hasRoleCol) {
-            $user->load(['salesman', 'retailers', 'orders' => fn($q) => $q->latest()]);
-        } else {
-            $user->load(['orders' => fn($q) => $q->latest()]);
-        }
+        $hasUserIdCol = Schema::hasColumn('orders', 'user_id');
+
+        $relations = [];
+        if ($hasRoleCol) $relations[] = 'salesman';
+        if ($hasRoleCol) $relations[] = 'retailers';
+        if ($hasUserIdCol) $relations['orders'] = fn($q) => $q->latest();
+
+        $user->load($relations);
 
         $salesmen = collect();
         if ($hasRoleCol) {
