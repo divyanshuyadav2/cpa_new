@@ -29,9 +29,13 @@
                     @foreach($order->cart as $item)
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-4">
-                                <strong class="block text-slate-900 leading-tight">{{ $item['name'] }}</strong>
-                                <span class="block text-xs text-slate-500">Comp: {{ $item['composition'] }}</span>
-                                <span class="text-[9px] text-pharma-gold font-bold uppercase tracking-wider">{{ $item['company'] }}</span>
+                                <strong class="block text-slate-900 leading-tight">{{ $item['name'] ?? 'Medicine Product' }}</strong>
+                                @if(!empty($item['composition']))
+                                    <span class="block text-xs text-slate-500">Comp: {{ $item['composition'] }}</span>
+                                @endif
+                                @if(!empty($item['company']))
+                                    <span class="text-[9px] text-pharma-gold font-bold uppercase tracking-wider block">{{ $item['company'] }}</span>
+                                @endif
                             </td>
                             <td class="p-4 text-slate-600 font-semibold">{{ $item['packing'] }}</td>
                             <td class="p-4 text-center font-bold text-slate-800">

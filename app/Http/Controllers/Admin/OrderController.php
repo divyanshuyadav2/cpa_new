@@ -54,10 +54,14 @@ class OrderController extends Controller
         $message .= "*Order Details:*\n";
         
         $i = 1;
-        foreach ($order->cart as $item) {
-            $subtotal = $item['qty'] * $item['price'];
-            $message .= "{$i}. {$item['name']} ({$item['packing']}) x {$item['qty']} = ₹" . number_format($subtotal, 2) . "\n";
-            $i++;
+        if (is_array($order->cart)) {
+            foreach ($order->cart as $item) {
+                $subtotal = ($item['qty'] ?? 1) * ($item['price'] ?? 0);
+                $packing = !empty($item['packing']) ? " ({$item['packing']})" : "";
+                $unit = $item['unit'] ?? 'Box';
+                $message .= "{$i}. {$item['name']}{$packing} - {$item['qty']} {$unit}(s) = ₹" . number_format($subtotal, 2) . "\n";
+                $i++;
+            }
         }
 
         $message .= "\n*Total Amount:* *₹" . number_format($order->total, 2) . "*\n\n";
