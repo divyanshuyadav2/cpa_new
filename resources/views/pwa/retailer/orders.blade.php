@@ -64,6 +64,13 @@
                             </div>
                         @endforeach
                     @endif
+
+                    @if(!empty($order->notes))
+                        <div class="bg-amber-500/10 border border-amber-500/20 p-2 rounded-xl text-xs text-amber-200">
+                            <span class="font-bold block text-[10px] uppercase tracking-wider text-amber-400">📝 Your Order Note:</span>
+                            {{ $order->notes }}
+                        </div>
+                    @endif
                 </div>
             </div>
         @empty

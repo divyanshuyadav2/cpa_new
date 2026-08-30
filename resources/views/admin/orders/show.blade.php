@@ -92,6 +92,18 @@
             </div>
         </div>
 
+        @if(!empty($order->notes))
+            <!-- Order Notes / Special Instructions -->
+            <div class="bg-amber-50/90 p-5 rounded-2xl border border-amber-200 shadow-sm space-y-2">
+                <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center space-x-1">
+                    <span>📝 Retailer Order Notes / Instructions</span>
+                </h3>
+                <p class="text-xs text-slate-800 leading-relaxed font-medium bg-white p-3 rounded-xl border border-amber-200/60">
+                    {{ $order->notes }}
+                </p>
+            </div>
+        @endif
+
         <!-- Update Status Form -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Update Order Status</h3>

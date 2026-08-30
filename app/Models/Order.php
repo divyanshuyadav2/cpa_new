@@ -16,6 +16,7 @@ class Order extends Model
         'total',
         'status',
         'cart',
+        'notes',
     ];
 
     protected $casts = [

@@ -64,7 +64,11 @@ class OrderController extends Controller
             }
         }
 
-        $message .= "\n*Total Amount:* *₹" . number_format($order->total, 2) . "*\n\n";
+        $message .= "\n*Total Amount:* *₹" . number_format($order->total, 2) . "*\n";
+        if (!empty($order->notes)) {
+            $message .= "*Order Note:* {$order->notes}\n";
+        }
+        $message .= "\n";
         
         if ($order->status == 'Confirmed') {
             $message .= "We have confirmed your order and it is currently being packed. We will update you once it is dispatched.";

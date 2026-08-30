@@ -30,7 +30,12 @@
                 <tbody class="divide-y divide-slate-100 text-sm">
                     @foreach($orders as $order)
                         <tr class="hover:bg-slate-50/50 transition">
-                            <td class="p-4 font-bold text-slate-900">#{{ $order->id }}</td>
+                            <td class="p-4 font-bold text-slate-900">
+                                #{{ $order->id }}
+                                @if(!empty($order->notes))
+                                    <span class="block text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200 w-fit mt-1" title="{{ $order->notes }}">📝 Note</span>
+                                @endif
+                            </td>
                             <td class="p-4 font-semibold text-slate-800">{{ $order->customer_name }}</td>
                             <td class="p-4 font-medium text-slate-600">{{ $order->phone }}</td>
                             <td class="p-4 font-bold text-slate-950">₹{{ number_format($order->total, 2) }}</td>

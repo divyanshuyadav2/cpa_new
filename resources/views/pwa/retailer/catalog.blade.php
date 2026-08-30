@@ -243,6 +243,13 @@
                                    class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
                         </div>
                     @endauth
+
+                    <!-- Order Notes / Special Instructions -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">📝 Order Notes / Special Instructions (Optional)</label>
+                        <textarea x-model="orderNotes" rows="2" placeholder="e.g. Please deliver after 5 PM, or urgent batch requirement..."
+                                  class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+                    </div>
                 </div>
 
                 <button type="submit" :disabled="submitting"
@@ -264,6 +271,7 @@
             showModal: false,
             customerName: '{{ Auth::check() ? (Auth::user()->company_name ?: Auth::user()->name) : "" }}',
             customerPhone: '{{ Auth::check() ? Auth::user()->phone : "" }}',
+            orderNotes: '',
             submitting: false,
 
             initCart() {
@@ -329,6 +337,7 @@
                         body: JSON.stringify({
                             customer_name: this.customerName,
                             phone: this.customerPhone,
+                            notes: this.orderNotes,
                             cart: this.cart
                         })
                     });

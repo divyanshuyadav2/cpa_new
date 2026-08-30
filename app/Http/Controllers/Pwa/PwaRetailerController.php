@@ -47,6 +47,7 @@ class PwaRetailerController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
+            'notes' => 'nullable|string|max:1000',
             'cart' => 'required|array|min:1',
             'cart.*.id' => 'required|integer',
             'cart.*.name' => 'required|string',
@@ -79,14 +80,20 @@ class PwaRetailerController extends Controller
             $user->update(['phone' => $request->phone]);
         }
 
-        $order = Order::create([
+        $orderData = [
             'user_id' => $user ? $user->id : null,
             'customer_name' => $request->customer_name,
             'phone' => $request->phone,
             'cart' => $formattedCart,
             'total' => $total,
             'status' => 'Pending',
-        ]);
+        ];
+
+        if ($request->filled('notes') && \Illuminate\Support\Facades\Schema::hasColumn('orders', 'notes')) {
+            $orderData['notes'] = $request->input('notes');
+        }
+
+        $order = Order::create($orderData);
 
         return response()->json([
             'success' => true,
