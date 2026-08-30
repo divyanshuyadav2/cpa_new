@@ -47,7 +47,7 @@
                 <button @click="sidebarOpen = false" class="text-slate-400 hover:text-white md:hidden text-2xl font-bold">×</button>
             </div>
             <!-- Navigation Links -->
-            <nav class="flex-grow px-4 py-6 space-y-1.5 overflow-hidden">
+            <nav class="flex-grow px-4 py-6 space-y-1.5 overflow-y-auto">
                 <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-4 mb-3">Menu</div>
 
                 <!-- Dashboard -->
