@@ -7,8 +7,10 @@ use App\Models\Company;
 use App\Models\Division;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
@@ -23,6 +25,11 @@ class DashboardController extends Controller
         
         $ordersToday = Order::whereDate('created_at', Carbon::today())->count();
         
+        $hasRoleCol = Schema::hasColumn('users', 'role');
+        $totalUsers = User::count();
+        $totalRetailers = $hasRoleCol ? User::where('role', 'retailer')->count() : 0;
+        $totalSalesmen = $hasRoleCol ? User::where('role', 'salesman')->count() : 0;
+
         $recentOrders = Order::latest()->take(5)->get();
         
         $lowStockAlerts = Product::with(['company', 'division'])
@@ -35,6 +42,9 @@ class DashboardController extends Controller
             'totalCompanies',
             'totalDivisions',
             'ordersToday',
+            'totalUsers',
+            'totalRetailers',
+            'totalSalesmen',
             'recentOrders',
             'lowStockAlerts'
         ));

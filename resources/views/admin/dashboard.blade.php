@@ -7,7 +7,7 @@
 </div>
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5 mb-8">
     <!-- Total Products -->
     <div class="bg-white overflow-hidden shadow-sm border border-slate-200 rounded-2xl flex items-center p-6 space-x-4">
         <div class="p-3 bg-blue-100 rounded-xl text-blue-600 text-2xl">💊</div>
@@ -43,6 +43,15 @@
             <strong class="text-2xl font-black text-slate-800">{{ $ordersToday }}</strong>
         </div>
     </div>
+
+    <!-- Registered Users -->
+    <a href="{{ route('admin.users.index') }}" class="bg-white overflow-hidden shadow-sm border border-slate-200 rounded-2xl flex items-center p-6 space-x-4 hover:border-pharma-accent transition">
+        <div class="p-3 bg-sky-100 rounded-xl text-sky-600 text-2xl">👥</div>
+        <div>
+            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Users & Counters</span>
+            <strong class="text-2xl font-black text-slate-800">{{ $totalUsers }}</strong>
+        </div>
+    </a>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

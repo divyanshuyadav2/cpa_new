@@ -99,6 +99,13 @@
                     Applications
                 </a>
 
+                <!-- Users & Accounts -->
+                <a href="{{ route('admin.users.index') }}" 
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition duration-150 {{ Request::is('admin/users*') ? 'bg-pharma-navyLight text-white font-bold shadow-inner' : 'text-slate-400 hover:bg-pharma-navyLight/50 hover:text-white' }}">
+                    <span class="mr-3 text-lg">👥</span>
+                    Users & Accounts
+                </a>
+
                 <!-- Settings -->
                 <a href="{{ route('admin.settings') }}" 
                    class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition duration-150 {{ Request::is('admin/settings*') ? 'bg-pharma-navyLight text-white font-bold shadow-inner' : 'text-slate-400 hover:bg-pharma-navyLight/50 hover:text-white' }}">

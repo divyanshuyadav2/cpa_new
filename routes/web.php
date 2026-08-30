@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\ProductImportController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Pwa\PwaAuthController;
 use App\Http\Controllers\Pwa\PwaRetailerController;
 use App\Http\Controllers\Pwa\PwaSalesmanController;
@@ -128,7 +129,11 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::patch('applications/{application}/status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status');
     Route::resource('applications', ApplicationController::class)->only(['index', 'show', 'destroy']);
 
-    // General Setting s
+    // Users & Counters Management
+    Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
+    Route::resource('users', UserController::class)->names('admin.users');
+
+    // General Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
     Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 });
