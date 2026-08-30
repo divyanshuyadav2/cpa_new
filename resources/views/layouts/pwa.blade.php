@@ -60,11 +60,9 @@
         <div class="max-w-md mx-auto flex items-center justify-between">
             <a href="{{ Auth::check() ? (Auth::user()->role === 'salesman' ? route('pwa.salesman.dashboard') : route('pwa.retailer.catalog')) : route('pwa.login') }}" class="flex items-center space-x-2.5">
                 @if(setting('site_logo'))
-                    <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-8 w-auto object-contain bg-white/10 rounded p-1">
+                    <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-9 w-auto object-contain bg-white/10 rounded-lg p-0.5">
                 @else
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 flex items-center justify-center font-black text-white text-sm shadow">
-                        CP
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-9 w-auto object-contain bg-white/10 rounded-lg p-0.5">
                 @endif
                 <div>
                     <span class="font-bold text-sm text-white tracking-wide block leading-none">Chitranshu Pharma</span>

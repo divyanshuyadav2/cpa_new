@@ -8,11 +8,9 @@
         <!-- App Header Logo -->
         <div class="text-center mb-6">
             @if(setting('site_logo'))
-                <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-16 w-auto object-contain mb-3 bg-white/10 p-2 rounded-2xl">
+                <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-3 bg-white/10 p-2 rounded-2xl">
             @else
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-emerald-400 mx-auto flex items-center justify-center font-extrabold text-white text-2xl shadow-lg mb-3">
-                    CP
-                </div>
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-3 bg-white/10 p-2 rounded-2xl">
             @endif
             <h1 class="text-2xl font-extrabold text-white tracking-tight">Sign In to Portal</h1>
             <p class="text-xs text-slate-400 mt-1">Retailer Counter Ordering Portal</p>
