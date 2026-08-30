@@ -6,31 +6,64 @@
 <div x-data="pwaCart()" x-init="initCart()">
     
     <!-- Top Filter & Search Bar -->
-    <div class="mb-4 space-y-2">
-        <form action="{{ route('pwa.retailer.catalog') }}" method="GET" class="flex items-center space-x-2">
-            <div class="relative flex-grow">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search medicine, salt..."
-                       class="w-full pl-9 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-2xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500">
-                <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
+    <div class="mb-4 space-y-2.5">
+        <form action="{{ route('pwa.retailer.catalog') }}" method="GET" class="space-y-2">
+            <div class="flex items-center space-x-2">
+                <!-- Search Input -->
+                <div class="relative flex-grow">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search medicine, salt..."
+                           class="w-full pl-9 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-2xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
+                </div>
+
+                <!-- Company Select Dropdown Filter -->
+                <select name="company_id" onchange="this.form.submit()"
+                        class="bg-slate-800 text-slate-200 border border-slate-700 text-xs rounded-2xl px-2.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 max-w-[130px] truncate">
+                    <option value="">🏢 All Companies</option>
+                    @foreach($companies as $c)
+                        <option value="{{ $c->id }}" {{ request('company_id') == $c->id ? 'selected' : '' }}>
+                            {{ $c->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-2xl transition shrink-0">
+                    Search
+                </button>
             </div>
-            <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-4 py-2.5 rounded-2xl transition">
-                Filter
-            </button>
         </form>
 
         <!-- Company Select Pills -->
-        <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1 text-xs">
-            <a href="{{ route('pwa.retailer.catalog') }}"
+        <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-0.5 text-xs">
+            <a href="{{ route('pwa.retailer.catalog', array_filter(['search' => request('search')])) }}"
                class="whitespace-nowrap px-3 py-1.5 rounded-xl border transition {{ !request('company_id') ? 'bg-sky-500/20 text-sky-300 border-sky-500/40 font-bold' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white' }}">
                 All Companies
             </a>
             @foreach($companies as $c)
-                <a href="{{ route('pwa.retailer.catalog', ['company_id' => $c->id]) }}"
+                <a href="{{ route('pwa.retailer.catalog', array_filter(['company_id' => $c->id, 'search' => request('search')])) }}"
                    class="whitespace-nowrap px-3 py-1.5 rounded-xl border transition {{ request('company_id') == $c->id ? 'bg-sky-500/20 text-sky-300 border-sky-500/40 font-bold' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white' }}">
                     {{ $c->name }}
                 </a>
             @endforeach
         </div>
+
+        @if(request('search') || request('company_id'))
+            <div class="flex items-center justify-between bg-slate-800/80 px-3 py-1.5 rounded-xl text-xs border border-slate-700">
+                <div class="flex items-center space-x-2 text-slate-300">
+                    <span>Filtering by:</span>
+                    @if(request('search'))
+                        <span class="font-bold text-sky-400">"{{ request('search') }}"</span>
+                    @endif
+                    @if(request('company_id'))
+                        @php $comp = $companies->firstWhere('id', request('company_id')); @endphp
+                        <span class="font-bold text-emerald-400">🏢 {{ $comp ? $comp->name : 'Company' }}</span>
+                    @endif
+                </div>
+                <a href="{{ route('pwa.retailer.catalog') }}" class="text-red-400 font-bold hover:underline text-[11px]">
+                    Clear Filter ✕
+                </a>
+            </div>
+        @endif
     </div>
 
     <!-- Product Grid / List -->
