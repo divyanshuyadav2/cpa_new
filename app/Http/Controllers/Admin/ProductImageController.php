@@ -73,7 +73,7 @@ class ProductImageController extends Controller
         );
 
         // Write lock file so UI knows it's running
-        file_put_contents($this->lockFile, json_encode([
+        \file_put_contents($this->lockFile, \json_encode([
             'started_at' => now()->toDateTimeString(),
             'limit'      => $limit,
             'company'    => $company,
@@ -81,13 +81,13 @@ class ProductImageController extends Controller
         ]));
 
         // Launch in background (Windows vs Unix)
-        if (PHP_OS_FAMILY === 'Windows') {
+        if (\PHP_OS_FAMILY === 'Windows') {
             $logFile = storage_path('app/image_fetch_output.log');
             $cmd = sprintf('start /B cmd /C "%s > "%s" 2>&1"', $cmd, $logFile);
-            pclose(popen($cmd, 'r'));
+            \pclose(\popen($cmd, 'r'));
         } else {
             $logFile = storage_path('app/image_fetch_output.log');
-            exec($cmd . ' > ' . escapeshellarg($logFile) . ' 2>&1 &');
+            \exec($cmd . ' > ' . \escapeshellarg($logFile) . ' 2>&1 &');
         }
 
         return response()->json([
@@ -130,8 +130,8 @@ class ProductImageController extends Controller
      */
     public function stopFetch()
     {
-        if (file_exists($this->lockFile)) {
-            @unlink($this->lockFile);
+        if (\file_exists($this->lockFile)) {
+            @\unlink($this->lockFile);
         }
         return response()->json(['status' => 'stopped']);
     }
@@ -141,11 +141,11 @@ class ProductImageController extends Controller
      */
     public function resetProgress()
     {
-        if (file_exists($this->progressFile)) {
-            unlink($this->progressFile);
+        if (\file_exists($this->progressFile)) {
+            \unlink($this->progressFile);
         }
-        if (file_exists($this->lockFile)) {
-            unlink($this->lockFile);
+        if (\file_exists($this->lockFile)) {
+            \unlink($this->lockFile);
         }
         return response()->json(['status' => 'reset', 'message' => 'Progress log cleared.']);
     }
@@ -156,32 +156,32 @@ class ProductImageController extends Controller
     public function getLog()
     {
         $logFile = storage_path('app/image_fetch_output.log');
-        if (!file_exists($logFile)) {
+        if (!\file_exists($logFile)) {
             return response()->json(['lines' => []]);
         }
 
         // Read last 30 lines
-        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $lines = array_slice($lines, -30);
+        $lines = \file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = \array_slice($lines, -30);
 
         // Strip ANSI escape codes
-        $lines = array_map(fn($l) => preg_replace('/\x1b\[[0-9;]*m/', '', $l), $lines);
+        $lines = \array_map(fn($l) => \preg_replace('/\x1b\[[0-9;]*m/', '', $l), $lines);
 
-        return response()->json(['lines' => array_values($lines)]);
+        return response()->json(['lines' => \array_values($lines)]);
     }
 
     // ─── Private Helpers ─────────────────────────────────────────────────────
 
     private function isRunning(): bool
     {
-        return file_exists($this->lockFile);
+        return \file_exists($this->lockFile);
     }
 
     /** Lock file older than 30 minutes is considered stale */
     private function isLockStale(): bool
     {
-        if (!file_exists($this->lockFile)) return false;
-        return (time() - filemtime($this->lockFile)) > 1800;
+        if (!\file_exists($this->lockFile)) return false;
+        return (\time() - \filemtime($this->lockFile)) > 1800;
     }
 
     private function getStats(): array
@@ -211,8 +211,8 @@ class ProductImageController extends Controller
 
     private function loadProgress(): array
     {
-        if (file_exists($this->progressFile)) {
-            return json_decode(file_get_contents($this->progressFile), true) ?? [];
+        if (\file_exists($this->progressFile)) {
+            return \json_decode(\file_get_contents($this->progressFile), true) ?? [];
         }
         return ['saved' => [], 'failed' => [], 'total_saved' => 0, 'total_failed' => 0];
     }
