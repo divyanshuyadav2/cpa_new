@@ -90,11 +90,15 @@ class FetchProductImages extends Command
         foreach ($products as $product) {
             $productName = trim($product->name);
             $companyName = $product->company ? trim($product->company->name) : 'unknown';
-            $bar->setMessage("Searching: {$productName}");
+
+            // Strip leading * and other noise before searching
+            $searchName = $this->cleanProductName($productName);
+
+            $bar->setMessage("Searching: {$searchName} (DB: {$productName})");
             $bar->advance();
 
             // Try to find image from multiple sources
-            $imageUrl = $this->searchImage($productName, $companyName);
+            $imageUrl = $this->searchImage($searchName, $companyName);
 
             if (!$imageUrl) {
                 $failed++;
@@ -210,10 +214,37 @@ class FetchProductImages extends Command
     }
 
     /**
+     * Clean product name before using it in a web search.
+     * Removes leading asterisks (*), hash (#), slashes, and other
+     * noise characters that come from CSV imports.
+     *
+     * Examples:
+     *   *BCCA PLUS       →  BCCA PLUS
+     *   *CIRETA          →  CIRETA
+     *   #DOTEX-80        →  DOTEX-80
+     *   BCCA PLUS (TAB)  →  BCCA PLUS
+     */
+    private function cleanProductName(string $name): string
+    {
+        // Strip leading non-alpha characters (*, #, -, /, spaces, etc.)
+        $clean = ltrim($name, "* \t\n\r\0\x0B#/\\|@!~`");
+
+        // Remove trailing dosage/form hints in brackets — e.g. (TAB), (SYP), (CAP)
+        $clean = preg_replace('/\s*[\(\[]\s*(TAB|CAP|SYP|INJ|CREAM|GEL|OIN|SUSP|DROPS?|MG|ML|GM|PFS|AMP)\s*[\)\]]/i', '', $clean);
+
+        // Collapse multiple spaces
+        $clean = preg_replace('/\s+/', ' ', trim($clean));
+
+        // If cleaning left us with nothing, fall back to the original
+        return $clean ?: $name;
+    }
+
+    /**
      * Search for product image URL from multiple sources.
      */
     private function searchImage(string $productName, string $companyName): ?string
     {
+
         $cleanName = preg_replace('/\s+/', ' ', $productName);
 
         // Strategy 1: 1mg.com API-based search

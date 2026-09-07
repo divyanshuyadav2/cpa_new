@@ -57,42 +57,60 @@ class ProductImageController extends Controller
         }
 
         $limit   = (int) $request->input('limit', 30);
-        $company = $request->input('company', '');
+        $company = (string) $request->input('company', '');
         $delay   = (int) $request->input('delay', 1500);
-        $force   = $request->boolean('force') ? '--force' : '';
+        $force   = $request->boolean('force');
 
-        // Build artisan command string
-        $artisan = PHP_BINARY . ' ' . base_path('artisan');
-        $cmd = sprintf(
-            '%s products:fetch-images --limit=%d --delay=%d %s %s',
-            $artisan,
-            $limit,
-            $delay,
-            $company ? '--company=' . escapeshellarg($company) : '',
-            $force
-        );
+        $phpBin   = \PHP_BINARY;                           // e.g. C:\php\php.exe
+        $artisan  = base_path('artisan');                  // e.g. C:\...\artisan
+        $logFile  = storage_path('app/image_fetch_output.log');
 
         // Write lock file so UI knows it's running
         \file_put_contents($this->lockFile, \json_encode([
             'started_at' => now()->toDateTimeString(),
             'limit'      => $limit,
             'company'    => $company,
-            'pid'        => null,
         ]));
 
-        // Launch in background (Windows vs Unix)
+        // ── Launch background process ─────────────────────────────────
         if (\PHP_OS_FAMILY === 'Windows') {
-            $logFile = storage_path('app/image_fetch_output.log');
-            $cmd = sprintf('start /B cmd /C "%s > "%s" 2>&1"', $cmd, $logFile);
-            \pclose(\popen($cmd, 'r'));
+            // Write a temp .bat file — handles Windows path quoting reliably
+            $batFile = storage_path('app/fetch_run_' . \time() . '.bat');
+
+            $args  = "--limit={$limit} --delay={$delay}";
+            if ($company) {
+                $args .= ' --company="' . \str_replace('"', '\"', $company) . '"';
+            }
+            if ($force) {
+                $args .= ' --force';
+            }
+
+            $bat  = "@echo off\r\n";
+            $bat .= "\"{$phpBin}\" \"{$artisan}\" products:fetch-images {$args} > \"{$logFile}\" 2>&1\r\n";
+            $bat .= "del \"{$batFile}\"\r\n";   // self-clean
+
+            \file_put_contents($batFile, $bat);
+
+            // start "" /B  —  run without a visible window, detached
+            \pclose(\popen('start "" /B cmd /C "' . $batFile . '"', 'r'));
+
         } else {
-            $logFile = storage_path('app/image_fetch_output.log');
-            \exec($cmd . ' > ' . \escapeshellarg($logFile) . ' 2>&1 &');
+            // Unix / Linux
+            $args = "--limit={$limit} --delay={$delay}";
+            if ($company) $args .= ' --company=' . \escapeshellarg($company);
+            if ($force)   $args .= ' --force';
+
+            $cmd = \escapeshellarg($phpBin) . ' '
+                 . \escapeshellarg($artisan)
+                 . " products:fetch-images {$args}"
+                 . ' > ' . \escapeshellarg($logFile) . ' 2>&1 &';
+
+            \exec($cmd);
         }
 
         return response()->json([
             'status'  => 'started',
-            'message' => "Background fetch started: {$limit} products, delay {$delay}ms.",
+            'message' => "Background fetch started: {$limit} products, {$delay}ms delay.",
         ]);
     }
 
