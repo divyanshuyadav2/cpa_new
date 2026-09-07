@@ -20,7 +20,6 @@
                     @else
                         💊
                     @endif
-                    @endif
                 </div>
 
                 <!-- Right: Product Information -->
