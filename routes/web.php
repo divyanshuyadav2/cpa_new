@@ -123,6 +123,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     // Product Image Fetcher (non-blocking background + AJAX polling)
     Route::get('products/images/fetch',          [ProductImageController::class, 'index'])->name('admin.product-images.index');
     Route::post('products/images/fetch',         [ProductImageController::class, 'fetchImages'])->name('admin.product-images.fetch');
+    Route::post('products/images/fetch-chunk',   [ProductImageController::class, 'fetchChunk'])->name('admin.product-images.fetch-chunk');
     Route::get('products/images/poll',           [ProductImageController::class, 'pollStatus'])->name('admin.product-images.poll');
     Route::get('products/images/log',            [ProductImageController::class, 'getLog'])->name('admin.product-images.log');
     Route::post('products/images/stop',          [ProductImageController::class, 'stopFetch'])->name('admin.product-images.stop');

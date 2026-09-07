@@ -149,9 +149,14 @@
                 </label>
             </div>
 
-            <button id="startBtn" onclick="startFetch()"
-                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-2 disabled:opacity-50">
-                ⚡ Start Fetching in Background
+            <button id="startBtn" onclick="startWebFetch()"
+                    class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-2 disabled:opacity-50 mb-2.5">
+                ⚡ Start Live Web Fetch (Web Safe)
+            </button>
+
+            <button id="bgBtn" onclick="startFetch()"
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-4 rounded-xl transition text-xs flex items-center justify-center gap-2 disabled:opacity-50">
+                🖥️ Or Run Background Server Job
             </button>
 
             <div id="startMsg" class="hidden mt-3 text-sm text-center font-medium"></div>
@@ -412,6 +417,7 @@
 const CSRF      = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 const POLL_URL  = "{{ route('admin.product-images.poll') }}";
 const FETCH_URL = "{{ route('admin.product-images.fetch') }}";
+const CHUNK_URL = "{{ route('admin.product-images.fetch-chunk') }}";
 const STOP_URL  = "{{ route('admin.product-images.stop') }}";
 const RESET_URL = "{{ route('admin.product-images.reset') }}";
 const LOG_URL   = "{{ route('admin.product-images.log') }}";
@@ -421,8 +427,64 @@ let logInterval     = null;
 let isRunning       = {{ $isRunning ? 'true' : 'false' }};
 let lastSavedCount  = 0;
 let lastFailedCount = 0;
+let isWebChunking   = false;
+let isWebStopped    = false;
 
 // ── Start / Stop ─────────────────────────────────────────────────
+
+async function startWebFetch() {
+    isWebStopped  = false;
+    isWebChunking = true;
+
+    const limit   = parseInt(document.getElementById('ctrlLimit').value) || 50;
+    const company = document.getElementById('ctrlCompany').value;
+    const delay   = parseInt(document.getElementById('ctrlDelay').value) || 1000;
+    const force   = document.getElementById('ctrlForce').checked;
+
+    setMsg('⚡ Live Web Fetching in progress… (Processing 3 products per chunk)', 'blue');
+    setRunning(true);
+
+    lastSavedCount = 0; lastFailedCount = 0;
+    document.getElementById('curSaved').textContent  = '0';
+    document.getElementById('curFailed').textContent = '0';
+    document.getElementById('curSavedBody').innerHTML  = '<tr><td colspan="3" class="p-3 text-slate-400 italic text-center">Fetching…</td></tr>';
+    document.getElementById('curFailedBody').innerHTML = '<tr><td colspan="3" class="p-3 text-slate-400 italic text-center">None yet…</td></tr>';
+
+    let processedTotal = 0;
+
+    while (!isWebStopped && processedTotal < limit) {
+        const chunkSize = Math.min(3, limit - processedTotal);
+        try {
+            const res = await fetch(CHUNK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+                body: JSON.stringify({ chunk_size: chunkSize, company, force })
+            });
+
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+
+            if (data.processed === 0 || data.is_complete) {
+                setMsg('✅ All available products processed!', 'green');
+                break;
+            }
+
+            processedTotal += data.processed;
+            pollStatus();
+
+            if (!isWebStopped && processedTotal < limit) {
+                await new Promise(r => setTimeout(r, delay));
+            }
+        } catch (e) {
+            setMsg('❌ Error: ' + e.message, 'red');
+            break;
+        }
+    }
+
+    setRunning(false);
+    isWebChunking = false;
+    pollStatus();
+}
 
 function startFetch() {
     const limit   = document.getElementById('ctrlLimit').value;
@@ -454,17 +516,19 @@ function startFetch() {
             setMsg('⚠️ ' + data.message, 'amber');
             document.getElementById('startBtn').disabled = false;
         } else {
-            setMsg('❌ Unexpected response.', 'red');
-            document.getElementById('startBtn').disabled = false;
+            setMsg('⚠️ Server background job could not start. Auto-switching to Live Web Fetch…', 'amber');
+            startWebFetch();
         }
     })
     .catch(e => {
-        setMsg('❌ Request failed: ' + e.message, 'red');
-        document.getElementById('startBtn').disabled = false;
+        setMsg('⚠️ Request failed. Auto-switching to Live Web Fetch…', 'amber');
+        startWebFetch();
     });
 }
 
 function stopFetch() {
+    isWebStopped  = true;
+    isWebChunking = false;
     fetch(STOP_URL, { method: 'POST', headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' } })
     .then(() => { setRunning(false); setMsg('⏹ Stop signal sent.', 'amber'); });
 }

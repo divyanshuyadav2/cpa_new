@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductImageController extends Controller
 {
@@ -74,25 +75,26 @@ class ProductImageController extends Controller
 
         // ── Launch background process ─────────────────────────────────
         if (\PHP_OS_FAMILY === 'Windows') {
-            // Write a temp .bat file — handles Windows path quoting reliably
-            $batFile = storage_path('app/fetch_run_' . \time() . '.bat');
+            // Write a temp .cmd runner file — avoids quote escaping issues and enables true detached execution
+            $cmdFile = storage_path('app/run_fetch_' . \time() . '.cmd');
 
-            $args  = "--limit={$limit} --delay={$delay}";
+            $args = "--limit={$limit} --delay={$delay}";
             if ($company) {
-                $args .= ' --company="' . \str_replace('"', '\"', $company) . '"';
+                $args .= ' --company=' . \escapeshellarg($company);
             }
             if ($force) {
                 $args .= ' --force';
             }
 
-            $bat  = "@echo off\r\n";
-            $bat .= "\"{$phpBin}\" \"{$artisan}\" products:fetch-images {$args} > \"{$logFile}\" 2>&1\r\n";
-            $bat .= "del \"{$batFile}\"\r\n";   // self-clean
+            $cmdContent  = "@echo off\r\n";
+            $cmdContent .= "\"{$phpBin}\" \"{$artisan}\" products:fetch-images {$args} > \"{$logFile}\" 2>&1\r\n";
+            $cmdContent .= "del \"{$cmdFile}\"\r\n";
 
-            \file_put_contents($batFile, $bat);
+            \file_put_contents($cmdFile, $cmdContent);
 
-            // start "" /B  —  run without a visible window, detached
-            \pclose(\popen('start "" /B cmd /C "' . $batFile . '"', 'r'));
+            // PowerShell Start-Process launches an OS-level detached process unaffected by web request termination
+            $psCmd = 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process \'' . $cmdFile . '\' -WindowStyle Hidden"';
+            \pclose(\popen($psCmd, 'r'));
 
         } else {
             // Unix / Linux
@@ -233,5 +235,267 @@ class ProductImageController extends Controller
             return \json_decode(\file_get_contents($this->progressFile), true) ?? [];
         }
         return ['saved' => [], 'failed' => [], 'total_saved' => 0, 'total_failed' => 0];
+    }
+
+    private function saveProgress(array $progress): void
+    {
+        \file_put_contents($this->progressFile, \json_encode($progress, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
+     * Web-safe direct chunk fetch endpoint.
+     * Processes $chunkSize products synchronously and updates progress live.
+     */
+    public function fetchChunk(Request $request)
+    {
+        $chunkSize = (int) $request->input('chunk_size', 3);
+        $chunkSize = max(1, min(10, $chunkSize));
+        $company   = (string) $request->input('company', '');
+        $force     = $request->boolean('force');
+
+        $query = Product::with('company');
+        if (!$force) {
+            $query->where(function ($q) {
+                $q->whereNull('image')->orWhere('image', '');
+            });
+        }
+        if ($company !== '') {
+            $query->whereHas('company', fn($q) => $q->where('name', $company));
+        }
+
+        $products = $query->take($chunkSize)->get();
+
+        if ($products->isEmpty()) {
+            return response()->json([
+                'status'       => 'complete',
+                'processed'    => 0,
+                'saved_count'  => 0,
+                'failed_count' => 0,
+                'remaining'    => 0,
+                'is_complete'  => true,
+            ]);
+        }
+
+        $progress = $this->loadProgress();
+
+        if (!isset($progress['current_run']) || $progress['current_run'] === null) {
+            $runId = now()->format('Y-m-d H:i:s');
+            $progress['current_run'] = [
+                'run_id'       => $runId,
+                'started_at'   => $runId,
+                'limit'        => $chunkSize,
+                'company'      => $company,
+                'saved'        => [],
+                'failed'       => [],
+                'saved_count'  => 0,
+                'failed_count' => 0,
+            ];
+        }
+
+        $savedChunk  = [];
+        $failedChunk = [];
+
+        foreach ($products as $product) {
+            $productName = trim($product->name);
+            $companyName = $product->company ? trim($product->company->name) : 'unknown';
+            $searchName  = $this->cleanProductName($productName);
+
+            $imageUrl = $this->searchImage($searchName, $companyName);
+
+            if (!$imageUrl) {
+                $entry = [
+                    'id'      => $product->id,
+                    'name'    => $productName,
+                    'company' => $companyName,
+                    'at'      => now()->format('H:i:s'),
+                ];
+                $progress['failed'][] = $entry;
+                $progress['current_run']['failed'][] = $entry;
+                $progress['current_run']['failed_count'] = ($progress['current_run']['failed_count'] ?? 0) + 1;
+                $progress['total_failed'] = ($progress['total_failed'] ?? 0) + 1;
+                $failedChunk[] = $entry;
+                continue;
+            }
+
+            $localPath = $this->downloadAndSave($imageUrl, $productName, $companyName);
+
+            if ($localPath) {
+                $product->image = $localPath;
+                $product->save();
+
+                $entry = [
+                    'id'      => $product->id,
+                    'name'    => $productName,
+                    'company' => $companyName,
+                    'path'    => $localPath,
+                    'source'  => $imageUrl,
+                    'at'      => now()->format('H:i:s'),
+                ];
+                $progress['saved'][] = $entry;
+                $progress['current_run']['saved'][] = $entry;
+                $progress['current_run']['saved_count'] = ($progress['current_run']['saved_count'] ?? 0) + 1;
+                $progress['total_saved'] = ($progress['total_saved'] ?? 0) + 1;
+                $savedChunk[] = $entry;
+            } else {
+                $entry = [
+                    'id'      => $product->id,
+                    'name'    => $productName,
+                    'company' => $companyName,
+                    'at'      => now()->format('H:i:s'),
+                ];
+                $progress['failed'][] = $entry;
+                $progress['current_run']['failed'][] = $entry;
+                $progress['current_run']['failed_count'] = ($progress['current_run']['failed_count'] ?? 0) + 1;
+                $progress['total_failed'] = ($progress['total_failed'] ?? 0) + 1;
+                $failedChunk[] = $entry;
+            }
+        }
+
+        $progress['last_run'] = now()->format('Y-m-d H:i:s');
+        $this->saveProgress($progress);
+
+        $remaining = Product::where(fn($q) => $q->whereNull('image')->orWhere('image', ''))->count();
+
+        return response()->json([
+            'status'       => 'success',
+            'processed'    => $products->count(),
+            'saved_count'  => count($savedChunk),
+            'failed_count' => count($failedChunk),
+            'remaining'    => $remaining,
+            'is_complete'  => $remaining === 0,
+        ]);
+    }
+
+    private function cleanProductName(string $name): string
+    {
+        $clean = \ltrim($name, "* \t\n\r\0\x0B#/\\|@!~`");
+        $clean = \preg_replace('/\s*[\(\[]\s*(TAB|CAP|SYP|INJ|CREAM|GEL|OIN|SUSP|DROPS?|MG|ML|GM|PFS|AMP)\s*[\)\]]/i', '', $clean);
+        $clean = \preg_replace('/\s+/', ' ', \trim($clean));
+        return $clean ?: $name;
+    }
+
+    private function searchImage(string $productName, string $companyName): ?string
+    {
+        $cleanName = \preg_replace('/\s+/', ' ', $productName);
+        $url = $this->search1mg($cleanName, $companyName);
+        if ($url) return $url;
+        $url = $this->searchNetmeds($cleanName);
+        if ($url) return $url;
+        $url = $this->searchPharmEasy($cleanName);
+        if ($url) return $url;
+        $url = $this->searchBingImages($cleanName . ' ' . $companyName . ' tablet medicine');
+        if ($url) return $url;
+        return null;
+    }
+
+    private function search1mg(string $name, string $company): ?string
+    {
+        try {
+            $query  = \urlencode($name);
+            $apiUrl = "https://www.1mg.com/pharmacy_api_gateway/v4/drug_skus/search?name={$query}&page=1&per_page=5";
+            $resp   = $this->httpGet($apiUrl, ['Referer' => 'https://www.1mg.com/drugs-all-medicines', 'Accept' => 'application/json']);
+            if ($resp) {
+                $data = \json_decode($resp, true);
+                $skus = $data['data']['sku_list'] ?? $data['data']['skus'] ?? [];
+                foreach ($skus as $sku) {
+                    $imgUrl = $sku['image'] ?? $sku['front_image'] ?? $sku['images'][0] ?? null;
+                    if ($imgUrl && \filter_var($imgUrl, FILTER_VALIDATE_URL)) return $imgUrl;
+                }
+            }
+            return $this->scrape1mgPage($name);
+        } catch (\Throwable $e) { return null; }
+    }
+
+    private function scrape1mgPage(string $name): ?string
+    {
+        try {
+            $query = \urlencode($name);
+            $html  = $this->httpGet("https://www.1mg.com/search/all?name={$query}");
+            if (!$html) return null;
+            if (\preg_match('/"image"\s*:\s*"(https:\/\/onemg[^"]+)"/', $html, $m)) return $m[1];
+            if (\preg_match('/content="(https:\/\/onemg\.gumlet\.io[^"]+)"/', $html, $m)) return $m[1];
+            if (\preg_match('/https:\/\/onemg\.gumlet\.io\/[^"\'>\s]+\.(jpg|jpeg|png|webp)/i', $html, $m)) return $m[0];
+        } catch (\Throwable $e) {}
+        return null;
+    }
+
+    private function searchNetmeds(string $name): ?string
+    {
+        try {
+            $query = \urlencode($name);
+            $html  = $this->httpGet("https://www.netmeds.com/catalogsearch/result/?q={$query}", ['Referer' => 'https://www.netmeds.com/']);
+            if ($html && \preg_match('/https:\/\/www\.netmeds\.com\/images\/product-v1\/full_image\/[^\'">\s]+\.(jpg|jpeg|png|webp)/i', $html, $m)) {
+                return $m[0];
+            }
+        } catch (\Throwable $e) {}
+        return null;
+    }
+
+    private function searchPharmEasy(string $name): ?string
+    {
+        try {
+            $query = \urlencode($name);
+            $html  = $this->httpGet("https://pharmeasy.in/search/all?name={$query}", ['Referer' => 'https://pharmeasy.in/']);
+            if ($html && \preg_match('/https:\/\/assets\.pharmeasy\.in\/apothecary\/images\/[^\'">\s]+\.(jpg|jpeg|png|webp)/i', $html, $m)) {
+                return $m[0];
+            }
+        } catch (\Throwable $e) {}
+        return null;
+    }
+
+    private function searchBingImages(string $query): ?string
+    {
+        try {
+            $q    = \urlencode($query . ' medicine');
+            $html = $this->httpGet("https://www.bing.com/images/search?q={$q}&form=HDRSC2&first=1&tsc=ImageHoverTitle", ['Referer' => 'https://www.bing.com/']);
+            if ($html && \preg_match('/murl&quot;:&quot;(https?:\/\/[^&]+\.(jpg|jpeg|png|webp))&quot;/i', $html, $m)) {
+                $imgUrl = \html_entity_decode($m[1]);
+                if (\filter_var($imgUrl, FILTER_VALIDATE_URL)) return $imgUrl;
+            }
+        } catch (\Throwable $e) {}
+        return null;
+    }
+
+    private function downloadAndSave(string $imageUrl, string $productName, string $companyName): ?string
+    {
+        try {
+            $imageData = $this->httpGet($imageUrl, [], true);
+            if (!$imageData || \strlen($imageData) < 1000) return null;
+            $ext = 'jpg';
+            if (\preg_match('/\.(jpeg|jpg|png|webp|gif)(\?|$)/i', $imageUrl, $m)) {
+                $ext = \strtolower($m[1]) === 'jpeg' ? 'jpg' : \strtolower($m[1]);
+            }
+            $companySafe = Str::slug($companyName, '_');
+            $productSafe = Str::limit(Str::slug($productName, '_'), 60, '');
+            $relativePath = "products/{$companySafe}/{$productSafe}.{$ext}";
+            Storage::disk('public')->put($relativePath, $imageData);
+            return 'storage/' . $relativePath;
+        } catch (\Throwable $e) { return null; }
+    }
+
+    private function httpGet(string $url, array $extraHeaders = [], bool $binary = false): ?string
+    {
+        $ch = \curl_init();
+        \curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 5,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            CURLOPT_HTTPHEADER     => \array_merge([
+                'Accept-Language: en-US,en;q=0.9',
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            ], \array_map(fn($k, $v) => "{$k}: {$v}", \array_keys($extraHeaders), $extraHeaders)),
+            CURLOPT_ENCODING       => '',
+        ]);
+        $result   = \curl_exec($ch);
+        $httpCode = \curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        \curl_close($ch);
+        if ($result === false || $httpCode < 200 || $httpCode >= 400) return null;
+        return $result;
     }
 }
