@@ -24,10 +24,13 @@ class FetchProductImages extends Command
     // Progress file for tracking
     private string $progressFile;
 
+    private string $lockFile;
+
     public function __construct()
     {
         parent::__construct();
         $this->progressFile = storage_path('app/image_fetch_progress.json');
+        $this->lockFile     = storage_path('app/image_fetch.lock');
     }
 
     public function handle(): int
@@ -64,9 +67,22 @@ class FetchProductImages extends Command
         $this->info("🔄 Processing up to: <fg=cyan>{$limit}</> this run");
         $this->newLine();
 
-        $saved  = 0;
-        $failed = 0;
+        $saved   = 0;
+        $failed  = 0;
         $skipped = 0;
+
+        // Initialise current_run block (polled live by the UI every 3s)
+        $runId = now()->format('Y-m-d H:i:s');
+        $progress['current_run'] = [
+            'run_id'    => $runId,
+            'started_at'=> $runId,
+            'limit'     => $limit,
+            'company'   => $company ?? '',
+            'saved'     => [],
+            'failed'    => [],
+        ];
+        $this->saveProgress($progress);
+
         $bar = $this->output->createProgressBar($products->count());
         $bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% — %message%');
         $bar->start();
@@ -98,23 +114,36 @@ class FetchProductImages extends Command
                 $product->image = $localPath;
                 $product->save();
                 $saved++;
-                $progress['saved'][] = [
+
+                $entry = [
                     'id'      => $product->id,
                     'name'    => $productName,
                     'company' => $companyName,
                     'path'    => $localPath,
                     'source'  => $imageUrl,
+                    'at'      => now()->format('H:i:s'),
                 ];
+                $progress['saved'][]                    = $entry;
+                $progress['current_run']['saved'][]     = $entry;
             } else {
                 $failed++;
-                $progress['failed'][] = [
+
+                $entry = [
                     'id'      => $product->id,
                     'name'    => $productName,
                     'company' => $companyName,
                     'source'  => $imageUrl,
                     'error'   => 'Download failed',
+                    'at'      => now()->format('H:i:s'),
                 ];
+                $progress['failed'][]                   = $entry;
+                $progress['current_run']['failed'][]    = $entry;
             }
+
+            // Flush progress to disk after every product so UI sees live updates
+            $progress['current_run']['saved_count']  = $saved;
+            $progress['current_run']['failed_count'] = $failed;
+            $this->saveProgress($progress);
 
             usleep($delay * 1000);
         }
@@ -127,6 +156,20 @@ class FetchProductImages extends Command
         $progress['total_saved']  = ($progress['total_saved']  ?? 0) + $saved;
         $progress['total_failed'] = ($progress['total_failed'] ?? 0) + $failed;
         $progress['last_run']     = now()->toDateTimeString();
+
+        // Finalise current_run and push to history
+        $progress['current_run']['finished_at']    = now()->format('Y-m-d H:i:s');
+        $progress['current_run']['saved_count']    = $saved;
+        $progress['current_run']['failed_count']   = $failed;
+        $completedRun = $progress['current_run'];
+
+        // Keep only last 10 runs in history
+        $history = $progress['run_history'] ?? [];
+        array_unshift($history, $completedRun);
+        $progress['run_history'] = array_slice($history, 0, 10);
+
+        // Clear live current_run (job done)
+        $progress['current_run'] = null;
 
         $this->saveProgress($progress);
 
@@ -157,6 +200,11 @@ class FetchProductImages extends Command
 
         $this->newLine();
         $this->info("Progress log: <fg=cyan>storage/app/image_fetch_progress.json</>");
+
+        // Remove lock file so UI knows job finished
+        if (file_exists($this->lockFile)) {
+            @unlink($this->lockFile);
+        }
 
         return Command::SUCCESS;
     }
