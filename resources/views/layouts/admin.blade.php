@@ -104,9 +104,20 @@
 
                 <!-- Products -->
                 <a href="{{ route('products.index') }}" 
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition duration-150 {{ Request::is('admin/products*') ? 'bg-pharma-navyLight text-white font-bold shadow-inner' : 'text-slate-400 hover:bg-pharma-navyLight/50 hover:text-white' }}">
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition duration-150 {{ Request::is('admin/products') ? 'bg-pharma-navyLight text-white font-bold shadow-inner' : 'text-slate-400 hover:bg-pharma-navyLight/50 hover:text-white' }}">
                     <span class="mr-3 text-lg">💊</span>
                     Products
+                </a>
+
+                <!-- Image Fetcher -->
+                <a href="{{ route('admin.product-images.index') }}" 
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition duration-150 {{ Request::is('admin/products/images*') ? 'bg-pharma-navyLight text-white font-bold shadow-inner' : 'text-slate-400 hover:bg-pharma-navyLight/50 hover:text-white' }}">
+                    <span class="mr-3 text-lg">🖼️</span>
+                    Image Fetcher
+                    @php $missing = \App\Models\Product::where(fn($q) => $q->whereNull('image')->orWhere('image',''))->count(); @endphp
+                    @if($missing > 0)
+                    <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $missing }}</span>
+                    @endif
                 </a>
 
                 <!-- Orders -->

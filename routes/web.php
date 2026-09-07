@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\ProductImportController;
+use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Pwa\PwaAuthController;
 use App\Http\Controllers\Pwa\PwaRetailerController;
@@ -118,6 +119,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('products/import/upload', [ProductImportController::class, 'upload'])->name('products.import.upload');
     Route::post('products/import/process', [ProductImportController::class, 'process'])->name('products.import.process');
     Route::get('products/export', [AdminProductController::class, 'export'])->name('products.export');
+
+    // Product Image Fetcher
+    Route::get('products/images/fetch', [ProductImageController::class, 'index'])->name('admin.product-images.index');
+    Route::post('products/images/fetch', [ProductImageController::class, 'fetchImages'])->name('admin.product-images.fetch');
+    Route::post('products/images/reset', [ProductImageController::class, 'resetProgress'])->name('admin.product-images.reset');
+
     Route::resource('products', AdminProductController::class);
     
     // Orders resource with status updates & WhatsApp confirmation
