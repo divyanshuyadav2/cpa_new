@@ -226,11 +226,12 @@ class FetchProductImages extends Command
      */
     private function cleanProductName(string $name): string
     {
-        // Strip leading non-alpha characters (*, #, -, /, spaces, etc.)
+        // Strip leading non-alphanumeric noise (*, #, -, /, spaces, etc.)
         $clean = ltrim($name, "* \t\n\r\0\x0B#/\\|@!~`");
 
-        // Remove trailing dosage/form hints in brackets — e.g. (TAB), (SYP), (CAP)
-        $clean = preg_replace('/\s*[\(\[]\s*(TAB|CAP|SYP|INJ|CREAM|GEL|OIN|SUSP|DROPS?|MG|ML|GM|PFS|AMP)\s*[\)\]]/i', '', $clean);
+        // Remove trailing dosage/form hints in brackets or standalone trailing words
+        $clean = preg_replace('/\s*[\(\[]\s*(TAB|TABLET|CAP|CAPSULE|SYP|SYRUP|INJ|INJECTION|CREAM|GEL|OINTMENT|OIN|SUSP|DROPS?|MG|ML|GM|PFS|AMP)\s*[\)\]]/i', '', $clean);
+        $clean = preg_replace('/\s+\b(TAB|TABLET|TABLETS|CAP|CAPSULE|CAPSULES|SYP|SYRUP|INJ|INJECTION|CREAM|GEL|SUSP|DROPS|SOLUTION|LOTION|KIT|TAN)\b$/i', '', $clean);
 
         // Collapse multiple spaces
         $clean = preg_replace('/\s+/', ' ', trim($clean));

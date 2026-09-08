@@ -369,7 +369,8 @@ class ProductImageController extends Controller
     private function cleanProductName(string $name): string
     {
         $clean = \ltrim($name, "* \t\n\r\0\x0B#/\\|@!~`");
-        $clean = \preg_replace('/\s*[\(\[]\s*(TAB|CAP|SYP|INJ|CREAM|GEL|OIN|SUSP|DROPS?|MG|ML|GM|PFS|AMP)\s*[\)\]]/i', '', $clean);
+        $clean = \preg_replace('/\s*[\(\[]\s*(TAB|TABLET|CAP|CAPSULE|SYP|SYRUP|INJ|INJECTION|CREAM|GEL|OINTMENT|OIN|SUSP|DROPS?|MG|ML|GM|PFS|AMP)\s*[\)\]]/i', '', $clean);
+        $clean = \preg_replace('/\s+\b(TAB|TABLET|TABLETS|CAP|CAPSULE|CAPSULES|SYP|SYRUP|INJ|INJECTION|CREAM|GEL|SUSP|DROPS|SOLUTION|LOTION|KIT|TAN)\b$/i', '', $clean);
         $clean = \preg_replace('/\s+/', ' ', \trim($clean));
         return $clean ?: $name;
     }
