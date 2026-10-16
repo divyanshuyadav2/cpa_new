@@ -52,6 +52,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final catalog = context.watch<CatalogProvider>();
+    final showFrequentSection = catalog.frequentProducts.isNotEmpty &&
+        catalog.searchQuery.isEmpty &&
+        catalog.selectedCompanyId == null;
 
     return Column(
       children: [
@@ -134,7 +137,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
         // Products List
         Expanded(
           child: RefreshIndicator(
-            onRefresh: () => catalog.fetchProducts(resetPage: true),
+            onRefresh: () async {
+              await Future.wait([
+                catalog.fetchFrequentProducts(),
+                catalog.fetchProducts(resetPage: true),
+              ]);
+            },
             child: catalog.isLoading && catalog.products.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : catalog.products.isEmpty
@@ -143,9 +151,18 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         controller: _scrollController,
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.all(12),
-                        itemCount: catalog.products.length + (catalog.hasMore ? 1 : 0),
+                        itemCount: catalog.products.length +
+                            (showFrequentSection ? 1 : 0) +
+                            (catalog.hasMore ? 1 : 0),
                         itemBuilder: (context, index) {
-                          if (index == catalog.products.length) {
+                          // Frequently ordered carousel at top
+                          if (showFrequentSection && index == 0) {
+                            return _buildFrequentlyOrderedSection(context, catalog.frequentProducts);
+                          }
+
+                          final productIndex = showFrequentSection ? index - 1 : index;
+
+                          if (productIndex == catalog.products.length) {
                             return const Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Center(
@@ -157,13 +174,74 @@ class _CatalogScreenState extends State<CatalogScreen> {
                               ),
                             );
                           }
-                          final product = catalog.products[index];
+
+                          final product = catalog.products[productIndex];
                           return _ProductCard(product: product);
                         },
                       ),
           ),
         ),
       ],
+    );
+  }
+
+  /// Frequently ordered quick-reorder carousel
+  Widget _buildFrequentlyOrderedSection(BuildContext context, List<Product> frequentProducts) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F0FE),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFBBDEFB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              children: [
+                const Icon(Icons.flash_on_rounded, color: Color(0xFF0D47A1), size: 20),
+                const SizedBox(width: 6),
+                const Text(
+                  'Aapke Regular Items',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D47A1),
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D47A1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'Frequently Ordered',
+                    style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 148,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              scrollDirection: Axis.horizontal,
+              itemCount: frequentProducts.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, idx) {
+                return _FrequentProductCard(product: frequentProducts[idx]);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -201,6 +279,120 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 }
 
+/// Compact Card for Frequently Ordered Carousel
+class _FrequentProductCard extends StatelessWidget {
+  final Product product;
+  const _FrequentProductCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>();
+    final isInCart = cart.items.containsKey(product.id);
+    final cartItem = cart.items[product.id];
+
+    return Container(
+      width: 165,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Pack: ${product.packing.isNotEmpty ? product.packing : '10*10'}',
+                style: TextStyle(fontSize: 10, color: Colors.blueGrey.shade700, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Box: ₹${product.boxPrice.toStringAsFixed(1)} (${product.stripsPerBox}s)',
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF2E7D32)),
+              ),
+              Text(
+                'Strip: ₹${product.stripPrice.toStringAsFixed(1)}',
+                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+          if (!isInCart)
+            SizedBox(
+              width: double.infinity,
+              height: 28,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D47A1),
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                ),
+                onPressed: () {
+                  cart.addItem(product, unit: 'Box', quantity: 1);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${product.name} (1 Box) added'),
+                      duration: const Duration(milliseconds: 900),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+                child: const Text('Add Box', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+              ),
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove_circle, color: Color(0xFF0D47A1)),
+                  iconSize: 20,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    cart.updateQuantity(product.id, (cartItem?.quantity ?? 1) - 1);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '${cartItem?.quantity ?? 0} ${cartItem?.unit ?? 'Box'}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle, color: Color(0xFF0D47A1)),
+                  iconSize: 20,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    cart.updateQuantity(product.id, (cartItem?.quantity ?? 0) + 1);
+                  },
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ProductCard extends StatefulWidget {
   final Product product;
 
@@ -211,13 +403,14 @@ class _ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<_ProductCard> {
-  final String _selectedUnit = 'Box';
+  String _selectedUnit = 'Box'; // Default to Box
 
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
     final isInCart = cart.items.containsKey(widget.product.id);
     final cartItem = cart.items[widget.product.id];
+    final activeUnit = isInCart ? (cartItem?.unit ?? 'Box') : _selectedUnit;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -333,31 +526,87 @@ class _ProductCardState extends State<_ProductCard> {
                   ),
                   const SizedBox(height: 8),
 
-                  // Pricing & Add/Qty Row
+                  // Strip vs Box Pricing
+                  Row(
+                    children: [
+                      // Box Rate
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: activeUnit == 'Box' ? const Color(0xFFE8F5E9) : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: activeUnit == 'Box' ? const Color(0xFF4CAF50) : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Text(
+                          'Box: ₹${widget.product.boxPrice.toStringAsFixed(1)} (${widget.product.stripsPerBox}s)',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: activeUnit == 'Box' ? FontWeight.bold : FontWeight.w600,
+                            color: activeUnit == 'Box' ? const Color(0xFF2E7D32) : Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      // Strip Rate
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: activeUnit == 'Strip' ? const Color(0xFFFFF3E0) : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: activeUnit == 'Strip' ? Colors.orange.shade700 : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Text(
+                          'Strip: ₹${widget.product.stripPrice.toStringAsFixed(1)}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: activeUnit == 'Strip' ? FontWeight.bold : FontWeight.w600,
+                            color: activeUnit == 'Strip' ? Colors.orange.shade900 : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Unit selection and Add to Cart Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'PTR: ₹${widget.product.ptr.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF2E7D32),
-                            ),
+                      // Unit Selector Dropdown
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: DropdownButton<String>(
+                          value: activeUnit,
+                          isDense: true,
+                          underline: const SizedBox(),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0D47A1),
                           ),
-                          if (widget.product.mrp > 0)
-                            Text(
-                              'MRP: ₹${widget.product.mrp.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey.shade500,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                        ],
+                          items: const [
+                            DropdownMenuItem(value: 'Box', child: Text('Box')),
+                            DropdownMenuItem(value: 'Strip', child: Text('Strip')),
+                          ],
+                          onChanged: (newUnit) {
+                            if (newUnit != null) {
+                              setState(() {
+                                _selectedUnit = newUnit;
+                              });
+                              if (isInCart) {
+                                cart.updateUnit(widget.product.id, newUnit);
+                              }
+                            }
+                          },
+                        ),
                       ),
 
                       // Add to Cart / Qty Stepper
@@ -378,14 +627,16 @@ class _ProductCardState extends State<_ProductCard> {
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('${widget.product.name} added to cart'),
+                                content: Text(
+                                  '${widget.product.name} (1 $_selectedUnit) added to cart',
+                                ),
                                 duration: const Duration(milliseconds: 900),
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
                           },
                           icon: const Icon(Icons.add_shopping_cart, size: 16),
-                          label: const Text('Add', style: TextStyle(fontSize: 13)),
+                          label: Text('Add $_selectedUnit', style: const TextStyle(fontSize: 12)),
                         )
                       else
                         Row(

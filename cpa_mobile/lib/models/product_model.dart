@@ -25,6 +25,41 @@ class Product {
     this.company,
   });
 
+  /// Parse packing string (e.g., "1*10*10", "10x10", "10*10", "20x10", "1x10")
+  /// to determine how many strips are in 1 box.
+  int get stripsPerBox {
+    if (packing.trim().isEmpty) return 1;
+
+    final numbers = RegExp(r'\d+')
+        .allMatches(packing)
+        .map((m) => int.tryParse(m.group(0) ?? '') ?? 0)
+        .where((n) => n > 0)
+        .toList();
+
+    if (numbers.isEmpty) return 1;
+
+    // Standard Indian pharma packing e.g. "1*10*10" (1 outer, 10 strips/box, 10 tabs/strip)
+    if (numbers.length >= 3 && numbers[0] == 1) {
+      return numbers[1] > 0 ? numbers[1] : 10;
+    }
+    // "10*10" or "10x10" -> 10 strips per box
+    if (numbers.length >= 2) {
+      return numbers[0] > 0 ? numbers[0] : 10;
+    }
+    // "10's" or "10 Tab"
+    if (numbers.length == 1 && numbers[0] > 1) {
+      return numbers[0];
+    }
+
+    return 10;
+  }
+
+  /// Price per single strip
+  double get stripPrice => ptr;
+
+  /// Price per full box (PTR * stripsPerBox)
+  double get boxPrice => ptr * stripsPerBox;
+
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'] is int ? json['id'] : (int.tryParse(json['id']?.toString() ?? '0') ?? 0),

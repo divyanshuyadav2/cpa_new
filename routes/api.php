@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Catalog APIs
     Route::get('/companies', [CatalogController::class, 'companies']);
+    Route::get('/products/frequent', [CatalogController::class, 'frequentProducts']);
     Route::get('/products', [CatalogController::class, 'products']);
     Route::get('/products/{id}', [CatalogController::class, 'product']);
 

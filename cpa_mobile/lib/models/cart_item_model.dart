@@ -11,7 +11,19 @@ class CartItem {
     this.unit = 'Box',
   });
 
-  double get totalPrice => product.ptr * quantity;
+  int get factor => unit == 'Box' ? product.stripsPerBox : 1;
+  double get unitPrice => product.ptr * factor;
+  double get totalPrice => unitPrice * quantity;
+
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      product: Product.fromJson(json['product'] as Map<String, dynamic>),
+      quantity: json['quantity'] is int
+          ? json['quantity']
+          : (int.tryParse(json['quantity']?.toString() ?? '1') ?? 1),
+      unit: json['unit']?.toString() ?? 'Box',
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -21,11 +33,15 @@ class CartItem {
       'product_name': product.name,
       'packing': product.packing,
       'unit': unit,
+      'factor': factor,
+      'strips_per_box': product.stripsPerBox,
       'qty': quantity,
       'quantity': quantity,
-      'price': product.ptr,
+      'price': unitPrice,
+      'unit_price': unitPrice,
       'subtotal': totalPrice,
       'total': totalPrice,
+      'product': product.toJson(),
     };
   }
 }

@@ -97,32 +97,48 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Pack: ${item.product.packing.isNotEmpty ? item.product.packing : 'Std'} | PTR: ₹${item.product.ptr.toStringAsFixed(2)}',
+                              'Pack: ${item.product.packing.isNotEmpty ? item.product.packing : 'Std'} (${item.product.stripsPerBox} strips/box)',
                               style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Rate: ₹${item.unitPrice.toStringAsFixed(2)} / ${item.unit}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF2E7D32),
+                              ),
                             ),
                             const SizedBox(height: 6),
                             // Unit selector chip
                             Row(
                               children: [
                                 const Text('Unit: ', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                DropdownButton<String>(
-                                  value: item.unit,
-                                  isDense: true,
-                                  underline: const SizedBox(),
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF0D47A1),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                  items: const [
-                                    DropdownMenuItem(value: 'Box', child: Text('Box')),
-                                    DropdownMenuItem(value: 'Strip', child: Text('Strip')),
-                                  ],
-                                  onChanged: (newUnit) {
-                                    if (newUnit != null) {
-                                      cart.updateUnit(item.product.id, newUnit);
-                                    }
-                                  },
+                                  child: DropdownButton<String>(
+                                    value: item.unit,
+                                    isDense: true,
+                                    underline: const SizedBox(),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF0D47A1),
+                                    ),
+                                    items: const [
+                                      DropdownMenuItem(value: 'Box', child: Text('Box')),
+                                      DropdownMenuItem(value: 'Strip', child: Text('Strip')),
+                                    ],
+                                    onChanged: (newUnit) {
+                                      if (newUnit != null) {
+                                        cart.updateUnit(item.product.id, newUnit);
+                                      }
+                                    },
+                                  ),
                                 ),
                               ],
                             ),

@@ -16,6 +16,12 @@ class PaginatedOrders {
   });
 }
 
+class CheckoutResult {
+  final bool isSuccess;
+  final String? errorMessage;
+  CheckoutResult({required this.isSuccess, this.errorMessage});
+}
+
 class OrderService {
   Future<PaginatedOrders> getRetailerOrders({int page = 1}) async {
     try {
@@ -43,7 +49,7 @@ class OrderService {
     }
   }
 
-  Future<bool> checkout({
+  Future<CheckoutResult> checkout({
     required String customerName,
     required String phone,
     required List<Map<String, dynamic>> cart,
@@ -66,9 +72,20 @@ class OrderService {
         data: payload,
       );
 
-      return response.statusCode == 200 || response.statusCode == 201;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return CheckoutResult(isSuccess: true);
+      }
+      return CheckoutResult(
+        isSuccess: false,
+        errorMessage: response.data is Map ? response.data['message']?.toString() : null,
+      );
     } catch (e) {
-      return false;
+      String msg = 'Failed to place order.';
+      if (e is DioException && e.response?.data is Map) {
+        final data = e.response!.data as Map;
+        msg = data['message']?.toString() ?? msg;
+      }
+      return CheckoutResult(isSuccess: false, errorMessage: msg);
     }
   }
 }

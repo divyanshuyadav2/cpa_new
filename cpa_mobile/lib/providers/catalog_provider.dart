@@ -7,6 +7,7 @@ class CatalogProvider with ChangeNotifier {
   final CatalogService _catalogService;
 
   List<Product> _products = [];
+  List<Product> _frequentProducts = [];
   List<Company> _companies = [];
   bool _isLoading = false;
   bool _isLoadingMore = false;
@@ -21,6 +22,7 @@ class CatalogProvider with ChangeNotifier {
       : _catalogService = catalogService ?? CatalogService();
 
   List<Product> get products => _products;
+  List<Product> get frequentProducts => _frequentProducts;
   List<Company> get companies => _companies;
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
@@ -30,8 +32,18 @@ class CatalogProvider with ChangeNotifier {
   bool get hasMore => _currentPage < _lastPage;
 
   Future<void> init() async {
-    await fetchCompanies();
-    await fetchProducts(resetPage: true);
+    await Future.wait([
+      fetchCompanies(),
+      fetchFrequentProducts(),
+      fetchProducts(resetPage: true),
+    ]);
+  }
+
+  Future<void> fetchFrequentProducts() async {
+    try {
+      _frequentProducts = await _catalogService.getFrequentProducts();
+      notifyListeners();
+    } catch (_) {}
   }
 
   Future<void> fetchCompanies() async {

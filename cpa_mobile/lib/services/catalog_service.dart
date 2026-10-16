@@ -71,5 +71,19 @@ class CatalogService {
       return PaginatedProducts(products: [], currentPage: 1, lastPage: 1, total: 0);
     }
   }
+
+  Future<List<Product>> getFrequentProducts() async {
+    try {
+      final response = await ApiClient.instance.get(ApiConstants.frequentProducts);
+      if (response.data is List) {
+        return (response.data as List)
+            .map((item) => Product.fromJson(item as Map<String, dynamic>))
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
 }
 

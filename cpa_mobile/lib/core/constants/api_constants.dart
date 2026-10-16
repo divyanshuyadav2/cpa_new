@@ -10,6 +10,7 @@ class ApiConstants {
   // Catalog Endpoints
   static const String companies = '/companies';
   static const String products = '/products';
+  static const String frequentProducts = '/products/frequent';
   
   // Order Endpoints
   static const String retailerOrders = '/orders';

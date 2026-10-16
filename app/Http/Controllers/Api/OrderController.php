@@ -25,7 +25,8 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'cart' => 'required|array',
-            'total' => 'required|numeric|min:0'
+            'total' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $order = Order::create([
@@ -34,7 +35,8 @@ class OrderController extends Controller
             'phone' => $request->phone,
             'cart' => $request->cart,
             'total' => $request->total,
-            'status' => 'Pending'
+            'status' => 'Pending',
+            'notes' => $request->input('notes'),
         ]);
 
         return response()->json([

@@ -16,6 +16,10 @@ void main() async {
   final authProvider = AuthProvider();
   await authProvider.init();
 
+  // Initialize CartProvider and restore saved cart items
+  final cartProvider = CartProvider();
+  await cartProvider.init();
+
   // Inject active AuthProvider into GoRouter for reactive route guarding
   final router = AppRouter.createRouter(authProvider);
 
@@ -23,7 +27,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: authProvider),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider.value(value: cartProvider),
         ChangeNotifierProvider(create: (_) => CatalogProvider()),
         ChangeNotifierProvider(create: (_) => SalesmanProvider()),
       ],
