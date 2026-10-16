@@ -26,3 +26,4 @@ return new class extends Migration
         // Safe no-op: does not alter schema
     }
 };
+

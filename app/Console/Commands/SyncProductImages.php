@@ -42,3 +42,4 @@ class SyncProductImages extends Command
         return 0;
     }
 }
+
