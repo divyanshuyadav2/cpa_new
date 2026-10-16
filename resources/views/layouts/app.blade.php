@@ -213,9 +213,9 @@
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         @if(setting('site_logo'))
-                            <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-8 w-auto object-contain">
+                            <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-10 w-auto object-contain rounded-lg bg-white p-1">
                         @else
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pharma-accent to-pharma-navy text-white font-bold">C</div>
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-auto object-contain rounded-lg bg-white p-1">
                         @endif
                         <span class="text-lg font-bold text-white tracking-wider">{{ setting('company_name', 'Chitranshu Pharmaceuticals Agency') }}</span>
                     </div>
