@@ -17,6 +17,8 @@ class HomeController extends Controller
         $companies = Company::where('is_active', true)->orderBy('name')->get();
         $products = Product::with(['company', 'division', 'salt'])
             ->where('is_active', true)
+            ->whereNotNull('image')
+            ->where('image', '!=', '')
             ->inRandomOrder()
             ->take(8)
             ->get();

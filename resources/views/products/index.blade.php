@@ -11,7 +11,7 @@
                 <p class="text-sm text-slate-500 mt-1">Explore our range of pharmaceutical products, active compositions, and salts.</p>
             </div>
             <div class="mt-4 md:mt-0 text-sm font-bold text-slate-600 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
-                Showing {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} of {{ $products->total() }} Products
+                Showing <span id="showing-first">{{ $products->firstItem() ?? 0 }}</span> - <span id="showing-last">{{ $products->lastItem() ?? 0 }}</span> of <span id="showing-total">{{ $products->total() }}</span> Products
             </div>
         </div>
 
@@ -90,63 +90,47 @@
                         </a>
                     </div>
                 @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                        @foreach($products as $product)
-                            <div class="flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition duration-200">
-                                
-                                <!-- Header Badge & Image -->
-                                <div class="h-44 bg-slate-50 border-b border-slate-100 flex items-center justify-center text-4xl relative">
-                                    @if($product->image)
-                                        <img src="{{ media_url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                                    @else
-                                        💊
-                                    @endif
-                                </div>
-
-                                <!-- Card Details -->
-                                <div class="p-5 flex-grow flex flex-col">
-                                    <span class="text-[9px] font-bold text-pharma-gold uppercase tracking-wider">{{ $product->company?->name ?? 'N/A' }} | {{ $product->division?->name ?? 'N/A' }}</span>
-                                    
-                                    <h3 class="text-base font-bold text-slate-800 mt-1 truncate">
-                                        <a href="{{ route('public.products.show', $product->id) }}" class="hover:text-pharma-accent transition">{{ $product->name }}</a>
-                                    </h3>
-                                    
-                                    <p class="text-xs text-slate-500 font-semibold mt-1">Composition: {{ Str::limit($product->composition, 40) }}</p>
-                                    <p class="text-xs text-slate-400 mt-2 italic">Packing: {{ $product->packing }}</p>
-
-                                    <!-- Salt badge -->
-                                    @if($product->salt?->name)
-                                        <div class="mt-3">
-                                            <span class="inline-block text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
-                                                {{ $product->salt->name }}
-                                            </span>
-                                        </div>
-                                    @endif
-
-                                    <!-- Price & Cart Button -->
-                                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
-                                        <div>
-                                            <span class="block text-[8px] uppercase font-bold text-slate-400">MRP Value</span>
-                                            <span class="text-base font-extrabold text-pharma-navy">₹{{ number_format($product->mrp, 2) }}</span>
-                                        </div>
-
-                                            <form action="{{ route('cart.add') }}" method="POST" class="flex items-center space-x-1">
-                                                @csrf
-                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                <input type="number" name="quantity" value="1" min="1" 
-                                                       class="w-12 px-2 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs font-semibold text-center focus:outline-none focus:border-pharma-accent">
-                                                <button type="submit" class="px-3 py-1 bg-pharma-accent hover:bg-pharma-navy text-white text-xs font-bold rounded-lg transition shadow-sm">
-                                                    Add
-                                                </button>
-                                            </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                    <!-- Products Grid -->
+                    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                        @include('products._card_list', ['products' => $products])
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="bg-white px-4 py-4 border border-slate-200 rounded-2xl shadow-sm">
+                    <!-- Sentinel to trigger infinite scroll -->
+                    <div id="scroll-sentinel" class="w-full h-8"></div>
+
+                    <!-- Loading Spinner -->
+                    <div id="infinite-scroll-loader" class="hidden my-8 flex justify-center items-center">
+                        <div class="inline-flex items-center gap-3 px-6 py-3.5 bg-white border border-slate-200 rounded-2xl shadow-md text-pharma-navy text-sm font-bold">
+                            <svg class="animate-spin h-5 w-5 text-pharma-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Aur products load ho rahe hain...</span>
+                        </div>
+                    </div>
+
+                    <!-- End of List Indicator -->
+                    <div id="infinite-scroll-end" class="{{ $products->hasMorePages() ? 'hidden' : '' }} my-8 text-center">
+                        <div class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-500 text-xs font-bold shadow-sm">
+                            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Sabhi products load ho chuke hain (Total <span id="showing-total-end">{{ $products->total() }}</span> Products)</span>
+                        </div>
+                    </div>
+
+                    <!-- Network Error / Retry Notice -->
+                    <div id="infinite-scroll-error" class="hidden my-8 text-center">
+                        <div class="inline-flex items-center gap-3 px-6 py-3 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm font-semibold shadow-sm">
+                            <span>Products load karne mein problem aayi.</span>
+                            <button type="button" id="retry-load-btn" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition shadow">
+                                Retry Karein
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fallback Pagination (hidden when JS is active) -->
+                    <div id="pagination-container" class="bg-white px-4 py-4 border border-slate-200 rounded-2xl shadow-sm hidden">
                         {{ $products->links() }}
                     </div>
                 @endif
@@ -156,3 +140,107 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let nextPageUrl = @json($products->nextPageUrl());
+    let isLoading = false;
+
+    const sentinel = document.getElementById('scroll-sentinel');
+    const loader = document.getElementById('infinite-scroll-loader');
+    const endNotice = document.getElementById('infinite-scroll-end');
+    const errorNotice = document.getElementById('infinite-scroll-error');
+    const retryBtn = document.getElementById('retry-load-btn');
+    const productsGrid = document.getElementById('products-grid');
+    const showingLast = document.getElementById('showing-last');
+    const paginationContainer = document.getElementById('pagination-container');
+
+    // Ensure fallback pagination is hidden when JS is active
+    if (paginationContainer) {
+        paginationContainer.classList.add('hidden');
+    }
+
+    if (!sentinel || !productsGrid) return;
+
+    function loadMoreProducts() {
+        if (!nextPageUrl || isLoading) return;
+
+        isLoading = true;
+        if (loader) loader.classList.remove('hidden');
+        if (errorNotice) errorNotice.classList.add('hidden');
+
+        fetch(nextPageUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP status ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.html) {
+                productsGrid.insertAdjacentHTML('beforeend', data.html);
+            }
+
+            nextPageUrl = data.next_page_url;
+
+            if (showingLast && data.to) {
+                showingLast.textContent = data.to;
+            }
+
+            isLoading = false;
+            if (loader) loader.classList.add('hidden');
+
+            if (!data.has_more || !nextPageUrl) {
+                if (observer) observer.disconnect();
+                if (endNotice) endNotice.classList.remove('hidden');
+            }
+        })
+        .catch(err => {
+            console.error('Error fetching more products:', err);
+            isLoading = false;
+            if (loader) loader.classList.add('hidden');
+            if (errorNotice) errorNotice.classList.remove('hidden');
+        });
+    }
+
+    if (retryBtn) {
+        retryBtn.addEventListener('click', function () {
+            loadMoreProducts();
+        });
+    }
+
+    let observer = null;
+    if (nextPageUrl && 'IntersectionObserver' in window) {
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !isLoading && nextPageUrl) {
+                    loadMoreProducts();
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '350px 0px', // trigger 350px before bottom for seamless scroll
+            threshold: 0
+        });
+
+        observer.observe(sentinel);
+    } else if (nextPageUrl) {
+        // Fallback for older browsers
+        window.addEventListener('scroll', function () {
+            if (isLoading || !nextPageUrl) return;
+            const scrollPosition = window.innerHeight + window.scrollY;
+            const threshold = document.documentElement.scrollHeight - 450;
+            if (scrollPosition >= threshold) {
+                loadMoreProducts();
+            }
+        }, { passive: true });
+    }
+});
+</script>
+@endpush

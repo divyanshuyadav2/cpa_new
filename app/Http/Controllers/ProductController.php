@@ -41,6 +41,19 @@ class ProductController extends Controller
         // Paginate results
         $products = $query->latest()->paginate(12)->withQueryString();
 
+        // Return JSON with partial HTML for infinite scroll AJAX requests
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'html' => view('products._card_list', compact('products'))->render(),
+                'next_page_url' => $products->nextPageUrl(),
+                'has_more' => $products->hasMorePages(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'total' => $products->total(),
+                'to' => $products->lastItem() ?? 0,
+            ]);
+        }
+
         // Get filter options
         $companies = Company::where('is_active', true)->orderBy('name')->get();
         
