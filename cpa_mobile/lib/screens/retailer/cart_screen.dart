@@ -70,7 +70,7 @@ class _CartScreenState extends State<CartScreen> {
 
     return Column(
       children: [
-        // Items List
+        // Items List — shrinks when keyboard opens
         Expanded(
           child: ListView.separated(
             padding: const EdgeInsets.all(12),

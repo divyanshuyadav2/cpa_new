@@ -34,6 +34,7 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
     final cart = context.watch<CartProvider>();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Cart handles keyboard insets itself
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
