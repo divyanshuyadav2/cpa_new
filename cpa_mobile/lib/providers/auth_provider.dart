@@ -9,11 +9,13 @@ class AuthProvider with ChangeNotifier {
   User? _user;
   String? _token;
   bool _isLoading = false;
+  String? _errorMessage;
 
   User? get user => _user;
   String? get token => _token;
   bool get isAuthenticated => _token != null;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
   
   bool get isAdmin => _user?.role == 'admin';
   bool get isSalesman => _user?.role == 'salesman';
@@ -30,6 +32,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> login(String email, String password, String type) async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
@@ -50,7 +53,7 @@ class AuthProvider with ChangeNotifier {
         id: _user!.id,
         name: _user!.name,
         email: _user!.email,
-        role: response.data['role'],
+        role: response.data['role'] ?? _user!.role,
         phone: _user!.phone,
         companyName: _user!.companyName,
         address: _user!.address,
@@ -64,6 +67,16 @@ class AuthProvider with ChangeNotifier {
       return true;
     } on DioException catch (e) {
       _isLoading = false;
+      if (e.response?.data is Map && e.response?.data['message'] != null) {
+        _errorMessage = e.response!.data['message'].toString();
+      } else {
+        _errorMessage = 'Login failed. Please check your credentials or connection.';
+      }
+      notifyListeners();
+      return false;
+    } catch (_) {
+      _isLoading = false;
+      _errorMessage = 'An unexpected error occurred. Please try again.';
       notifyListeners();
       return false;
     }
@@ -77,9 +90,12 @@ class AuthProvider with ChangeNotifier {
         id: _user!.id,
         name: _user!.name,
         email: _user!.email,
-        role: response.data['role'],
+        role: response.data['role'] ?? _user!.role,
+        phone: _user!.phone,
+        companyName: _user!.companyName,
+        address: _user!.address,
       );
-    } catch (e) {
+    } catch (_) {
       // If fetching user fails (e.g., token expired), logout
       await logout();
     }
@@ -90,12 +106,13 @@ class AuthProvider with ChangeNotifier {
       if (_token != null) {
         await ApiClient.instance.post(ApiConstants.logout);
       }
-    } catch (e) {
+    } catch (_) {
       // Ignore errors on logout
     }
 
     _token = null;
     _user = null;
+    _errorMessage = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
     

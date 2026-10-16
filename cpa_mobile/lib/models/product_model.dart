@@ -27,16 +27,34 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      name: json['name'],
-      composition: json['composition'],
-      packing: json['packing'],
-      mrp: double.parse(json['mrp'].toString()),
-      ptr: double.parse(json['ptr'].toString()),
-      pts: double.parse(json['pts'].toString()),
-      stockQty: json['stock_qty'],
-      imageFullUrl: json['image_full_url'],
-      company: json['company'] != null ? Company.fromJson(json['company']) : null,
+      id: json['id'] is int ? json['id'] : (int.tryParse(json['id']?.toString() ?? '0') ?? 0),
+      name: json['name']?.toString() ?? '',
+      composition: json['composition']?.toString() ?? '',
+      packing: json['packing']?.toString() ?? '',
+      mrp: double.tryParse(json['mrp']?.toString() ?? '0') ?? 0.0,
+      ptr: double.tryParse(json['ptr']?.toString() ?? '0') ?? 0.0,
+      pts: double.tryParse(json['pts']?.toString() ?? '0') ?? 0.0,
+      stockQty: json['stock_qty'] is int ? json['stock_qty'] : (int.tryParse(json['stock_qty']?.toString() ?? '0') ?? 0),
+      imageFullUrl: json['image_full_url']?.toString(),
+      company: json['company'] != null && json['company'] is Map<String, dynamic>
+          ? Company.fromJson(json['company'])
+          : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'composition': composition,
+      'packing': packing,
+      'mrp': mrp,
+      'ptr': ptr,
+      'pts': pts,
+      'stock_qty': stockQty,
+      'image_full_url': imageFullUrl,
+      'company': company?.toJson(),
+    };
+  }
 }
+

@@ -1,7 +1,6 @@
 class ApiConstants {
-  // Use 10.0.2.2 for Android Emulator connecting to local host
-  // Use your live domain when in production
-  static const String baseUrl = 'https://chitranshupharma.com/cpa/api';
+  // Live domain API endpoint (Without /cpa/ prefix)
+  static const String baseUrl = 'https://chitranshupharma.com/api';
   
   // Auth Endpoints
   static const String login = '/login';
@@ -19,4 +18,6 @@ class ApiConstants {
   // Salesman Endpoints
   static const String salesmanRetailers = '/salesman/retailers';
   static const String salesmanOrders = '/salesman/orders';
+  static String salesmanOrderStatus(int id) => '/salesman/orders/$id/status';
 }
+
