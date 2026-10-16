@@ -211,7 +211,7 @@ class _ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<_ProductCard> {
-  String _selectedUnit = 'Box';
+  final String _selectedUnit = 'Box';
 
   @override
   Widget build(BuildContext context) {

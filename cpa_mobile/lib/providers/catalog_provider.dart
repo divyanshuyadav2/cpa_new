@@ -102,3 +102,4 @@ class CatalogProvider with ChangeNotifier {
     fetchProducts(resetPage: true);
   }
 }
+
