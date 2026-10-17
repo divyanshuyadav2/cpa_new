@@ -77,17 +77,17 @@
     <!-- Header Navigation -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16 sm:h-20">
+            <div class="flex justify-between items-center h-20 sm:h-24">
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex items-center space-x-3 shrink-0">
+                <a href="{{ route('home') }}" class="flex items-center space-x-3.5 shrink-0 py-1">
                     @if(setting('site_logo'))
-                        <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain rounded-lg">
+                        <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-14 sm:h-16 md:h-20 w-auto object-contain transition-transform duration-200 hover:scale-105">
                     @else
-                        <img src="{{ asset('images/cpa_logo_blue.png') }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain rounded-lg">
+                        <img src="{{ asset('images/cpa_logo_blue.png') }}" alt="Logo" class="h-14 sm:h-16 md:h-20 w-auto object-contain transition-transform duration-200 hover:scale-105">
                     @endif
                     <div>
-                        <span class="block text-lg sm:text-xl font-bold tracking-tight text-pharma-navy leading-none">Chitranshu</span>
-                        <span class="text-[10px] sm:text-xs text-pharma-gold font-semibold uppercase tracking-wider">Pharmaceuticals</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold tracking-tight text-pharma-navy leading-tight">Chitranshu</span>
+                        <span class="text-xs sm:text-sm text-pharma-gold font-bold uppercase tracking-wider block">Pharmaceuticals</span>
                     </div>
                 </a>
 

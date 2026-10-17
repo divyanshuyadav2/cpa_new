@@ -40,8 +40,9 @@ class _SalesmanDashboardState extends State<SalesmanDashboard> with SingleTicker
 
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 72,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 12.0, top: 10.0, bottom: 10.0),
+          padding: const EdgeInsets.only(left: 14.0, top: 8.0, bottom: 8.0),
           child: Image.asset(
             'assets/images/cpa_logo_white.png',
             fit: BoxFit.contain,
