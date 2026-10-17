@@ -39,24 +39,27 @@ class AuthProvider with ChangeNotifier {
     try {
       final response = await ApiClient.instance.post(
         ApiConstants.login,
-        data: FormData.fromMap({
-          'email': email,
+        data: {
+          'email': email.trim(),
           'password': password,
-        }),
+        },
       );
 
       _token = response.data['token'];
-      _user = User.fromJson(response.data['user']);
+      final userData = response.data['user'] as Map<String, dynamic>;
+      _user = User.fromJson(userData);
       
-      // Override role from backend correctly
+      // Override role from backend correctly and ensure fallback name
+      final backendRole = (response.data['role'] ?? _user!.role).toString().toLowerCase();
       _user = User(
         id: _user!.id,
-        name: _user!.name,
+        name: _user!.name.trim().isNotEmpty ? _user!.name : (backendRole == 'admin' ? 'Admin' : 'User'),
         email: _user!.email,
-        role: response.data['role'] ?? _user!.role,
+        role: backendRole,
         phone: _user!.phone,
         companyName: _user!.companyName,
         address: _user!.address,
+        salesmanId: _user!.salesmanId,
       );
 
       final prefs = await SharedPreferences.getInstance();
@@ -67,16 +70,12 @@ class AuthProvider with ChangeNotifier {
       return true;
     } on DioException catch (e) {
       _isLoading = false;
-      if (e.response?.data is Map && e.response?.data['message'] != null) {
-        _errorMessage = e.response!.data['message'].toString();
-      } else {
-        _errorMessage = 'Login failed. Please check your credentials or connection.';
-      }
+      _errorMessage = _extractDioError(e, 'Login failed. Please check your credentials or connection.');
       notifyListeners();
       return false;
-    } catch (_) {
+    } catch (e) {
       _isLoading = false;
-      _errorMessage = 'An unexpected error occurred. Please try again.';
+      _errorMessage = 'An unexpected error occurred: ${e.toString()}';
       notifyListeners();
       return false;
     }
@@ -97,27 +96,30 @@ class AuthProvider with ChangeNotifier {
     try {
       final response = await ApiClient.instance.post(
         ApiConstants.register,
-        data: FormData.fromMap({
-          'name': name,
-          'email': email,
+        data: {
+          'name': name.trim(),
+          'email': email.trim(),
           'password': password,
-          'phone': phone,
-          'company_name': companyName,
-          'address': address,
+          'phone': phone.trim(),
+          'company_name': companyName.trim(),
+          'address': address.trim(),
           'role': 'retailer',
-        }),
+        },
       );
 
       _token = response.data['token'];
-      _user = User.fromJson(response.data['user']);
+      final userData = response.data['user'] as Map<String, dynamic>;
+      _user = User.fromJson(userData);
+      final backendRole = (response.data['role'] ?? _user!.role).toString().toLowerCase();
       _user = User(
         id: _user!.id,
-        name: _user!.name,
+        name: _user!.name.trim().isNotEmpty ? _user!.name : 'User',
         email: _user!.email,
-        role: response.data['role'] ?? _user!.role,
+        role: backendRole,
         phone: _user!.phone,
         companyName: _user!.companyName,
         address: _user!.address,
+        salesmanId: _user!.salesmanId,
       );
 
       final prefs = await SharedPreferences.getInstance();
@@ -128,19 +130,68 @@ class AuthProvider with ChangeNotifier {
       return true;
     } on DioException catch (e) {
       _isLoading = false;
-      if (e.response?.data is Map && e.response?.data['message'] != null) {
-        _errorMessage = e.response!.data['message'].toString();
-      } else {
-        _errorMessage = 'Registration failed. Please check details or connection.';
-      }
+      _errorMessage = _extractDioError(e, 'Registration failed. Please check details or connection.');
       notifyListeners();
       return false;
-    } catch (_) {
+    } catch (e) {
       _isLoading = false;
       _errorMessage = 'An unexpected error occurred during registration.';
       notifyListeners();
       return false;
     }
+  }
+
+  String _extractDioError(DioException e, String defaultMessage) {
+    if (e.response?.data != null) {
+      final data = e.response!.data;
+      if (data is Map) {
+        if (data['message'] != null && data['message'].toString().trim().isNotEmpty) {
+          return data['message'].toString();
+        }
+        if (data['errors'] != null && data['errors'] is Map) {
+          final errors = data['errors'] as Map;
+          if (errors.isNotEmpty) {
+            final firstVal = errors.values.first;
+            if (firstVal is List && firstVal.isNotEmpty) {
+              return firstVal.first.toString();
+            } else if (firstVal != null) {
+              return firstVal.toString();
+            }
+          }
+        }
+        if (data['error'] != null) {
+          return data['error'].toString();
+        }
+      } else if (data is String && data.isNotEmpty && !data.contains('<!DOCTYPE')) {
+        return data;
+      }
+    }
+
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout ||
+        e.type == DioExceptionType.sendTimeout) {
+      return 'Connection timed out. Please check your internet connection.';
+    }
+    if (e.type == DioExceptionType.connectionError) {
+      return 'Could not reach server. Please check your internet connection.';
+    }
+    if (e.response?.statusCode != null) {
+      if (e.response!.statusCode == 401) {
+        return 'Invalid email or password.';
+      }
+      if (e.response!.statusCode == 403) {
+        return 'Access denied. Your account may be inactive.';
+      }
+      if (e.response!.statusCode == 404) {
+        return 'Server route not found.';
+      }
+      if (e.response!.statusCode == 500) {
+        return 'Server error (500). Please try again later.';
+      }
+      return 'Server error (${e.response!.statusCode}). Please try again.';
+    }
+
+    return defaultMessage;
   }
 
   Future<void> fetchUser() async {

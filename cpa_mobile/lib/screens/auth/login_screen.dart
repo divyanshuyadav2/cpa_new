@@ -63,38 +63,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   Center(
                     child: Image.asset(
                       'assets/images/cpa_logo_blue.png',
-                      height: 90,
+                      height: 110,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => const Icon(
                         Icons.local_pharmacy_rounded,
-                        size: 70,
+                        size: 80,
                         color: Color(0xFF0D47A1),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'CPA',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF0D47A1),
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Chitranshu Pharmaceuticals Agency',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 36),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
