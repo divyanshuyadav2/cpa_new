@@ -40,7 +40,7 @@ class AuthProvider with ChangeNotifier {
       final response = await ApiClient.instance.post(
         ApiConstants.login,
         data: {
-          'email': email.trim(),
+          'email': email.trim().toLowerCase(),
           'password': password,
         },
       );
