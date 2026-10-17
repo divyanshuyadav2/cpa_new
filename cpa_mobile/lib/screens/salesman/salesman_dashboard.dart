@@ -40,6 +40,13 @@ class _SalesmanDashboardState extends State<SalesmanDashboard> with SingleTicker
 
     return Scaffold(
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0, top: 10.0, bottom: 10.0),
+          child: Image.asset(
+            'assets/images/cpa_logo_white.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         title: Column(
           children: [
             const Text('Salesman Field Portal', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),

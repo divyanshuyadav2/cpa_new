@@ -39,6 +39,13 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
     return Scaffold(
       resizeToAvoidBottomInset: false, // Cart handles keyboard insets itself
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0, top: 10.0, bottom: 10.0),
+          child: Image.asset(
+            'assets/images/cpa_logo_white.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

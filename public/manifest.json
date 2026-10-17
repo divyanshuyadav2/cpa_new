@@ -9,13 +9,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/images/logo.png",
+      "src": "/images/cpa_logo_blue.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/images/logo.png",
+      "src": "/images/cpa_logo_blue.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

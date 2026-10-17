@@ -41,3 +41,5 @@ flutter:
   
   assets:
     - assets/images/logo.png
+    - assets/images/cpa_logo_blue.png
+    - assets/images/cpa_logo_white.png

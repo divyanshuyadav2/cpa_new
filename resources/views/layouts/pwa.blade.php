@@ -13,9 +13,9 @@
     
     <!-- PWA Manifest & Icons -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/cpa_logo_blue.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/cpa_logo_blue.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/cpa_logo_blue.png') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,7 +63,7 @@
                 @if(setting('site_logo'))
                     <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-9 w-auto object-contain bg-white/10 rounded-lg p-0.5">
                 @else
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-9 w-auto object-contain bg-white/10 rounded-lg p-0.5">
+                    <img src="{{ asset('images/cpa_logo_white.png') }}" alt="Logo" class="h-9 w-auto object-contain">
                 @endif
                 <div>
                     <span class="font-bold text-sm text-white tracking-wide block leading-none">Chitranshu Pharma</span>

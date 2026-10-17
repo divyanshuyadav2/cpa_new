@@ -36,8 +36,8 @@
         }
     </script>
     
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/cpa_logo_blue.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/cpa_logo_blue.png') }}">
 </head>
 <body class="h-full font-sans antialiased text-slate-800" x-data="{ sidebarOpen: false }">
 
@@ -60,7 +60,7 @@
                     @if(setting('site_logo'))
                         <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="w-9 h-9 object-contain rounded-lg">
                     @else
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-9 h-9 object-contain rounded-lg">
+                        <img src="{{ asset('images/cpa_logo_white.png') }}" alt="Logo" class="w-9 h-9 object-contain">
                     @endif
                     <div>
                         <span class="block text-sm font-bold text-white tracking-wider uppercase leading-none">CPA Admin</span>

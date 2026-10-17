@@ -55,8 +55,8 @@
         }
     </script>
     
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/cpa_logo_blue.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/cpa_logo_blue.png') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
 </head>
 <body class="flex flex-col h-full font-sans antialiased text-slate-800" x-data="{ cartOpen: false, mobileMenuOpen: false }">
@@ -83,7 +83,7 @@
                     @if(setting('site_logo'))
                         <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain rounded-lg">
                     @else
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain rounded-lg">
+                        <img src="{{ asset('images/cpa_logo_blue.png') }}" alt="Logo" class="h-10 sm:h-12 w-auto object-contain rounded-lg">
                     @endif
                     <div>
                         <span class="block text-lg sm:text-xl font-bold tracking-tight text-pharma-navy leading-none">Chitranshu</span>
@@ -215,7 +215,7 @@
                         @if(setting('site_logo'))
                             <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="h-10 w-auto object-contain rounded-lg bg-white p-1">
                         @else
-                            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-auto object-contain rounded-lg bg-white p-1">
+                            <img src="{{ asset('images/cpa_logo_white.png') }}" alt="Logo" class="h-10 w-auto object-contain">
                         @endif
                         <span class="text-lg font-bold text-white tracking-wider">{{ setting('company_name', 'Chitranshu Pharmaceuticals Agency') }}</span>
                     </div>

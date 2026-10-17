@@ -35,8 +35,8 @@
         }
     </script>
     
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/cpa_logo_blue.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/cpa_logo_blue.png') }}">
 </head>
 <body class="flex flex-col justify-center h-full min-h-screen py-12 sm:px-6 lg:px-8 bg-slate-900 text-slate-100 font-sans antialiased">
 
@@ -45,7 +45,7 @@
         @if(setting('site_logo'))
             <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-4 rounded-xl bg-white/10 p-2">
         @else
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-4 rounded-xl bg-white/10 p-2">
+            <img src="{{ asset('images/cpa_logo_white.png') }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-4">
         @endif
         <h2 class="mt-6 text-3xl font-extrabold tracking-tight text-white font-display">
             Admin Panel Login

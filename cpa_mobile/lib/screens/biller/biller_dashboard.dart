@@ -28,6 +28,13 @@ class _BillerDashboardState extends State<BillerDashboard> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0, top: 10.0, bottom: 10.0),
+          child: Image.asset(
+            'assets/images/cpa_logo_white.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

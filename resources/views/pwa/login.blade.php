@@ -10,7 +10,7 @@
             @if(setting('site_logo'))
                 <img src="{{ media_url(setting('site_logo')) }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-3 bg-white/10 p-2 rounded-2xl">
             @else
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-3 bg-white/10 p-2 rounded-2xl">
+                <img src="{{ asset('images/cpa_logo_white.png') }}" alt="Logo" class="mx-auto h-20 w-auto object-contain mb-3">
             @endif
             <h1 class="text-2xl font-extrabold text-white tracking-tight">Sign In to Portal</h1>
             <p class="text-xs text-slate-400 mt-1">Retailer Counter Ordering Portal</p>
