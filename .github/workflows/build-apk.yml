@@ -41,21 +41,8 @@ jobs:
         run: flutter pub get
 
       - name: Build Android Release APK
-        id: build_apk
         working-directory: ./cpa_mobile
-        run: |
-          set -o pipefail
-          flutter build apk --release 2>&1 | tee /tmp/flutter_build.log
-        continue-on-error: true
-
-      - name: Inspect Build Log on Failure
-        if: steps.build_apk.outcome != 'success'
-        run: |
-          echo "## ❌ Build Failed - Log Preview" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -n 120 /tmp/flutter_build.log >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          exit 1
+        run: flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

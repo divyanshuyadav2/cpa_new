@@ -134,7 +134,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0D47A1).withValues(alpha: 0.1),
+                        color: const Color(0xFF0D47A1).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.receipt_long, color: Color(0xFF0D47A1)),
