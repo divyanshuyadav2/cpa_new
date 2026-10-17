@@ -1,11 +1,12 @@
 {
-    "name": "cpa_mobile",
-    "short_name": "cpa_mobile",
+    "name": "CPA",
+    "short_name": "CPA",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#0D47A1",
+    "description": "CPA - Chitranshu Pharmaceuticals Agency",
+
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

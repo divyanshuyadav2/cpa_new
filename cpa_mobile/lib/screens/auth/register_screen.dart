@@ -49,9 +49,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Registration successful! Welcome to Chitranshu Pharma 🎉'),
+          content: Text('Registration successful! Welcome to CPA 🎉'),
           backgroundColor: Color(0xFF2E7D32),
           behavior: SnackBarBehavior.floating,
+
         ),
       );
       Navigator.pop(context);

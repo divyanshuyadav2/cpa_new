@@ -14,13 +14,21 @@ import 'providers/biller_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize AuthProvider and check existing session
   final authProvider = AuthProvider();
-  await authProvider.init();
-
-  // Initialize CartProvider and restore saved cart items
   final cartProvider = CartProvider();
-  await cartProvider.init();
+
+  // Safely initialize providers with timeout so startup never hangs on a dark screen
+  try {
+    await authProvider.init().timeout(const Duration(seconds: 4));
+  } catch (e) {
+    debugPrint('AuthProvider init error: $e');
+  }
+
+  try {
+    await cartProvider.init().timeout(const Duration(seconds: 4));
+  } catch (e) {
+    debugPrint('CartProvider init error: $e');
+  }
 
   // Inject active AuthProvider into GoRouter for reactive route guarding
   final router = AppRouter.createRouter(authProvider);
@@ -48,8 +56,10 @@ class CPAMobileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Chitranshu Pharma',
+      title: 'CPA',
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.lightTheme, // Force clean light theme even on dark mode devices
+      themeMode: ThemeMode.light,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );
