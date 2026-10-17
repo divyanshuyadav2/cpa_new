@@ -45,18 +45,24 @@ void main() {
         stockQty: 100,
       );
 
-      final item = CartItem(product: product, quantity: 3, unit: 'Box');
-      expect(item.totalPrice, 66.0);
+      // Testing Strip unit (factor = 1)
+      final stripItem = CartItem(product: product, quantity: 3, unit: 'Strip');
+      expect(stripItem.totalPrice, 66.0);
 
-      final json = item.toJson();
+      // Testing Box unit (factor = 10)
+      final boxItem = CartItem(product: product, quantity: 3, unit: 'Box');
+      expect(boxItem.totalPrice, 660.0);
+
+      final json = stripItem.toJson();
       expect(json['id'], 101);
       expect(json['product_id'], 101);
       expect(json['qty'], 3);
       expect(json['quantity'], 3);
-      expect(json['unit'], 'Box');
+      expect(json['unit'], 'Strip');
       expect(json['price'], 22.0);
       expect(json['subtotal'], 66.0);
     });
+
 
     test('Order.fromJson parses safely with null user and cart items', () {
       final json = <String, dynamic>{
