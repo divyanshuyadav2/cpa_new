@@ -64,12 +64,12 @@ class _CartScreenState extends State<CartScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Aapka Cart Khali Hai',
+                'Your Cart is Empty',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
               ),
               const SizedBox(height: 8),
               Text(
-                'Catalog se medicines select karein aur apne order me add karein.',
+                'Explore our catalog to select and add medicines to your order.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
               ),
@@ -81,330 +81,356 @@ class _CartScreenState extends State<CartScreen> {
 
     final cartItems = cart.items.values.toList();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      body: CustomScrollView(
-        slivers: [
-          // Header / Actions Bar
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Order Items (${cart.itemCount})',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+    return Container(
+      color: const Color(0xFFF8FAFC),
+      child: Column(
+        children: [
+          // Scrollable Cart Content
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              children: [
+                // Header (Items count & Clear All)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Order Items (${cart.itemCount})',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
                     ),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red.shade700,
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                      ),
+                      icon: const Icon(Icons.delete_sweep_outlined, size: 18),
+                      label: const Text('Clear All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Clear Cart'),
+                            content: const Text('Are you sure you want to remove all items from your cart?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('Cancel'),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text('Clear Cart'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) {
+                          cart.clear();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // List of Cart Item Cards
+                ...cartItems.map((item) => _buildCartItemCard(context, item, cart)),
+                const SizedBox(height: 8),
+
+                // Delivery & Contact Card
+                Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: Colors.grey.shade200),
                   ),
-                  TextButton.icon(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.red.shade700,
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                    ),
-                    icon: const Icon(Icons.delete_sweep_outlined, size: 18),
-                    label: const Text('Clear All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                    onPressed: () async {
-                      final confirm = await showDialog<bool>(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text('Clear Cart'),
-                          content: const Text('Kya aap cart se saare items hatana chahte hain?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx, false),
-                              child: const Text('Cancel'),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                              onPressed: () => Navigator.pop(ctx, true),
-                              child: const Text('Clear Cart'),
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.storefront_outlined, color: Color(0xFF0D47A1), size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Delivery & Contact Info',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
-                      );
-                      if (confirm == true) {
-                        cart.clear();
-                      }
-                    },
+                        const SizedBox(height: 14),
+                        TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            labelText: 'Medical Store / Shop Name',
+                            prefixIcon: const Icon(Icons.business_outlined, size: 20),
+                            filled: true,
+                            fillColor: const Color(0xFFF8FAFC),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            labelText: 'Contact Phone Number',
+                            prefixIcon: const Icon(Icons.phone_outlined, size: 20),
+                            filled: true,
+                            fillColor: const Color(0xFFF8FAFC),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: _notesController,
+                          decoration: InputDecoration(
+                            labelText: 'Order Notes (Optional)',
+                            hintText: 'e.g. Urgent evening delivery',
+                            prefixIcon: const Icon(Icons.note_alt_outlined, size: 20),
+                            filled: true,
+                            fillColor: const Color(0xFFF8FAFC),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 12),
+
+                // Bill Summary Card
+                Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Bill Summary',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Items Count', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                            Text('${cart.itemCount} item(s)', style: const TextStyle(fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Total Quantity', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                            Text('${cart.totalUnits} unit(s)', style: const TextStyle(fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                        const Divider(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Grand Total',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0D47A1)),
+                            ),
+                            Text(
+                              '₹${cart.totalAmount.toStringAsFixed(2)}',
+                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF2E7D32)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Big Full-Width Place Order Button
+                _buildBigPlaceOrderButton(context, cart),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
 
-          // Cart Items List
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final item = cartItems[index];
-                  return _buildCartItemCard(context, item, cart);
-                },
-                childCount: cartItems.length,
-              ),
-            ),
-          ),
+          // Fixed Bottom Bar
+          _buildBottomCheckoutBar(context, cart),
+        ],
+      ),
+    );
+  }
 
-          // Delivery & Contact Details Card
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: Colors.grey.shade200),
-                ),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: const [
-                          Icon(Icons.storefront_outlined, color: Color(0xFF0D47A1), size: 20),
-                          SizedBox(width: 8),
-                          Text(
-                            'Delivery & Contact Info',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          labelText: 'Medical Store / Shop Name',
-                          prefixIcon: const Icon(Icons.business_outlined, size: 20),
-                          filled: true,
-                          fillColor: const Color(0xFFF8FAFC),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          labelText: 'Contact Phone Number',
-                          prefixIcon: const Icon(Icons.phone_outlined, size: 20),
-                          filled: true,
-                          fillColor: const Color(0xFFF8FAFC),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: _notesController,
-                        decoration: InputDecoration(
-                          labelText: 'Order Notes (Optional)',
-                          hintText: 'e.g. Urgent evening delivery',
-                          prefixIcon: const Icon(Icons.note_alt_outlined, size: 20),
-                          filled: true,
-                          fillColor: const Color(0xFFF8FAFC),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+  Widget _buildBigPlaceOrderButton(BuildContext context, CartProvider cart) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF0D47A1),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 2,
+        ),
+        onPressed: cart.isCheckingOut ? null : () => _handleCheckout(context, cart),
+        icon: cart.isCheckingOut
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              )
+            : const Icon(Icons.check_circle_outline, size: 22),
+        label: Text(
+          cart.isCheckingOut
+              ? 'Placing Order...'
+              : 'CONFIRM & PLACE ORDER (₹${cart.totalAmount.toStringAsFixed(2)})',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomCheckoutBar(BuildContext context, CartProvider cart) {
+    return Container(
+      height: 72,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 6,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'TOTAL PAYABLE',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.5),
+              ),
+              Text(
+                '₹${cart.totalAmount.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF0D47A1),
                 ),
               ),
-            ),
+            ],
           ),
-
-          // Bill Summary Card
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              child: Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: Colors.grey.shade200),
-                ),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Bill Summary',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Items Count', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                          Text('${cart.itemCount} item(s)', style: const TextStyle(fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Total Quantity', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                          Text('${cart.totalUnits} unit(s)', style: const TextStyle(fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                      const Divider(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Grand Total',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0D47A1)),
-                          ),
-                          Text(
-                            '₹${cart.totalAmount.toStringAsFixed(2)}',
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF2E7D32)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+          SizedBox(
+            height: 44,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0D47A1),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 22),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                elevation: 1,
+              ),
+              onPressed: cart.isCheckingOut ? null : () => _handleCheckout(context, cart),
+              icon: cart.isCheckingOut
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    )
+                  : const Icon(Icons.arrow_forward_rounded, size: 18),
+              label: Text(
+                cart.isCheckingOut ? 'Placing...' : 'Place Order',
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ),
           ),
         ],
       ),
-
-      // Fixed Bottom Place Order Bar
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'TOTAL PAYABLE',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
-                    ),
-                    Text(
-                      '₹${cart.totalAmount.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w900,
-                        color: Color(0xFF0D47A1),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0D47A1),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 2,
-                ),
-                onPressed: cart.isCheckingOut
-                    ? null
-                    : () async {
-                        final name = _nameController.text.trim();
-                        final phone = _phoneController.text.trim();
-
-                        if (name.isEmpty || phone.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Kripya apna Shop Name aur Phone Number enter karein'),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: Colors.orange,
-                            ),
-                          );
-                          return;
-                        }
-
-                        final success = await cart.checkout(
-                          customerName: name,
-                          phone: phone,
-                          notes: _notesController.text.trim(),
-                        );
-
-                        if (success && context.mounted) {
-                          _notesController.clear();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Order Successfully Submitted! 🎉'),
-                              backgroundColor: Color(0xFF2E7D32),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        } else if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(cart.errorMessage ?? 'Order place nahi ho paya. Dobara koshish karein.'),
-                              backgroundColor: Colors.red.shade700,
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        }
-                      },
-                icon: cart.isCheckingOut
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Icon(Icons.check_circle_outline, size: 20),
-                label: Text(
-                  cart.isCheckingOut ? 'Submitting...' : 'Place Order',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
+  }
+
+  Future<void> _handleCheckout(BuildContext context, CartProvider cart) async {
+    final name = _nameController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    if (name.isEmpty || phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your Medical Store Name and Phone Number'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final success = await cart.checkout(
+      customerName: name,
+      phone: phone,
+      notes: _notesController.text.trim(),
+    );
+
+    if (success && context.mounted) {
+      _notesController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Order Successfully Placed! 🎉'),
+          backgroundColor: Color(0xFF2E7D32),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(cart.errorMessage ?? 'Unable to place order. Please try again.'),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   Widget _buildCartItemCard(BuildContext context, dynamic item, CartProvider cart) {

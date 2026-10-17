@@ -8,6 +8,8 @@ import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/catalog_provider.dart';
 import 'providers/salesman_provider.dart';
+import 'providers/admin_provider.dart';
+import 'providers/biller_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,8 @@ void main() async {
         ChangeNotifierProvider.value(value: cartProvider),
         ChangeNotifierProvider(create: (_) => CatalogProvider()),
         ChangeNotifierProvider(create: (_) => SalesmanProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
+        ChangeNotifierProvider(create: (_) => BillerProvider()),
       ],
       child: CPAMobileApp(router: router),
     ),

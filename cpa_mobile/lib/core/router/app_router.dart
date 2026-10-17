@@ -4,6 +4,7 @@ import '../../screens/auth/login_screen.dart';
 import '../../screens/admin/admin_dashboard.dart';
 import '../../screens/salesman/salesman_dashboard.dart';
 import '../../screens/retailer/retailer_dashboard.dart';
+import '../../screens/biller/biller_dashboard.dart';
 
 class AppRouter {
   static GoRouter createRouter(AuthProvider authProvider) {
@@ -23,6 +24,7 @@ class AppRouter {
           if (authProvider.isAdmin) return '/admin';
           if (authProvider.isSalesman) return '/salesman';
           if (authProvider.isRetailer) return '/retailer';
+          if (authProvider.isBiller) return '/biller';
           return '/retailer';
         }
 
@@ -44,6 +46,10 @@ class AppRouter {
         GoRoute(
           path: '/retailer',
           builder: (context, state) => const RetailerDashboard(),
+        ),
+        GoRoute(
+          path: '/biller',
+          builder: (context, state) => const BillerDashboard(),
         ),
       ],
     );

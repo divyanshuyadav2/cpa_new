@@ -25,10 +25,18 @@ return new class extends Migration
             $table->string('packing')->nullable()->change();
 
             // New columns from the price-list CSV
-            $table->string('hsn_code')->nullable()->after('name');
-            $table->decimal('tax', 10, 2)->nullable()->after('pts');
-            $table->decimal('a_tax', 10, 2)->nullable()->after('tax');
-            $table->decimal('pur', 10, 2)->nullable()->after('a_tax');
+            if (!Schema::hasColumn('products', 'hsn_code')) {
+                $table->string('hsn_code')->nullable()->after('name');
+            }
+            if (!Schema::hasColumn('products', 'tax')) {
+                $table->decimal('tax', 10, 2)->nullable()->after('pts');
+            }
+            if (!Schema::hasColumn('products', 'a_tax')) {
+                $table->decimal('a_tax', 10, 2)->nullable()->after('tax');
+            }
+            if (!Schema::hasColumn('products', 'pur')) {
+                $table->decimal('pur', 10, 2)->nullable()->after('a_tax');
+            }
         });
     }
 

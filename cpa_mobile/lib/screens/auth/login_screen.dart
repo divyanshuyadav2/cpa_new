@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,7 +14,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  String _selectedRole = 'user'; // 'user' for Retailer/Salesman, 'admin' for Admin
   bool _obscurePassword = true;
 
   @override
@@ -30,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final success = await authProvider.login(
       _emailController.text.trim(),
       _passwordController.text,
-      _selectedRole,
     );
 
     if (!success && mounted) {
@@ -82,7 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
                   const Text(
                     'Chitranshu Pharma',
@@ -105,32 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(
-                        value: 'user',
-                        label: Text('Retailer / Salesman'),
-                        icon: Icon(Icons.badge_outlined, size: 18),
-                      ),
-                      ButtonSegment(
-                        value: 'admin',
-                        label: Text('Admin'),
-                        icon: Icon(Icons.admin_panel_settings_outlined, size: 18),
-                      ),
-                    ],
-                    selected: {_selectedRole},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      setState(() {
-                        _selectedRole = newSelection.first;
-                      });
-                    },
-                    style: const ButtonStyle(
-                      visualDensity: VisualDensity.compact,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-
-                  ),
-                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -185,6 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                     onPressed: authProvider.isLoading ? null : _login,
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0D47A1),
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -203,6 +177,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Sign In',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: Color(0xFF0D47A1)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.storefront_outlined, color: Color(0xFF0D47A1)),
+                    label: const Text(
+                      'New Medical Store? Register Here',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0D47A1),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      );
+                    },
                   ),
                 ],
               ),

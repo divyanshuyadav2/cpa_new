@@ -20,6 +20,7 @@ class AuthProvider with ChangeNotifier {
   bool get isAdmin => _user?.role == 'admin';
   bool get isSalesman => _user?.role == 'salesman';
   bool get isRetailer => _user?.role == 'retailer';
+  bool get isBiller => _user?.role == 'biller';
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
@@ -30,20 +31,54 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password, String type) async {
+  Future<bool> login(String email, String password) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final response = await ApiClient.instance.post(
-        ApiConstants.login,
-        data: {
-          'email': email,
-          'password': password,
-          'type': type,
-        },
-      );
+      Response? response;
+      DioException? lastDioError;
+
+      // First attempt: try logging in as regular user (Retailer, Salesman, Biller)
+      try {
+        response = await ApiClient.instance.post(
+          ApiConstants.login,
+          data: FormData.fromMap({
+            'email': email,
+            'password': password,
+            'type': 'user',
+          }),
+        );
+      } on DioException catch (e) {
+        lastDioError = e;
+        // If user credentials failed or not found, try as admin
+        if (e.response?.statusCode == 401 || e.response?.statusCode == 404 || e.response?.statusCode == 422) {
+          try {
+            response = await ApiClient.instance.post(
+              ApiConstants.login,
+              data: FormData.fromMap({
+                'email': email,
+                'password': password,
+                'type': 'admin',
+              }),
+            );
+          } on DioException catch (adminErr) {
+            lastDioError = adminErr;
+          }
+        }
+      }
+
+      if (response == null) {
+        _isLoading = false;
+        if (lastDioError?.response?.data is Map && lastDioError?.response?.data['message'] != null) {
+          _errorMessage = lastDioError!.response!.data['message'].toString();
+        } else {
+          _errorMessage = 'Invalid email or password. Please try again.';
+        }
+        notifyListeners();
+        return false;
+      }
 
       _token = response.data['token'];
       _user = User.fromJson(response.data['user']);
@@ -77,6 +112,67 @@ class AuthProvider with ChangeNotifier {
     } catch (_) {
       _isLoading = false;
       _errorMessage = 'An unexpected error occurred. Please try again.';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> register({
+    required String name,
+    required String email,
+    required String password,
+    required String phone,
+    required String companyName,
+    required String address,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final response = await ApiClient.instance.post(
+        ApiConstants.register,
+        data: FormData.fromMap({
+          'name': name,
+          'email': email,
+          'password': password,
+          'phone': phone,
+          'company_name': companyName,
+          'address': address,
+          'role': 'retailer',
+        }),
+      );
+
+      _token = response.data['token'];
+      _user = User.fromJson(response.data['user']);
+      _user = User(
+        id: _user!.id,
+        name: _user!.name,
+        email: _user!.email,
+        role: response.data['role'] ?? _user!.role,
+        phone: _user!.phone,
+        companyName: _user!.companyName,
+        address: _user!.address,
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', _token!);
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on DioException catch (e) {
+      _isLoading = false;
+      if (e.response?.data is Map && e.response?.data['message'] != null) {
+        _errorMessage = e.response!.data['message'].toString();
+      } else {
+        _errorMessage = 'Registration failed. Please check details or connection.';
+      }
+      notifyListeners();
+      return false;
+    } catch (_) {
+      _isLoading = false;
+      _errorMessage = 'An unexpected error occurred during registration.';
       notifyListeners();
       return false;
     }

@@ -4,6 +4,7 @@ class ApiConstants {
   
   // Auth Endpoints
   static const String login = '/login';
+  static const String register = '/register';
   static const String logout = '/logout';
   static const String user = '/user';
   
@@ -20,5 +21,16 @@ class ApiConstants {
   static const String salesmanRetailers = '/salesman/retailers';
   static const String salesmanOrders = '/salesman/orders';
   static String salesmanOrderStatus(int id) => '/salesman/orders/$id/status';
+
+  // Admin Endpoints
+  static const String adminOrders = '/admin/orders';
+  static String adminAssignBiller(int id) => '/admin/orders/$id/assign';
+  static String adminUpdateOrderStatus(int id) => '/admin/orders/$id/status';
+  static const String adminBillers = '/admin/billers';
+  static const String adminCreateBiller = '/admin/billers';
+
+  // Biller Endpoints
+  static const String billerOrders = '/biller/orders';
+  static String billerUpdateStatus(int id) => '/biller/orders/$id/status';
 }
 

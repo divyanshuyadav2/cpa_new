@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->string('bg_color')->nullable()->after('logo');
+            if (!Schema::hasColumn('companies', 'bg_color')) {
+                $table->string('bg_color')->nullable()->after('logo');
+            }
         });
     }
 

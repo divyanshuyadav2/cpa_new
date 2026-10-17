@@ -12,12 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['salesman', 'retailer'])->default('retailer')->after('email');
-            $table->string('phone')->nullable()->after('role');
-            $table->string('company_name')->nullable()->after('phone');
-            $table->text('address')->nullable()->after('company_name');
-            $table->boolean('is_active')->default(true)->after('address');
-            $table->foreignId('salesman_id')->nullable()->constrained('users')->nullOnDelete()->after('is_active');
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->string('role', 50)->default('retailer')->after('email');
+            }
+            if (!Schema::hasColumn('users', 'phone')) {
+                $table->string('phone')->nullable()->after('role');
+            }
+            if (!Schema::hasColumn('users', 'company_name')) {
+                $table->string('company_name')->nullable()->after('phone');
+            }
+            if (!Schema::hasColumn('users', 'address')) {
+                $table->text('address')->nullable()->after('company_name');
+            }
+            if (!Schema::hasColumn('users', 'is_active')) {
+                $table->boolean('is_active')->default(true)->after('address');
+            }
+            if (!Schema::hasColumn('users', 'salesman_id')) {
+                $table->foreignId('salesman_id')->nullable()->constrained('users')->nullOnDelete()->after('is_active');
+            }
         });
     }
 

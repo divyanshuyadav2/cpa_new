@@ -15,28 +15,42 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'type' => 'required|in:admin,user'
         ]);
 
-        if ($request->type === 'admin') {
-            $user = Admin::where('email', $request->email)->first();
-        } else {
-            $user = User::where('email', $request->email)->first();
+        $email = trim($request->email);
+        $password = $request->password;
+
+        $user = null;
+        $role = null;
+
+        // 1. Check in User table (Retailer, Salesman, Biller, etc.)
+        $foundUser = User::where('email', $email)->first();
+        if ($foundUser && Hash::check($password, $foundUser->password)) {
+            if (!$foundUser->is_active) {
+                return response()->json(['message' => 'Your account is inactive. Please contact admin.'], 403);
+            }
+            $user = $foundUser;
+            $role = $foundUser->role ?? 'retailer';
         }
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        // 2. If not found in Users, check in Admins table
+        if (!$user) {
+            $adminUser = Admin::where('email', $email)->first();
+            if ($adminUser && Hash::check($password, $adminUser->password)) {
+                $user = $adminUser;
+                $role = 'admin';
+            }
         }
 
-        if ($request->type === 'user' && !$user->is_active) {
-            return response()->json(['message' => 'Your account is inactive. Please contact admin.'], 403);
+        if (!$user) {
+            return response()->json(['message' => 'Invalid email or password.'], 401);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'user' => $user,
-            'role' => $request->type === 'admin' ? 'admin' : $user->role,
+            'role' => $role,
             'token' => $token,
         ]);
     }

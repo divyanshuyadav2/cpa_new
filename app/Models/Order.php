@@ -11,10 +11,14 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'biller_id',
         'customer_name',
         'phone',
         'total',
         'status',
+        'billing_status',
+        'invoice_no',
+        'billing_notes',
         'cart',
         'notes',
     ];
@@ -27,5 +31,10 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function biller()
+    {
+        return $this->belongsTo(User::class, 'biller_id');
     }
 }
