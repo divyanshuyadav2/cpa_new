@@ -34,11 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!success && mounted) {
       final msg = authProvider.errorMessage ?? 'Login failed. Please check credentials.';
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),
           backgroundColor: Colors.red.shade700,
           behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
         ),
       );
     }
@@ -63,16 +65,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   Center(
                     child: Image.asset(
                       'assets/images/cpa_logo_blue.png',
-                      height: 110,
+                      height: 85,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => const Icon(
                         Icons.local_pharmacy_rounded,
-                        size: 80,
+                        size: 70,
                         color: Color(0xFF0D47A1),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Chitranshu Pharmaceuticals Agency',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(

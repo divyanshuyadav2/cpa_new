@@ -45,8 +45,9 @@ class AuthProvider with ChangeNotifier {
         },
       );
 
-      _token = response.data['token'];
-      final userData = response.data['user'] as Map<String, dynamic>;
+      _token = response.data['token']?.toString();
+      final userRaw = response.data['user'];
+      final userData = userRaw is Map ? Map<String, dynamic>.from(userRaw) : <String, dynamic>{};
       _user = User.fromJson(userData);
       
       // Override role from backend correctly and ensure fallback name
@@ -107,8 +108,9 @@ class AuthProvider with ChangeNotifier {
         },
       );
 
-      _token = response.data['token'];
-      final userData = response.data['user'] as Map<String, dynamic>;
+      _token = response.data['token']?.toString();
+      final userRaw = response.data['user'];
+      final userData = userRaw is Map ? Map<String, dynamic>.from(userRaw) : <String, dynamic>{};
       _user = User.fromJson(userData);
       final backendRole = (response.data['role'] ?? _user!.role).toString().toLowerCase();
       _user = User(
@@ -197,15 +199,19 @@ class AuthProvider with ChangeNotifier {
   Future<void> fetchUser() async {
     try {
       final response = await ApiClient.instance.get(ApiConstants.user);
-      _user = User.fromJson(response.data['user']);
+      final userRaw = response.data['user'];
+      final userData = userRaw is Map ? Map<String, dynamic>.from(userRaw) : <String, dynamic>{};
+      _user = User.fromJson(userData);
+      final backendRole = (response.data['role'] ?? _user!.role).toString().toLowerCase();
       _user = User(
         id: _user!.id,
-        name: _user!.name,
+        name: _user!.name.trim().isNotEmpty ? _user!.name : (backendRole == 'admin' ? 'Admin' : 'User'),
         email: _user!.email,
-        role: response.data['role'] ?? _user!.role,
+        role: backendRole,
         phone: _user!.phone,
         companyName: _user!.companyName,
         address: _user!.address,
+        salesmanId: _user!.salesmanId,
       );
     } catch (_) {
       // If fetching user fails (e.g., token expired), logout

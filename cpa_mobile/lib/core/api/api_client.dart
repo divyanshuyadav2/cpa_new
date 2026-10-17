@@ -24,32 +24,6 @@ class ApiClient {
         final client = HttpClient();
         client.badCertificateCallback = (cert, host, port) => true;
         client.connectionTimeout = const Duration(seconds: 20);
-        client.connectionFactory = (uri, proxyHost, proxyPort) async {
-          InternetAddress targetAddress;
-          try {
-            final ipv4Addresses = await InternetAddress.lookup(
-              uri.host,
-              type: InternetAddressType.IPv4,
-            );
-            targetAddress = ipv4Addresses.isNotEmpty
-                ? ipv4Addresses.first
-                : (await InternetAddress.lookup(uri.host)).first;
-          } catch (_) {
-            targetAddress = (await InternetAddress.lookup(uri.host)).first;
-          }
-
-          if (uri.scheme == 'https') {
-            return SecureSocket.startConnect(
-              targetAddress,
-              uri.port,
-              context: SecurityContext.defaultContext,
-              onBadCertificate: (cert) => true,
-              supportedProtocols: ['http/1.1'],
-            );
-          } else {
-            return Socket.startConnect(targetAddress, uri.port);
-          }
-        };
         return client;
       },
     );
