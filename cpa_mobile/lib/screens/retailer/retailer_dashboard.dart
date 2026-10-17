@@ -5,6 +5,7 @@ import '../../providers/cart_provider.dart';
 import 'catalog_screen.dart';
 import 'cart_screen.dart';
 import 'orders_screen.dart';
+import 'profile_screen.dart';
 
 class RetailerDashboard extends StatefulWidget {
   const RetailerDashboard({super.key});
@@ -20,12 +21,14 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
     CatalogScreen(),
     CartScreen(),
     OrdersScreen(),
+    ProfileScreen(),
   ];
 
   final List<String> _titles = const [
     'Medicine Catalog',
     'Shopping Cart',
     'My Orders',
+    'Store Profile',
   ];
 
   @override
@@ -114,6 +117,11 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
             label: 'Orders',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),

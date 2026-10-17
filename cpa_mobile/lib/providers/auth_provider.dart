@@ -37,48 +37,13 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      Response? response;
-      DioException? lastDioError;
-
-      // First attempt: try logging in as regular user (Retailer, Salesman, Biller)
-      try {
-        response = await ApiClient.instance.post(
-          ApiConstants.login,
-          data: FormData.fromMap({
-            'email': email,
-            'password': password,
-            'type': 'user',
-          }),
-        );
-      } on DioException catch (e) {
-        lastDioError = e;
-        // If user credentials failed or not found, try as admin
-        if (e.response?.statusCode == 401 || e.response?.statusCode == 404 || e.response?.statusCode == 422) {
-          try {
-            response = await ApiClient.instance.post(
-              ApiConstants.login,
-              data: FormData.fromMap({
-                'email': email,
-                'password': password,
-                'type': 'admin',
-              }),
-            );
-          } on DioException catch (adminErr) {
-            lastDioError = adminErr;
-          }
-        }
-      }
-
-      if (response == null) {
-        _isLoading = false;
-        if (lastDioError?.response?.data is Map && lastDioError?.response?.data['message'] != null) {
-          _errorMessage = lastDioError!.response!.data['message'].toString();
-        } else {
-          _errorMessage = 'Invalid email or password. Please try again.';
-        }
-        notifyListeners();
-        return false;
-      }
+      final response = await ApiClient.instance.post(
+        ApiConstants.login,
+        data: FormData.fromMap({
+          'email': email,
+          'password': password,
+        }),
+      );
 
       _token = response.data['token'];
       _user = User.fromJson(response.data['user']);
