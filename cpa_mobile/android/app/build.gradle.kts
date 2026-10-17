@@ -7,8 +7,7 @@ plugins {
 
 android {
     namespace = "com.chitranshupharma.cpa_mobile"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -17,8 +16,8 @@ android {
 
     defaultConfig {
         applicationId = "com.chitranshupharma.cpa_mobile"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 21
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
