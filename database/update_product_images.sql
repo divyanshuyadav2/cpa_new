@@ -550,8 +550,10 @@ UPDATE products SET image = 'storage/products/talent_india/vildee_m_500.jpg' WHE
 UPDATE products SET image = 'storage/products/talent_india/voglital_0_2.jpg' WHERE id = 1053; -- VOGLITAL 0.2
 UPDATE products SET image = 'storage/products/talent_india/voglital_m_0_2.jpg' WHERE id = 1054; -- VOGLITAL M 0.2
 
--- Kivi Labs Ltd Verified Authentic Packaging (4 items)
+-- Kivi Labs Ltd Verified Authentic Packaging (6 items)
 UPDATE products SET image = 'storage/products/kivi/coxito_s_10tab.jpg' WHERE id = 182; -- COXITO-S 10TAB
 UPDATE products SET image = 'storage/products/kivi/dotidep_50.jpg' WHERE id = 242; -- DOTIDEP-50
 UPDATE products SET image = 'storage/products/kivi/epigold_xr_300_tab.jpg' WHERE id = 270; -- EPIGOLD XR-300 TAB
+UPDATE products SET image = 'storage/products/kivi/kivit_ga_cap.jpg' WHERE id = 444; -- KIVIT-GA CAP
+UPDATE products SET image = 'storage/products/kivi/kivit_syp.jpg' WHERE id = 445; -- KIVIT-SYP
 UPDATE products SET image = 'storage/products/kivi/neolet_500_tab.jpg' WHERE id = 592; -- NEOLET-500 TAB
