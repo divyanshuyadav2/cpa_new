@@ -11,6 +11,8 @@
 !/storage/app/public/products
 !/storage/app/public/products/**
 /vendor
+__pycache__/
+*.pyc
 .env
 .env.backup
 .env.production

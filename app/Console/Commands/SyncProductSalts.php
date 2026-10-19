@@ -45,3 +45,4 @@ class SyncProductSalts extends Command
         return 0;
     }
 }
+
