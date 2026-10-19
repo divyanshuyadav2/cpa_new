@@ -53,24 +53,19 @@
                         </div>
                     @endif
 
-                    <!-- Pricing Table -->
-                    <div class="mt-8 border border-slate-200 rounded-2xl overflow-hidden shadow-inner bg-slate-50">
-                        <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wider">
-                            Pricing Structures (INR)
+                    <!-- Price Display (MRP Only) -->
+                    <div class="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Maximum Retail Price (MRP)</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span class="text-3xl font-extrabold text-pharma-navy">₹{{ number_format($product->mrp, 2) }}</span>
+                                <span class="text-xs text-slate-500 font-semibold">(Inclusive of all taxes)</span>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-3 divide-x divide-slate-200 text-center">
-                            <div class="p-4">
-                                <span class="block text-[10px] font-bold text-slate-400 uppercase">MRP (Retail)</span>
-                                <span class="text-xl font-extrabold text-slate-800">₹{{ number_format($product->mrp, 2) }}</span>
-                            </div>
-                            <div class="p-4">
-                                <span class="block text-[10px] font-bold text-slate-400 uppercase">PTR (Retailer)</span>
-                                <span class="text-xl font-extrabold text-slate-800">₹{{ number_format($product->ptr, 2) }}</span>
-                            </div>
-                            <div class="p-4">
-                                <span class="block text-[10px] font-bold text-slate-400 uppercase">PTS (Stockist)</span>
-                                <span class="text-xl font-extrabold text-slate-800">₹{{ number_format($product->pts, 2) }}</span>
-                            </div>
+                        <div>
+                            <span class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                Available in Stock
+                            </span>
                         </div>
                     </div>
 
