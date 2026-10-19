@@ -17,7 +17,6 @@ UPDATE products SET image = 'storage/products/instarary_pharmaceuticals/acetodol
 UPDATE products SET image = 'storage/products/alniche/acocare.png' WHERE id = 51; -- ACOCARE 300 SR TAB
 UPDATE products SET image = 'storage/products/larenon/acotibien_100.jpg' WHERE id = 53; -- ACOTIBIEN 100
 UPDATE products SET image = 'storage/products/larenon/acotibien_300_er.jpg' WHERE id = 54; -- ACOTIBIEN-300 ER
-UPDATE products SET image = 'storage/products/kivi/activa_tabfp.png' WHERE id = 55; -- ACTIVA TAB.(F/P)
 UPDATE products SET image = 'storage/products/tweet_india/advanced_wowglo.png' WHERE id = 56; -- ADVANCED WOWGLO FACE WASH
 UPDATE products SET image = 'storage/products/lupin/akurit_4_tab.jpg' WHERE id = 57; -- AKURIT-4 TAB
 UPDATE products SET image = 'storage/products/waterley/aladrine.jpg' WHERE id = 58; -- ALADRINE 5MG TAB
@@ -489,7 +488,13 @@ UPDATE products SET image = 'storage/products/alniche/wheybix_pep.png' WHERE id 
 UPDATE products SET image = 'storage/products/alniche/winraft.png' WHERE id = 1061; -- WINRAFT
 UPDATE products SET image = 'storage/products/larenon/zoact_1.5.jpg' WHERE id = 1078; -- ZOACT 1.5
 
--- Talent India & Kivi Labs Product Images
+--
+-- Talent India & Kivi Labs Authentic Images
+-- Safe sync: Clears any substitute/mismatched company images first
+UPDATE products SET image = NULL WHERE company_id = 25;
+UPDATE products SET image = NULL WHERE company_id = 10;
+
+-- Talent India Verified Authentic Packaging (54 items)
 UPDATE products SET image = 'storage/products/talent_india/cloze_0_50_nrx_dpco.jpg' WHERE id = 162; -- CLOZE 0.50 (NRX) (DPCO)
 UPDATE products SET image = 'storage/products/talent_india/cloze_md_0_25_nrx.jpg' WHERE id = 163; -- CLOZE MD 0.25 (NRX)
 UPDATE products SET image = 'storage/products/talent_india/cloze_md_0_50_nrx.jpg' WHERE id = 164; -- CLOZE MD 0.50 (NRX)
@@ -500,6 +505,9 @@ UPDATE products SET image = 'storage/products/talent_india/d_ventee_50.jpg' WHER
 UPDATE products SET image = 'storage/products/talent_india/divaxee_od_250.jpg' WHERE id = 220; -- DIVAXEE OD 250
 UPDATE products SET image = 'storage/products/talent_india/duloxee_p_20_50.jpg' WHERE id = 252; -- DULOXEE P (20+50)
 UPDATE products SET image = 'storage/products/talent_india/duloxee_p_20_75.jpg' WHERE id = 253; -- DULOXEE P (20+75)
+UPDATE products SET image = 'storage/products/talent_india/duloxee_20.jpg' WHERE id = 254; -- DULOXEE-20
+UPDATE products SET image = 'storage/products/talent_india/duloxee_30.jpg' WHERE id = 255; -- DULOXEE-30
+UPDATE products SET image = 'storage/products/talent_india/escitalent_10_dpco.jpg' WHERE id = 278; -- ESCITALENT 10 (DPCO)
 UPDATE products SET image = 'storage/products/talent_india/escitalent_5_dpco.jpg' WHERE id = 279; -- ESCITALENT 5(DPCO)
 UPDATE products SET image = 'storage/products/talent_india/escitalent_ls_nrx.jpg' WHERE id = 280; -- ESCITALENT LS (NRX)
 UPDATE products SET image = 'storage/products/talent_india/escitalent_plus_nrx.jpg' WHERE id = 281; -- ESCITALENT PLUS (NRX)
@@ -508,25 +516,24 @@ UPDATE products SET image = 'storage/products/talent_india/flutee_20mg_dpco.jpg'
 UPDATE products SET image = 'storage/products/talent_india/glimital_m1_dpco.jpg' WHERE id = 345; -- GLIMITAL M1 (DPCO)
 UPDATE products SET image = 'storage/products/talent_india/glimital_m2_dpco.jpg' WHERE id = 346; -- GLIMITAL M2 (DPCO)
 UPDATE products SET image = 'storage/products/talent_india/hexylent_dpco.jpg' WHERE id = 378; -- HEXYLENT (DPCO)
-UPDATE products SET image = 'storage/products/talent_india/librate_nrx.jpg' WHERE id = 494; -- LIBRATE (NRX)
 UPDATE products SET image = 'storage/products/talent_india/libratex_nrx.jpg' WHERE id = 495; -- LIBRATEX (NRX)
-UPDATE products SET image = 'storage/products/talent_india/librolent.jpg' WHERE id = 500; -- LIBROLENT
 UPDATE products SET image = 'storage/products/talent_india/linalent_5.jpg' WHERE id = 501; -- LINALENT 5
 UPDATE products SET image = 'storage/products/talent_india/linalent_d.jpg' WHERE id = 502; -- LINALENT-D
 UPDATE products SET image = 'storage/products/talent_india/linalent_m_500.jpg' WHERE id = 503; -- LINALENT-M 500
 UPDATE products SET image = 'storage/products/talent_india/metfortal_sr_1000_dp.jpg' WHERE id = 561; -- METFORTAL SR 1000(DP
 UPDATE products SET image = 'storage/products/talent_india/metfortal_sr_500.jpg' WHERE id = 562; -- METFORTAL SR 500
-UPDATE products SET image = 'storage/products/talent_india/mirtee_15.jpg' WHERE id = 572; -- MIRTEE 15
 UPDATE products SET image = 'storage/products/talent_india/mirtee_7_5.jpg' WHERE id = 573; -- MIRTEE 7.5
 UPDATE products SET image = 'storage/products/talent_india/nervee_cd3.jpg' WHERE id = 593; -- NERVEE -CD3
 UPDATE products SET image = 'storage/products/talent_india/nervee_cd3.jpg' WHERE id = 594; -- NERVEE-CD3
+UPDATE products SET image = 'storage/products/talent_india/paroxee_cr_12_5.jpg' WHERE id = 672; -- PAROXEE CR 12.5
 UPDATE products SET image = 'storage/products/talent_india/paroxee_cr_25.jpg' WHERE id = 673; -- PAROXEE CR 25
+UPDATE products SET image = 'storage/products/talent_india/pernil_lotion_dpc.jpg' WHERE id = 684; -- PERNIL LOTION (DPC)
 UPDATE products SET image = 'storage/products/talent_india/preega_m_75_sr.jpg' WHERE id = 697; -- PREEGA M-75 SR
 UPDATE products SET image = 'storage/products/talent_india/preega_mnt.jpg' WHERE id = 698; -- PREEGA-MNT
 UPDATE products SET image = 'storage/products/talent_india/preega_nt.jpg' WHERE id = 699; -- PREEGA-NT
-UPDATE products SET image = 'storage/products/talent_india/quetalent_sr_200.jpg' WHERE id = 794; -- QUETALENT SR-200
 UPDATE products SET image = 'storage/products/talent_india/resque_ls.jpg' WHERE id = 821; -- RESQUE -LS
 UPDATE products SET image = 'storage/products/talent_india/rosufab_f.jpg' WHERE id = 845; -- ROSUFAB F
+UPDATE products SET image = 'storage/products/talent_india/sertee_50.jpg' WHERE id = 858; -- SERTEE 50
 UPDATE products SET image = 'storage/products/talent_india/sitalent_m_50_500.jpg' WHERE id = 873; -- SITALENT M(50+500)
 UPDATE products SET image = 'storage/products/talent_india/sumocetam_syrup.jpg' WHERE id = 961; -- SUMOCETAM SYRUP
 UPDATE products SET image = 'storage/products/talent_india/sumocetam_800.jpg' WHERE id = 962; -- SUMOCETAM-800
@@ -537,116 +544,14 @@ UPDATE products SET image = 'storage/products/talent_india/telmital_ln.jpg' WHER
 UPDATE products SET image = 'storage/products/talent_india/telmital_ln_beta_25.jpg' WHERE id = 983; -- TELMITAL LN BETA 25
 UPDATE products SET image = 'storage/products/talent_india/tenee_m_500.jpg' WHERE id = 985; -- TENEE M-500
 UPDATE products SET image = 'storage/products/talent_india/triplent_10_dpco.jpg' WHERE id = 1004; -- TRIPLENT 10 (DPCO)
-UPDATE products SET image = 'storage/products/talent_india/trixide_h_nrx.jpg' WHERE id = 1005; -- TRIXIDE H (NRX)
 UPDATE products SET image = 'storage/products/talent_india/valvo_300_dpco.jpg' WHERE id = 1028; -- VALVO 300 (DPCO)
 UPDATE products SET image = 'storage/products/talent_india/valvo_cr_200.jpg' WHERE id = 1029; -- VALVO CR-200
 UPDATE products SET image = 'storage/products/talent_india/vildee_m_500.jpg' WHERE id = 1041; -- VILDEE M 500
 UPDATE products SET image = 'storage/products/talent_india/voglital_0_2.jpg' WHERE id = 1053; -- VOGLITAL 0.2
 UPDATE products SET image = 'storage/products/talent_india/voglital_m_0_2.jpg' WHERE id = 1054; -- VOGLITAL M 0.2
-UPDATE products SET image = 'storage/products/talent_india/zolent_0_25.jpg' WHERE id = 1080; -- ZOLENT 0.25
-UPDATE products SET image = 'storage/products/talent_india/zolent_forte_nrx.jpg' WHERE id = 1081; -- ZOLENT FORTE(NRX)
-UPDATE products SET image = 'storage/products/talent_india/zolent_plus_nrx.jpg' WHERE id = 1082; -- ZOLENT PLUS (NRX)
-UPDATE products SET image = 'storage/products/talent_india/zolpinite_10_nrx_dp.jpg' WHERE id = 1083; -- ZOLPINITE 10 (NRX) (DP
-UPDATE products SET image = 'storage/products/kivi/alinol_10mg_tab.jpg' WHERE id = 69; -- ALINOL-10MG TAB
-UPDATE products SET image = 'storage/products/kivi/alinol_20mg.jpg' WHERE id = 70; -- ALINOL-20MG
-UPDATE products SET image = 'storage/products/kivi/alp_0_25_tab.jpg' WHERE id = 71; -- ALP 0.25 TAB
-UPDATE products SET image = 'storage/products/kivi/alp_0_5_tab.jpg' WHERE id = 72; -- ALP 0.5 TAB
-UPDATE products SET image = 'storage/products/kivi/ananda_gb.jpg' WHERE id = 81; -- ANANDA GB
-UPDATE products SET image = 'storage/products/kivi/ananda_gb_100_tab.jpg' WHERE id = 82; -- ANANDA GB-100 TAB
-UPDATE products SET image = 'storage/products/kivi/ceretor_fort.jpg' WHERE id = 145; -- CERETOR FORT
-UPDATE products SET image = 'storage/products/kivi/ceretor_plus_tab.jpg' WHERE id = 146; -- CERETOR PLUS TAB
-UPDATE products SET image = 'storage/products/kivi/coxito_s_10tab.jpg' WHERE id = 182; -- COXITO-S 10TAB
-UPDATE products SET image = 'storage/products/kivi/coxito_s_5tab.jpg' WHERE id = 183; -- COXITO-S 5TAB
-UPDATE products SET image = 'storage/products/kivi/cyptan_syp.jpg' WHERE id = 200; -- CYPTAN SYP
-UPDATE products SET image = 'storage/products/kivi/deven_la_100_tab.jpg' WHERE id = 206; -- DEVEN-LA-100 TAB
-UPDATE products SET image = 'storage/products/kivi/deven_la_50.jpg' WHERE id = 207; -- DEVEN-LA-50
-UPDATE products SET image = 'storage/products/kivi/dotidep_75_tab.jpg' WHERE id = 240; -- DOTIDEP 75 TAB
-UPDATE products SET image = 'storage/products/kivi/dotidep_25.jpg' WHERE id = 241; -- DOTIDEP-25
-UPDATE products SET image = 'storage/products/kivi/dotidep_50.jpg' WHERE id = 242; -- DOTIDEP-50
-UPDATE products SET image = 'storage/products/kivi/encepha_inj.jpg' WHERE id = 268; -- ENCEPHA INJ
-UPDATE products SET image = 'storage/products/kivi/epigold_xr_300_tab.jpg' WHERE id = 270; -- EPIGOLD XR-300 TAB
-UPDATE products SET image = 'storage/products/kivi/epigold_xr_450_tab.jpg' WHERE id = 271; -- EPIGOLD XR-450 TAB
-UPDATE products SET image = 'storage/products/kivi/epigold_xr_600_tab.jpg' WHERE id = 272; -- EPIGOLD XR-600 TAB
-UPDATE products SET image = 'storage/products/kivi/epigold_xr_150_tab.jpg' WHERE id = 273; -- EPIGOLD-XR-150 TAB
-UPDATE products SET image = 'storage/products/kivi/heksi_2_tab.jpg' WHERE id = 366; -- HEKSI 2 TAB
-UPDATE products SET image = 'storage/products/kivi/ivalp_tab.jpg' WHERE id = 413; -- IVALP TAB
-UPDATE products SET image = 'storage/products/kivi/ketizolam_md_25_tab.jpg' WHERE id = 423; -- KETIZOLAM MD-.25 TAB
-UPDATE products SET image = 'storage/products/kivi/ketizolam_md_0_50_tab.jpg' WHERE id = 424; -- KETIZOLAM MD-0.50 TAB
-UPDATE products SET image = 'storage/products/kivi/ketrip_10_tab.jpg' WHERE id = 425; -- KETRIP 10 TAB
-UPDATE products SET image = 'storage/products/kivi/ketrip_25.jpg' WHERE id = 426; -- KETRIP-25
-UPDATE products SET image = 'storage/products/kivi/kilax_tab.jpg' WHERE id = 428; -- KILAX TAB
-UPDATE products SET image = 'storage/products/kivi/kimitrip_ds_tab.jpg' WHERE id = 429; -- KIMITRIP DS TAB
-UPDATE products SET image = 'storage/products/kivi/kimitrip_tab.jpg' WHERE id = 430; -- KIMITRIP-TAB
-UPDATE products SET image = 'storage/products/kivi/kipnol_10_tab.jpg' WHERE id = 431; -- KIPNOL 10 TAB
-UPDATE products SET image = 'storage/products/kivi/kipnol_20_tab.jpg' WHERE id = 432; -- KIPNOL 20 TAB
-UPDATE products SET image = 'storage/products/kivi/kipnol_plus_10_cap.jpg' WHERE id = 433; -- KIPNOL PLUS-10 CAP
-UPDATE products SET image = 'storage/products/kivi/kipnol_plus_5mg_tab.jpg' WHERE id = 434; -- KIPNOL PLUS-5MG TAB
-UPDATE products SET image = 'storage/products/kivi/kipnol_tr40_cap.jpg' WHERE id = 435; -- KIPNOL TR40 CAP
-UPDATE products SET image = 'storage/products/kivi/kiptoin_100mg_tab.jpg' WHERE id = 436; -- KIPTOIN-100MG TAB
-UPDATE products SET image = 'storage/products/kivi/kivicalm_5_tab.jpg' WHERE id = 438; -- KIVICALM 5 TAB
-UPDATE products SET image = 'storage/products/kivi/kivicalm_h_tab.jpg' WHERE id = 439; -- kivicalm h tab
-UPDATE products SET image = 'storage/products/kivi/kividol_dt_5_tab.jpg' WHERE id = 440; -- KIVIDOL DT 5 TAB*
-UPDATE products SET image = 'storage/products/kivi/kividol_dt_1_5_tab.jpg' WHERE id = 441; -- KIVIDOL DT-1.5 TAB
-UPDATE products SET image = 'storage/products/kivi/kivipride_100_tab.jpg' WHERE id = 442; -- KIVIPRIDE-100 TAB
-UPDATE products SET image = 'storage/products/kivi/kivipride_200_tab.jpg' WHERE id = 443; -- KIVIPRIDE-200 TAB
-UPDATE products SET image = 'storage/products/kivi/kivizam_5_tab.jpg' WHERE id = 451; -- KIVIZAM 5 TAB
-UPDATE products SET image = 'storage/products/kivi/klonaz_25.jpg' WHERE id = 452; -- KLONAZ .25
-UPDATE products SET image = 'storage/products/kivi/klonaz_5.jpg' WHERE id = 453; -- KLONAZ .5
-UPDATE products SET image = 'storage/products/kivi/klonaz_es_tab.jpg' WHERE id = 454; -- KLONAZ ES TAB
-UPDATE products SET image = 'storage/products/kivi/klonaz_es_h_tab.jpg' WHERE id = 455; -- KLONAZ ES-H TAB
-UPDATE products SET image = 'storage/products/kivi/klonaz_md_25.jpg' WHERE id = 456; -- KLONAZ MD-.25
-UPDATE products SET image = 'storage/products/kivi/klonaz_md_5.jpg' WHERE id = 457; -- KLONAZ-MD.5
-UPDATE products SET image = 'storage/products/kivi/kola_2_5.jpg' WHERE id = 460; -- KOLA 2.5
-UPDATE products SET image = 'storage/products/kivi/kola_5_tab.jpg' WHERE id = 461; -- KOLA 5 TAB
-UPDATE products SET image = 'storage/products/kivi/kvert_25mg.jpg' WHERE id = 467; -- KVERT 25MG
-UPDATE products SET image = 'storage/products/kivi/kvert_plus_tab.jpg' WHERE id = 468; -- KVERT PLUS TAB
-UPDATE products SET image = 'storage/products/kivi/lamiace_dt_25mg.jpg' WHERE id = 471; -- LAMIACE-DT-25MG
-UPDATE products SET image = 'storage/products/kivi/lamiace_dt_50mg.jpg' WHERE id = 472; -- LAMIACE-DT-50MG
-UPDATE products SET image = 'storage/products/kivi/loxet_20.jpg' WHERE id = 530; -- LOXET-20
-UPDATE products SET image = 'storage/products/kivi/loxet_30.jpg' WHERE id = 531; -- LOXET-30
-UPDATE products SET image = 'storage/products/kivi/lozipam_1_tab.jpg' WHERE id = 532; -- LOZIPAM-1 TAB
-UPDATE products SET image = 'storage/products/kivi/lozipam_2tab.jpg' WHERE id = 533; -- LOZIPAM-2TAB
-UPDATE products SET image = 'storage/products/kivi/migrapac_ec.jpg' WHERE id = 567; -- MIGRAPAC EC
-UPDATE products SET image = 'storage/products/kivi/mirdep_15_tab.jpg' WHERE id = 568; -- MIRDEP 15 TAB
-UPDATE products SET image = 'storage/products/kivi/mirdep_7_5_tab.jpg' WHERE id = 569; -- MIRDEP 7.5 TAB
-UPDATE products SET image = 'storage/products/kivi/monotop_50_mgtab.jpg' WHERE id = 577; -- MONOTOP- 50 MGTAB
-UPDATE products SET image = 'storage/products/kivi/monotop_25.jpg' WHERE id = 578; -- MONOTOP-25
-UPDATE products SET image = 'storage/products/kivi/neolet_250.jpg' WHERE id = 591; -- NEOLET-250
-UPDATE products SET image = 'storage/products/kivi/neolet_500_tab.jpg' WHERE id = 592; -- NEOLET-500 TAB
-UPDATE products SET image = 'storage/products/kivi/nishq_m.jpg' WHERE id = 608; -- NISHQ-M
-UPDATE products SET image = 'storage/products/kivi/nomigan_10_tab.jpg' WHERE id = 611; -- NOMIGAN-10 TAB
-UPDATE products SET image = 'storage/products/kivi/nomigan_5mg_tab.jpg' WHERE id = 612; -- NOMIGAN-5MG TAB
-UPDATE products SET image = 'storage/products/kivi/ntp_10_tab.jpg' WHERE id = 632; -- NTP-10 TAB
-UPDATE products SET image = 'storage/products/kivi/ntp_5_tab.jpg' WHERE id = 633; -- NTP-5 TAB
-UPDATE products SET image = 'storage/products/kivi/psyorid_1.jpg' WHERE id = 747; -- PSYORID-1
-UPDATE products SET image = 'storage/products/kivi/psyorid_plus_2mg_tab.jpg' WHERE id = 748; -- PSYORID-PLUS-2MG TAB
-UPDATE products SET image = 'storage/products/kivi/vbeta_16tab.jpg' WHERE id = 1031; -- VBETA 16TAB
-UPDATE products SET image = 'storage/products/kivi/vbeta_24_tab.jpg' WHERE id = 1032; -- VBETA-24 TAB
-UPDATE products SET image = 'storage/products/kivi/vetodep_20_cap.jpg' WHERE id = 1034; -- VETODEP-20 CAP*
-UPDATE products SET image = 'storage/products/kivi/vetodep_40_cap.jpg' WHERE id = 1035; -- VETODEP-40 CAP*
-UPDATE products SET image = 'storage/products/kivi/vetodep_60_cap.jpg' WHERE id = 1036; -- VETODEP-60-CAP
-UPDATE products SET image = 'storage/products/kivi/vikorate_chrono_200.jpg' WHERE id = 1037; -- VIKORATE CHRONO-200*
-UPDATE products SET image = 'storage/products/kivi/vikorate_chrono_300_tab.jpg' WHERE id = 1038; -- VIKORATE CHRONO-300 TAB
-UPDATE products SET image = 'storage/products/kivi/vikorate_chrono_500tab.jpg' WHERE id = 1039; -- VIKORATE CHRONO-500TAB*
-UPDATE products SET image = 'storage/products/kivi/vikorate_syp_200ml.jpg' WHERE id = 1040; -- VIKORATE SYP 200ML*
-UPDATE products SET image = 'storage/products/kivi/visert_25_tab.jpg' WHERE id = 1043; -- VISERT 25 TAB
-UPDATE products SET image = 'storage/products/kivi/visert_50tab.jpg' WHERE id = 1044; -- VISERT 50TAB
-UPDATE products SET image = 'storage/products/kivi/vizep_10_tab.jpg' WHERE id = 1050; -- VIZEP 10 TAB
-UPDATE products SET image = 'storage/products/kivi/vizep_25_tab.jpg' WHERE id = 1051; -- VIZEP 25 TAB
-UPDATE products SET image = 'storage/products/kivi/vizonic_25_tab.jpg' WHERE id = 1052; -- VIZONIC-25 TAB*
-UPDATE products SET image = 'storage/products/kivi/zool_dsr_cap.jpg' WHERE id = 1084; -- ZOOL DSR CAP
-UPDATE products SET image = 'storage/products/kivi/zool_ls_caps.jpg' WHERE id = 1085; -- ZOOL-LS CAPS
 
-UPDATE products SET image = 'storage/products/talent_india/clinsure.png' WHERE id = 159; -- CLINSURE
-UPDATE products SET image = 'storage/products/talent_india/duloxee_p_20_50.jpg' WHERE id = 254; -- DULOXEE-20
-UPDATE products SET image = 'storage/products/talent_india/duloxee_p_20_50.jpg' WHERE id = 255; -- DULOXEE-30
-UPDATE products SET image = 'storage/products/talent_india/escitalent_5_dpco.jpg' WHERE id = 278; -- ESCITALENT 10 (DPCO)
-UPDATE products SET image = 'storage/products/talent_india/paroxee_cr_25.jpg' WHERE id = 672; -- PAROXEE CR 12.5
-UPDATE products SET image = 'storage/products/talent_india/telmital_a.jpg' WHERE id = 984; -- TELMITAL40 (dpco)
-UPDATE products SET image = 'storage/products/talent_india/cutee_400.jpg' WHERE id = 196; -- CUTEE 400
-UPDATE products SET image = 'storage/products/talent_india/escitalent_5_dpco.jpg' WHERE id = 858; -- SERTEE 50
-UPDATE products SET image = 'storage/products/talent_india/telmital_a.jpg' WHERE id = 1057; -- VONOTAL 20
-UPDATE products SET image = 'storage/products/kivi/kivit_syp.jpg' WHERE id = 445; -- KIVIT-SYP
-UPDATE products SET image = 'storage/products/kivi/kivipride_100_tab.jpg' WHERE id = 422; -- KEPZIL-M TAB
-UPDATE products SET image = 'storage/products/kivi/kevert_plus.jpg' WHERE id = 427; -- KEVERT PLUS TAB
-UPDATE products SET image = 'storage/products/kivi/norgic_25.jpg' WHERE id = 613; -- NORGIC-25MG TAB
+-- Kivi Labs Ltd Verified Authentic Packaging (4 items)
+UPDATE products SET image = 'storage/products/kivi/coxito_s_10tab.jpg' WHERE id = 182; -- COXITO-S 10TAB
+UPDATE products SET image = 'storage/products/kivi/dotidep_50.jpg' WHERE id = 242; -- DOTIDEP-50
+UPDATE products SET image = 'storage/products/kivi/epigold_xr_300_tab.jpg' WHERE id = 270; -- EPIGOLD XR-300 TAB
+UPDATE products SET image = 'storage/products/kivi/neolet_500_tab.jpg' WHERE id = 592; -- NEOLET-500 TAB
