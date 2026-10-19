@@ -96,6 +96,9 @@
                     <a href="{{ route('home') }}" class="hover:text-pharma-accent transition py-1">Home</a>
                     <a href="{{ route('public.products.index') }}" class="hover:text-pharma-accent transition py-1">Products Catalog</a>
                     <a href="{{ route('about') }}" class="hover:text-pharma-accent transition py-1">About & Contact</a>
+                    <a href="{{ route('home') }}#download-app" class="text-sky-600 hover:text-sky-700 font-bold transition py-1 flex items-center gap-1.5">
+                        <span>📱</span> Download App
+                    </a>
                     <a href="{{ route('cart.view') }}" class="hover:text-pharma-accent transition py-1">Review Cart</a>
                 </nav>
 
@@ -164,6 +167,7 @@
                 <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Home</a>
                 <a href="{{ route('public.products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Products Catalog</a>
                 <a href="{{ route('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">About & Contact</a>
+                <a href="{{ route('home') }}#download-app" class="block px-3 py-2 rounded-md text-base font-bold text-sky-600 hover:bg-slate-50 transition">📱 Download Retailer App</a>
                 <a href="{{ route('cart.view') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-pharma-accent hover:bg-slate-50 transition">Review Cart</a>
                 <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
                     <a href="{{ route('pwa.login') }}" class="block text-center px-4 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-sm shadow">
@@ -230,6 +234,7 @@
                         <li><a href="{{ route('home') }}" class="hover:text-white transition">Home</a></li>
                         <li><a href="{{ route('public.products.index') }}" class="hover:text-white transition">Products Catalog</a></li>
                         <li><a href="{{ route('about') }}" class="hover:text-white transition">About & Contact</a></li>
+                        <li><a href="{{ route('home') }}#download-app" class="hover:text-white transition text-sky-400 font-semibold flex items-center gap-1.5"><span>📱</span> Download Android APK</a></li>
                         <li><a href="{{ route('cart.view') }}" class="hover:text-white transition">Review Shopping Cart</a></li>
                     </ul>
                 </div>

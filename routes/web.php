@@ -62,6 +62,18 @@ Route::get('/cart', [CartController::class, 'view'])->name('cart.view');
 Route::post('/cart/whatsapp', [CartController::class, 'whatsapp'])->name('cart.whatsapp');
 Route::get('/cart/whatsapp', [CartController::class, 'whatsapp']); // Fallback support
 
+// Mobile App APK Download Route
+Route::get('/download-app', function() {
+    $path = public_path('downloads/cpa-mobile.apk');
+    if (file_exists($path)) {
+        return response()->download($path, 'CPA-Mobile.apk', [
+            'Content-Type' => 'application/vnd.android.package-archive',
+        ]);
+    }
+    abort(404, 'APK file not found');
+})->name('app.download');
+
+
 /*
 |--------------------------------------------------------------------------
 | PWA Routes (Retailer Counter & Salesman App)
