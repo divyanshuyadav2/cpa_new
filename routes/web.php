@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CompanyController;
@@ -51,6 +52,10 @@ Route::get('/storage/{path}', function($path) {
     }
     abort(404);
 })->where('path', '.*')->name('storage.serve');
+Route::get('/salts', [SeoController::class, 'index'])->name('public.salts.index');
+Route::get('/salts/{id}/{slug?}', [SeoController::class, 'show'])->whereNumber('id')->name('public.salts.show');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 Route::get('/products', [ProductController::class, 'index'])->name('public.products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('public.products.show');
 

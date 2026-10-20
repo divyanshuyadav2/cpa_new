@@ -8,22 +8,25 @@
     <!-- Primary Meta Tags -->
     <title>@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency | Trusted Wholesale Medical Distribution'))</title>
     <meta name="title" content="@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency | Trusted Wholesale Medical Distribution'))">
-    <meta name="description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines. Discover top healthcare solutions with us.">
+    <meta name="description" content="@yield('meta_description', 'Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines. Discover top healthcare solutions with us.')">
+    <link rel="canonical" href="@yield('canonical', url()->current())">
     <meta name="keywords" content="Chitranshu Pharma, Chitranshu Pharmaceuticals Agency, wholesale medicines, pharmaceutical distributor, healthcare solutions, medical distribution, pharmacy">
     <meta name="author" content="Chitranshu Pharmaceuticals Agency">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="@yield('robots', 'index, follow')">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
+    <meta property="og:url" content="@yield('canonical', url()->current())">
+    <meta property="og:site_name" content="Chitranshu Pharmaceuticals Agency">
     <meta property="og:title" content="@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency'))">
-    <meta property="og:description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.">
-    <meta property="og:image" content="{{ asset('favicon.svg') }}">
+    <meta property="og:description" content="@yield('meta_description', 'Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.')">
+    <meta property="og:image" content="@yield('og_image', asset('images/cpa_logo_blue.png'))">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="@yield('title', setting('company_name', 'Chitranshu Pharmaceuticals Agency'))">
     <meta property="twitter:description" content="Chitranshu Pharmaceuticals Agency is a leading wholesale distributor of pharmaceutical products and medicines.">
-    <meta property="twitter:image" content="{{ asset('favicon.svg') }}">
+    <meta property="twitter:image" content="@yield('og_image', asset('images/cpa_logo_blue.png'))">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,6 +61,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/cpa_logo_blue.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/cpa_logo_blue.png') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
+    @stack('head')
 </head>
 <body class="flex flex-col h-full font-sans antialiased text-slate-800" x-data="{ cartOpen: false, mobileMenuOpen: false }">
 

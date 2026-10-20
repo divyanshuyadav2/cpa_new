@@ -1,5 +1,39 @@
 @extends('layouts.app')
 
+@php
+    $company = setting('company_name', 'Chitranshu Pharmaceuticals Agency');
+    $saltName = $product->salt?->name;
+    $seoTitle = $product->name . ($saltName ? " ({$saltName})" : '') . " – Wholesale | {$company}";
+    $seoDesc = "Buy {$product->name}" . ($product->composition ? " ({$product->composition})" : '') . ($product->packing ? ", pack {$product->packing}" : '') . ($product->company?->name ? " by {$product->company->name}" : '') . ($product->mrp ? ", MRP ₹" . number_format($product->mrp, 2) : '') . ". Wholesale supply from {$company}.";
+    $seoImage = media_url($product->image) ?: asset('images/cpa_logo_blue.png');
+@endphp
+
+@section('title', $seoTitle)
+@section('meta_description', \Illuminate\Support\Str::limit($seoDesc, 158))
+@section('canonical', route('public.products.show', $product->id))
+@section('og_image', $seoImage)
+
+@push('head')
+<script type="application/ld+json">
+{!! json_encode(array_filter([
+    '@' . 'context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $product->name,
+    'description' => $seoDesc,
+    'image' => $seoImage,
+    'sku' => (string) $product->id,
+    'brand' => $product->company?->name ? ['@type' => 'Brand', 'name' => $product->company->name] : null,
+    'category' => $saltName,
+    'offers' => $product->mrp ? [
+        '@type' => 'Offer', 'priceCurrency' => 'INR', 'price' => (string) $product->mrp,
+        'availability' => 'https://schema.org/InStock',
+        'url' => route('public.products.show', $product->id),
+        'seller' => ['@type' => 'Organization', 'name' => $company],
+    ] : null,
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endpush
+
 @section('content')
 <div class="bg-slate-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,7 +75,7 @@
                     <div class="mt-4 flex items-center space-x-6">
                         <span class="text-xs text-slate-500 font-bold uppercase">Packing: <span class="text-slate-800 font-semibold italic">{{ $product->packing }}</span></span>
                         @if($product->salt?->name)
-                            <span class="text-xs text-slate-500 font-bold uppercase">Chemical Salt: <span class="text-slate-800 font-semibold">{{ $product->salt->name }}</span></span>
+                            <span class="text-xs text-slate-500 font-bold uppercase">Chemical Salt: <a href="{{ route('public.salts.show', [$product->salt->id, \Illuminate\Support\Str::slug($product->salt->name)]) }}" class="text-pharma-accent font-semibold hover:underline">{{ $product->salt->name }}</a></span>
                         @endif
                     </div>
 

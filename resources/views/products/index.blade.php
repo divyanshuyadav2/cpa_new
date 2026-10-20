@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('title', 'Wholesale Medicines Catalog – Search by Name or Salt | ' . setting('company_name', 'Chitranshu Pharmaceuticals Agency'))
+@if(request()->hasAny(['search', 'company_id', 'division_id', 'page']))
+    @section('robots', 'noindex, follow')
+@endif
+
 @section('content')
 <div class="bg-slate-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
