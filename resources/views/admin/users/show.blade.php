@@ -134,18 +134,10 @@
                                 <tr class="hover:bg-slate-50/50 transition">
                                     <td class="p-4 font-bold text-pharma-navy">#{{ $order->id }}</td>
                                     <td class="p-4 text-xs text-slate-500">{{ $order->created_at->format('d M Y, h:i A') }}</td>
-                                    <td class="p-4 font-semibold text-slate-700">{{ is_array($order->cart) ? count($order->cart) : 0 }} items</td>
+                                    <td class="p-4 font-semibold text-slate-700">{{ count($order->items()) }} items</td>
                                     <td class="p-4 font-extrabold text-emerald-600">₹{{ number_format($order->total, 2) }}</td>
                                     <td class="p-4 text-center">
-                                        @if($order->status == 'Pending')
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Pending</span>
-                                        @elseif($order->status == 'Confirmed')
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">Confirmed</span>
-                                        @elseif($order->status == 'Dispatched')
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">Dispatched</span>
-                                        @else
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Delivered</span>
-                                        @endif
+                                        @include('admin.partials.status-badge', ['status' => $order->status_label])
                                     </td>
                                     <td class="p-4 text-right">
                                         <a href="{{ route('orders.show', $order->id) }}" class="text-xs font-bold text-pharma-accent hover:underline">

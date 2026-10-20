@@ -112,8 +112,8 @@
                         </a>
                         <div class="flex items-center gap-3 flex-shrink-0">
                             <span class="text-sm font-bold text-slate-900">₹{{ number_format($order->total, 2) }}</span>
-                            @include('admin.partials.status-badge', ['status' => $order->status])
-                            @if($order->status === 'Pending')
+                            @include('admin.partials.status-badge', ['status' => $order->status_label])
+                            @if($order->status_label === 'Pending')
                                 <form action="{{ route('orders.update-status', $order) }}" method="POST">@csrf @method('PATCH')
                                     <input type="hidden" name="status" value="Confirmed">
                                     <button class="px-2.5 py-1 bg-pharma-navy text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition">Confirm</button>

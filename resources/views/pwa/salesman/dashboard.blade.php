@@ -93,7 +93,7 @@
                         'Dispatched' => 'bg-purple-500/20 text-purple-300 border-purple-500/30',
                         'Delivered' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
                     ];
-                    $color = $statusColors[$order->status] ?? 'bg-slate-700 text-slate-300 border-slate-600';
+                    $color = $statusColors[$order->status_label] ?? 'bg-slate-700 text-slate-300 border-slate-600';
                 @endphp
 
                 <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm" x-data="{ expanded: false }">
@@ -105,7 +105,7 @@
                         </div>
 
                         <span class="text-xs font-bold px-2.5 py-1 rounded-full border {{ $color }}">
-                            {{ $order->status }}
+                            {{ $order->status_label }}
                         </span>
                     </div>
 
@@ -147,21 +147,21 @@
                             @csrf
                             @method('PATCH')
 
-                            @if($order->status !== 'Confirmed')
+                            @if($order->status_label !== 'Confirmed')
                                 <button type="submit" name="status" value="Confirmed"
                                         class="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-600 hover:text-white border border-blue-500/30 text-[11px] font-bold transition">
                                     Confirm
                                 </button>
                             @endif
 
-                            @if($order->status !== 'Dispatched')
+                            @if($order->status_label !== 'Dispatched')
                                 <button type="submit" name="status" value="Dispatched"
                                         class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 text-[11px] font-bold transition">
                                     Dispatch
                                 </button>
                             @endif
 
-                            @if($order->status !== 'Delivered')
+                            @if($order->status_label !== 'Delivered')
                                 <button type="submit" name="status" value="Delivered"
                                         class="px-3 py-1 rounded-lg bg-emerald-500 text-white hover:bg-emerald-400 text-[11px] font-extrabold shadow transition flex items-center space-x-1">
                                     <span>✅ Mark Delivered</span>

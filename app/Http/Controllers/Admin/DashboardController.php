@@ -19,13 +19,13 @@ class DashboardController extends Controller
         $start = Carbon::today()->subDays($days - 1);
 
         // Revenue excludes cancelled orders.
-        $valid = fn () => Order::where('status', '!=', 'Cancelled');
+        $valid = fn () => Order::notCancelled();
 
         $stats = [
             'orders_today'    => Order::whereDate('created_at', Carbon::today())->count(),
             'revenue_today'   => (float) $valid()->whereDate('created_at', Carbon::today())->sum('total'),
             'revenue_month'   => (float) $valid()->where('created_at', '>=', Carbon::now()->startOfMonth())->sum('total'),
-            'pending_orders'  => Order::where('status', 'Pending')->count(),
+            'pending_orders'  => Order::withStatus('Pending')->count(),
             'pending_apps'    => StockistApplication::where('status', 'Pending')->count(),
             'products'        => Product::count(),
             'companies'       => Company::count(),
@@ -36,7 +36,7 @@ class DashboardController extends Controller
 
         // Daily orders + revenue for the chart (zero-filled).
         $daily = Order::where('created_at', '>=', $start)
-            ->where('status', '!=', 'Cancelled')
+            ->notCancelled()
             ->get(['created_at', 'total'])
             ->groupBy(fn ($o) => $o->created_at->format('Y-m-d'));
 
@@ -49,11 +49,11 @@ class DashboardController extends Controller
             $chart['revenue'][] = round((float) $rows->sum('total'), 2);
         }
 
-        $statusCounts = Order::selectRaw('status, count(*) as c')->groupBy('status')->pluck('c', 'status');
+        $statusCounts = Order::statusCounts();
 
         // Top products by quantity in the selected range (cart is JSON).
         $top = [];
-        Order::where('created_at', '>=', $start)->where('status', '!=', 'Cancelled')->get(['cart'])
+        Order::where('created_at', '>=', $start)->notCancelled()->get(['cart'])
             ->each(function ($order) use (&$top) {
                 foreach ($order->items() as $item) {
                     $name = $item['name'] ?? 'Unknown';

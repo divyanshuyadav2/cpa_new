@@ -42,7 +42,7 @@
 </head>
 <body class="h-full font-sans antialiased text-slate-800" x-data="{ sidebarOpen: false }" @keydown.window.escape="sidebarOpen = false">
 @php
-    $navPending = \App\Models\Order::where('status', 'Pending')->count();
+    $navPending = \App\Models\Order::withStatus('Pending')->count();
     $navApps = \App\Models\StockistApplication::where('status', 'Pending')->count();
 @endphp
 

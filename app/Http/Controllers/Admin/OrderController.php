@@ -17,9 +17,9 @@ class OrderController extends Controller
 
         $summary = [
             'count' => (clone $query)->count(),
-            'total' => (float) (clone $query)->where('status', '!=', 'Cancelled')->sum('total'),
+            'total' => (float) (clone $query)->notCancelled()->sum('total'),
         ];
-        $statusCounts = Order::selectRaw('status, count(*) as c')->groupBy('status')->pluck('c', 'status');
+        $statusCounts = Order::statusCounts();
         $orders = $query->latest()->paginate(15)->withQueryString();
 
         return view('admin.orders.index', compact('orders', 'summary', 'statusCounts'));
@@ -29,7 +29,7 @@ class OrderController extends Controller
     {
         return Order::query()
             ->search($request->query('q'))
-            ->when(in_array($request->query('status'), Order::STATUSES, true), fn ($q) => $q->where('status', $request->query('status')))
+            ->when(in_array($request->query('status'), Order::STATUSES, true), fn ($q) => $q->withStatus($request->query('status')))
             ->when($request->filled('from'), fn ($q) => $q->whereDate('created_at', '>=', $request->query('from')))
             ->when($request->filled('to'), fn ($q) => $q->whereDate('created_at', '<=', $request->query('to')));
     }
@@ -47,7 +47,7 @@ class OrderController extends Controller
             foreach ($orders as $o) {
                 fputcsv($out, [
                     $o->id, $o->created_at->format('Y-m-d H:i'), $o->customer_name, $o->phone,
-                    count($o->items()), $o->total, $o->status, $o->invoice_no, $o->notes,
+                    count($o->items()), $o->total, $o->status_label, $o->invoice_no, $o->notes,
                 ]);
             }
             fclose($out);
@@ -93,10 +93,10 @@ class OrderController extends Controller
             'status' => 'required|in:' . implode(',', Order::STATUSES),
         ]);
 
-        $oldStatus = $order->status;
+        $oldStatus = $order->status_label;
         $order->update(['status' => $request->input('status')]);
 
-        return back()->with('success', "Order #{$order->id} status updated from {$oldStatus} to {$order->status}!");
+        return back()->with('success', "Order #{$order->id} status updated from {$oldStatus} to {$request->input('status')}!");
     }
 
     /**
@@ -108,7 +108,7 @@ class OrderController extends Controller
         
         $message = "Hello *{$order->customer_name}*,\n\n";
         $message .= "Your order *#{$order->id}* with *{$companyName}* has been updated!\n";
-        $message .= "*Current Status:* *{$order->status}*\n\n";
+        $message .= "*Current Status:* *{$order->status_label}*\n\n";
         $message .= "*Order Details:*\n";
         
         $i = 1;
@@ -128,13 +128,13 @@ class OrderController extends Controller
         }
         $message .= "\n";
         
-        if ($order->status == 'Confirmed') {
+        if ($order->status_label == 'Confirmed') {
             $message .= "We have confirmed your order and it is currently being packed. We will update you once it is dispatched.";
-        } elseif ($order->status == 'Delivered') {
+        } elseif ($order->status_label == 'Delivered') {
             $message .= "Your order has been delivered. Thank you for your business!";
-        } elseif ($order->status == 'Cancelled') {
+        } elseif ($order->status_label == 'Cancelled') {
             $message .= "Your order has been cancelled. Please contact us if you have any questions.";
-        } elseif ($order->status == 'Dispatched') {
+        } elseif ($order->status_label == 'Dispatched') {
             $message .= "Great news! Your order has been dispatched and is on its way to you.";
         } else {
             $message .= "Your order is currently pending review. We will contact you shortly.";

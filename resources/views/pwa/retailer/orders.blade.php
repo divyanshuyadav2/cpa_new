@@ -23,7 +23,7 @@
                     'Dispatched' => 'bg-purple-500/20 text-purple-300 border-purple-500/30',
                     'Delivered' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
                 ];
-                $color = $statusColors[$order->status] ?? 'bg-slate-700 text-slate-300 border-slate-600';
+                $color = $statusColors[$order->status_label] ?? 'bg-slate-700 text-slate-300 border-slate-600';
             @endphp
 
             <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm" x-data="{ expanded: false }">
@@ -34,7 +34,7 @@
                     </div>
 
                     <span class="text-xs font-bold px-2.5 py-1 rounded-full border {{ $color }}">
-                        {{ $order->status }}
+                        {{ $order->status_label }}
                     </span>
                 </div>
 

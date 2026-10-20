@@ -26,7 +26,7 @@
         <div class="r">
             <strong>ORDER #{{ $order->id }}</strong><br>
             {{ $order->created_at->format('d M Y, h:i A') }}<br>
-            Status: {{ $order->status }}
+            Status: {{ $order->status_label }}
             @if($order->invoice_no)<br>Invoice: {{ $order->invoice_no }}@endif
         </div>
     </div>

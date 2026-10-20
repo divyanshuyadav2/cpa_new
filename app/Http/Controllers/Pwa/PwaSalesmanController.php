@@ -40,7 +40,7 @@ class PwaSalesmanController extends Controller
                       });
 
         if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
+            $query->withStatus($request->input('status'));
         }
 
         if ($request->filled('search')) {
@@ -56,8 +56,8 @@ class PwaSalesmanController extends Controller
 
         // Stats overview
         $totalOrders = Order::whereIn('user_id', $retailerIds)->count();
-        $pendingCount = Order::whereIn('user_id', $retailerIds)->where('status', 'Pending')->count();
-        $deliveredCount = Order::whereIn('user_id', $retailerIds)->where('status', 'Delivered')->count();
+        $pendingCount = Order::whereIn('user_id', $retailerIds)->withStatus('Pending')->count();
+        $deliveredCount = Order::whereIn('user_id', $retailerIds)->withStatus('Delivered')->count();
 
         return view('pwa.salesman.dashboard', compact('retailers', 'orders', 'totalOrders', 'pendingCount', 'deliveredCount'));
     }

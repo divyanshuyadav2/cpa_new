@@ -80,7 +80,7 @@
                                     <a href="tel:{{ $order->phone }}" class="text-xs text-slate-500 hover:text-pharma-accent">{{ $order->phone }}</a>
                                 </td>
                                 <td class="p-4 font-bold text-slate-950">₹{{ number_format($order->total, 2) }}</td>
-                                <td class="p-4">@include('admin.partials.status-badge', ['status' => $order->status])</td>
+                                <td class="p-4">@include('admin.partials.status-badge', ['status' => $order->status_label])</td>
                                 <td class="p-4 text-xs text-slate-500 whitespace-nowrap">{{ $order->created_at->format('d-M-Y h:i A') }}</td>
                                 <td class="p-4 text-right whitespace-nowrap">
                                     <a href="{{ route('orders.show', $order) }}" class="px-3 py-1.5 bg-pharma-light text-pharma-navy hover:bg-pharma-navy hover:text-white font-bold text-xs rounded-xl border border-slate-200 transition">View</a>

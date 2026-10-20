@@ -6,7 +6,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3">
         <h1 class="text-3xl font-extrabold text-pharma-navy font-display">Order #{{ $order->id }}</h1>
         <div class="flex gap-2">
-            @php $next = ['Pending' => 'Confirmed', 'Confirmed' => 'Dispatched', 'Dispatched' => 'Delivered'][$order->status] ?? null; @endphp
+            @php $next = ['Pending' => 'Confirmed', 'Confirmed' => 'Dispatched', 'Dispatched' => 'Delivered'][$order->status_label] ?? null; @endphp
             @if($next)
                 <form action="{{ route('orders.update-status', $order) }}" method="POST">@csrf @method('PATCH')
                     <input type="hidden" name="status" value="{{ $next }}">
@@ -91,7 +91,7 @@
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold text-slate-400 uppercase">Current Status</span>
-                    <div class="mt-1">@include('admin.partials.status-badge', ['status' => $order->status])</div>
+                    <div class="mt-1">@include('admin.partials.status-badge', ['status' => $order->status_label])</div>
                 </div>
             </div>
         </div>
@@ -125,7 +125,7 @@
                     <select name="status" id="status" required
                             class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
                         @foreach(\App\Models\Order::STATUSES as $st)
-                        <option value="{{ $st }}" {{ $order->status == $st ? 'selected' : '' }}>{{ $st }}</option>
+                        <option value="{{ $st }}" {{ $order->status_label == $st ? 'selected' : '' }}>{{ $st }}</option>
                         @endforeach
                     </select>
                 </div>
