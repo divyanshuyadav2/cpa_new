@@ -3,7 +3,19 @@
 @section('content')
 <div class="mb-8">
     <a href="{{ route('orders.index') }}" class="text-xs font-bold text-pharma-accent hover:underline mb-2 block">&larr; Back to Orders</a>
-    <h1 class="text-3xl font-extrabold text-pharma-navy font-display">Order #{{ $order->id }} details</h1>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h1 class="text-3xl font-extrabold text-pharma-navy font-display">Order #{{ $order->id }}</h1>
+        <div class="flex gap-2">
+            @php $next = ['Pending' => 'Confirmed', 'Confirmed' => 'Dispatched', 'Dispatched' => 'Delivered'][$order->status] ?? null; @endphp
+            @if($next)
+                <form action="{{ route('orders.update-status', $order) }}" method="POST">@csrf @method('PATCH')
+                    <input type="hidden" name="status" value="{{ $next }}">
+                    <button class="px-4 py-2 bg-pharma-navy text-white text-xs font-bold rounded-xl hover:bg-slate-700 transition">Mark as {{ $next }} &rarr;</button>
+                </form>
+            @endif
+            <a href="{{ route('orders.invoice', $order) }}" target="_blank" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-50 transition">🖨 Print invoice</a>
+        </div>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -26,8 +38,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm">
-                    @foreach($order->cart as $key => $item)
-                        @if($key === '_order_notes' || !is_array($item)) @continue @endif
+                    @foreach($order->items() as $item)
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-4">
                                 <strong class="block text-slate-900 leading-tight">{{ $item['name'] ?? 'Medicine Product' }}</strong>
@@ -38,15 +49,15 @@
                                     <span class="text-[9px] text-pharma-gold font-bold uppercase tracking-wider block">{{ $item['company'] }}</span>
                                 @endif
                             </td>
-                            <td class="p-4 text-slate-600 font-semibold">{{ $item['packing'] }}</td>
+                            <td class="p-4 text-slate-600 font-semibold">{{ $item['packing'] ?? '' }}</td>
                             <td class="p-4 text-center font-bold text-slate-800">
                                 {{ $item['qty'] }}
                                 <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded ml-1 {{ ($item['unit'] ?? '') === 'Strip' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-sky-100 text-sky-800 border border-sky-200' }}">
                                     {{ $item['unit'] ?? 'Box' }}
                                 </span>
                             </td>
-                            <td class="p-4 font-semibold text-slate-700">₹{{ number_format($item['price'], 2) }}</td>
-                            <td class="p-4 text-right font-bold text-slate-900">₹{{ number_format($item['qty'] * $item['price'], 2) }}</td>
+                            <td class="p-4 font-semibold text-slate-700">₹{{ number_format($item['price'] ?? 0, 2) }}</td>
+                            <td class="p-4 text-right font-bold text-slate-900">₹{{ number_format(($item['qty'] ?? 0) * ($item['price'] ?? 0), 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -80,15 +91,7 @@
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold text-slate-400 uppercase">Current Status</span>
-                    @if($order->status == 'Pending')
-                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">Pending Approval</span>
-                    @elseif($order->status == 'Confirmed')
-                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Confirmed</span>
-                    @elseif($order->status == 'Dispatched')
-                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Dispatched</span>
-                    @else
-                        <span class="inline-flex px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Delivered</span>
-                    @endif
+                    <div class="mt-1">@include('admin.partials.status-badge', ['status' => $order->status])</div>
                 </div>
             </div>
         </div>
@@ -121,10 +124,9 @@
                     <label for="status" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Select Status</label>
                     <select name="status" id="status" required
                             class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pharma-accent focus:bg-white transition">
-                        <option value="Pending" {{ $order->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="Confirmed" {{ $order->status == 'Confirmed' ? 'selected' : '' }}>Confirmed</option>
-                        <option value="Dispatched" {{ $order->status == 'Dispatched' ? 'selected' : '' }}>Dispatched</option>
-                        <option value="Delivered" {{ $order->status == 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                        @foreach(\App\Models\Order::STATUSES as $st)
+                        <option value="{{ $st }}" {{ $order->status == $st ? 'selected' : '' }}>{{ $st }}</option>
+                        @endforeach
                     </select>
                 </div>
 

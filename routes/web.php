@@ -145,6 +145,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     
     // Orders resource with status updates & WhatsApp confirmation
     Route::get('orders/{order}/confirm', [OrderController::class, 'sendConfirmation'])->name('orders.confirm');
+    Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
+    Route::post('orders/bulk-status', [OrderController::class, 'bulkStatus'])->name('orders.bulk-status');
+    Route::get('orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::resource('orders', OrderController::class)->only(['index', 'show']);
 
