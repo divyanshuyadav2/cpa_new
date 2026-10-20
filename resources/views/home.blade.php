@@ -159,7 +159,7 @@
                     <!-- Buttons Row -->
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-5">
                         <!-- Primary Direct APK Download Button -->
-                        <a href="https://github.com/divyanshuyadav2/cpa_new/actions/runs/39232564439/artifacts/12178107716" 
+                        <a href="https://github.com/divyanshuyadav2/cpa_new/releases/download/app-latest/app-release.apk" 
                            class="inline-flex items-center gap-3 px-6 py-3 rounded-xl font-bold text-sm text-white bg-pharma-accent hover:bg-blue-700 shadow-sm transition">
                             <span class="text-lg">🤖</span>
                             <div class="text-left">
