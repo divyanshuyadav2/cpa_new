@@ -89,7 +89,9 @@
                     @endif
 
                     <div>
-                        <label for="company_name" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Shop / Medical Counter Name</label>
+                        <label for="company_name" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                            {{ ($user->role ?? '') === 'salesman' ? 'Territory / Area Name' : 'Shop / Medical Counter Name' }}
+                        </label>
                         <input type="text" name="company_name" id="company_name" value="{{ old('company_name', $user->company_name) }}"
                                class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800">
                     </div>
@@ -100,6 +102,20 @@
                                class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800">
                     </div>
 
+                    <div class="border-t border-slate-100 pt-3 space-y-3">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reset Password (Optional)</span>
+                        <div>
+                            <label for="password" class="block text-xs font-semibold text-slate-600 mb-1">New Password</label>
+                            <input type="password" name="password" id="password" minlength="6" placeholder="Leave blank to keep current"
+                                   class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800">
+                        </div>
+                        <div>
+                            <label for="password_confirmation" class="block text-xs font-semibold text-slate-600 mb-1">Confirm New Password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" minlength="6" placeholder="Repeat new password"
+                                   class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800">
+                        </div>
+                    </div>
+
                     <button type="submit" class="w-full py-2.5 bg-pharma-navy hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow transition">
                         Save Changes
                     </button>
@@ -107,8 +123,76 @@
             </div>
         </div>
 
-        <!-- Right Column: Order History -->
+        <!-- Right Column: Order History & Assigned Retailers -->
         <div class="lg:col-span-2 space-y-6">
+            
+            @if(($user->role ?? '') === 'salesman')
+                <!-- Assigned Retailer Counters Section for Salesman -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 bg-amber-50/50 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-base">🏪</span>
+                            <h2 class="text-sm font-bold text-amber-900 uppercase tracking-wider">Assigned Retailer Counters</h2>
+                        </div>
+                        <span class="text-xs font-bold bg-amber-200 text-amber-900 px-2.5 py-1 rounded-full">
+                            {{ $user->retailers ? $user->retailers->count() : 0 }} Assigned Counters
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
+                                    <th class="p-4">Counter / Shop Name</th>
+                                    <th class="p-4">Contact Phone</th>
+                                    <th class="p-4 text-center">Total Orders</th>
+                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm">
+                                @forelse($user->retailers as $retailer)
+                                    <tr class="hover:bg-slate-50/50 transition">
+                                        <td class="p-4">
+                                            <a href="{{ route('admin.users.show', $retailer->id) }}" class="font-bold text-slate-900 hover:text-pharma-accent transition">
+                                                {{ $retailer->name }}
+                                            </a>
+                                            @if($retailer->company_name)
+                                                <span class="text-xs font-semibold text-sky-700 block">🏪 {{ $retailer->company_name }}</span>
+                                            @endif
+                                            <span class="text-[11px] text-slate-400 block">{{ $retailer->email }}</span>
+                                        </td>
+                                        <td class="p-4 font-semibold text-slate-700">{{ $retailer->phone ?? 'N/A' }}</td>
+                                        <td class="p-4 text-center">
+                                            <span class="inline-block px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-bold text-xs">
+                                                {{ $retailer->orders ? $retailer->orders->count() : 0 }}
+                                            </span>
+                                        </td>
+                                        <td class="p-4 text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ ($retailer->is_active ?? true) ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800' }}">
+                                                {{ ($retailer->is_active ?? true) ? '● Active' : '○ Inactive' }}
+                                            </span>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <a href="{{ route('admin.users.show', $retailer->id) }}" class="text-xs font-bold text-pharma-accent hover:underline">
+                                                View Profile &rarr;
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-8 text-slate-400">
+                                            <span class="text-2xl block mb-1">🏪</span>
+                                            <p class="text-xs font-semibold">No retailers assigned to this salesman yet.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @endif
+
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
                     <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Order History</h2>
