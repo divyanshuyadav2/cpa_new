@@ -54,6 +54,23 @@ class Order extends Model
     }
 
     /**
+     * Get the salesman responsible for this order.
+     */
+    public function getSalesmanAttribute(): ?User
+    {
+        if ($this->user && $this->user->salesman) {
+            return $this->user->salesman;
+        }
+        if ($this->user && $this->user->role === 'salesman') {
+            return $this->user;
+        }
+        if ($this->biller && $this->biller->role === 'salesman') {
+            return $this->biller;
+        }
+        return null;
+    }
+
+    /**
      * Search by order id, customer name, phone or invoice number.
      */
     public function scopeSearch($query, ?string $term)

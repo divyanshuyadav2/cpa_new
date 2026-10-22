@@ -149,7 +149,12 @@ class UserController extends Controller
             $salesmen = User::where('role', 'salesman')->where('id', '!=', $user->id)->orderBy('name')->get();
         }
 
-        return view('admin.users.show', compact('user', 'salesmen'));
+        $territoryOrders = collect();
+        if (($user->role ?? '') === 'salesman') {
+            $territoryOrders = $user->territoryOrders()->with('user')->latest()->get();
+        }
+
+        return view('admin.users.show', compact('user', 'salesmen', 'territoryOrders'));
     }
 
     /**

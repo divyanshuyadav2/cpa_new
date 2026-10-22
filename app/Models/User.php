@@ -73,4 +73,44 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'biller_id');
     }
+
+    /**
+     * Orders belonging to this salesman (placed by their assigned retailers or themselves).
+     */
+    public function territoryOrders()
+    {
+        $retailerIds = $this->retailers()->pluck('id')->push($this->id);
+        return Order::where(function ($q) use ($retailerIds) {
+            $q->whereIn('user_id', $retailerIds)
+              ->orWhere('biller_id', $this->id);
+        });
+    }
+
+    /**
+     * Delivery breakdown for this salesman: total, delivered, pending/remaining, cancelled.
+     */
+    public function getDeliveryStatsAttribute(): array
+    {
+        if ($this->role !== 'salesman') {
+            return ['total' => 0, 'delivered' => 0, 'pending' => 0, 'cancelled' => 0];
+        }
+
+        $retailerIds = $this->retailers()->pluck('id')->push($this->id);
+        $base = Order::where(function ($q) use ($retailerIds) {
+            $q->whereIn('user_id', $retailerIds)
+              ->orWhere('biller_id', $this->id);
+        });
+
+        $total = (clone $base)->count();
+        $delivered = (clone $base)->withStatus('Delivered')->count();
+        $cancelled = (clone $base)->withStatus('Cancelled')->count();
+        $pending = max(0, $total - $delivered - $cancelled);
+
+        return [
+            'total'     => $total,
+            'delivered' => $delivered,
+            'pending'   => $pending,
+            'cancelled' => $cancelled,
+        ];
+    }
 }

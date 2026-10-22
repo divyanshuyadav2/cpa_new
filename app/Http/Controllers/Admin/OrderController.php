@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     /**
-     * Filtered listing with search, status, date range and totals.
+     * Filtered listing with search, status, date range, salesman filter and totals.
      */
     public function index(Request $request)
     {
@@ -20,9 +21,10 @@ class OrderController extends Controller
             'total' => (float) (clone $query)->notCancelled()->sum('total'),
         ];
         $statusCounts = Order::statusCounts();
-        $orders = $query->latest()->paginate(15)->withQueryString();
+        $orders = $query->with(['user.salesman', 'biller'])->latest()->paginate(15)->withQueryString();
+        $salesmen = User::where('role', 'salesman')->orderBy('name')->get();
 
-        return view('admin.orders.index', compact('orders', 'summary', 'statusCounts'));
+        return view('admin.orders.index', compact('orders', 'summary', 'statusCounts', 'salesmen'));
     }
 
     protected function filtered(Request $request)
@@ -30,6 +32,16 @@ class OrderController extends Controller
         return Order::query()
             ->search($request->query('q'))
             ->when(in_array($request->query('status'), Order::STATUSES, true), fn ($q) => $q->withStatus($request->query('status')))
+            ->when($request->filled('salesman_id'), function ($q) use ($request) {
+                $salesman = User::find($request->query('salesman_id'));
+                if ($salesman) {
+                    $retailerIds = $salesman->retailers()->pluck('id')->push($salesman->id);
+                    $q->where(function ($sub) use ($retailerIds, $salesman) {
+                        $sub->whereIn('user_id', $retailerIds)
+                            ->orWhere('biller_id', $salesman->id);
+                    });
+                }
+            })
             ->when($request->filled('from'), fn ($q) => $q->whereDate('created_at', '>=', $request->query('from')))
             ->when($request->filled('to'), fn ($q) => $q->whereDate('created_at', '<=', $request->query('to')));
     }
@@ -39,14 +51,15 @@ class OrderController extends Controller
      */
     public function export(Request $request)
     {
-        $orders = $this->filtered($request)->latest()->get();
+        $orders = $this->filtered($request)->with(['user.salesman', 'biller'])->latest()->get();
 
         return response()->streamDownload(function () use ($orders) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['Order ID', 'Date', 'Customer', 'Phone', 'Items', 'Total', 'Status', 'Invoice No', 'Notes']);
+            fputcsv($out, ['Order ID', 'Date', 'Customer', 'Phone', 'Salesman', 'Items', 'Total', 'Status', 'Invoice No', 'Notes']);
             foreach ($orders as $o) {
                 fputcsv($out, [
                     $o->id, $o->created_at->format('Y-m-d H:i'), $o->customer_name, $o->phone,
+                    $o->salesman ? $o->salesman->name : 'N/A',
                     count($o->items()), $o->total, $o->status_label, $o->invoice_no, $o->notes,
                 ]);
             }

@@ -127,6 +127,33 @@
         <div class="lg:col-span-2 space-y-6">
             
             @if(($user->role ?? '') === 'salesman')
+                @php $dStats = $user->delivery_stats; @endphp
+                <!-- Salesman Delivery Performance Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">📦 Total Orders</span>
+                        <strong class="text-2xl font-extrabold text-slate-900 block mt-1">{{ $dStats['total'] }}</strong>
+                        <span class="text-[11px] text-slate-500">Assigned Territory</span>
+                    </div>
+                    <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200 shadow-sm">
+                        <span class="block text-[10px] font-bold text-emerald-700 uppercase tracking-wider">✅ Delivered</span>
+                        <strong class="text-2xl font-extrabold text-emerald-800 block mt-1">{{ $dStats['delivered'] }}</strong>
+                        <span class="text-[11px] text-emerald-600 font-semibold">Deliver ho chuke</span>
+                    </div>
+                    <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 shadow-sm">
+                        <span class="block text-[10px] font-bold text-amber-700 uppercase tracking-wider">⏳ To Deliver</span>
+                        <strong class="text-2xl font-extrabold text-amber-800 block mt-1">{{ $dStats['pending'] }}</strong>
+                        <span class="text-[11px] text-amber-600 font-semibold">Bache hue orders</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Orders Filter</span>
+                        <a href="{{ route('orders.index', ['salesman_id' => $user->id]) }}" 
+                           class="inline-flex items-center justify-center px-3 py-2 bg-pharma-navy text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition">
+                            View All Orders &rarr;
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Assigned Retailer Counters Section for Salesman -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-200 bg-amber-50/50 flex items-center justify-between">
@@ -193,11 +220,22 @@
                 </div>
             @endif
 
+            @php 
+                $displayOrders = (($user->role ?? '') === 'salesman') ? ($territoryOrders ?? collect()) : ($user->orders ?? collect()); 
+            @endphp
+
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-                    <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Order History</h2>
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                            {{ (($user->role ?? '') === 'salesman') ? 'Territory Orders & Delivery Status' : 'Order History' }}
+                        </h2>
+                        @if(($user->role ?? '') === 'salesman')
+                            <p class="text-xs text-slate-400 mt-0.5">Orders placed by assigned retailers in this salesman's area</p>
+                        @endif
+                    </div>
                     <span class="text-xs font-bold bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full">
-                        {{ $user->orders ? $user->orders->count() : 0 }} Total Orders
+                        {{ $displayOrders->count() }} Total Orders
                     </span>
                 </div>
 
@@ -206,17 +244,22 @@
                         <thead>
                             <tr class="border-b border-slate-200 bg-slate-100/50 text-[10px] font-bold text-slate-500 uppercase">
                                 <th class="p-4">Order ID</th>
+                                <th class="p-4">Customer / Shop</th>
                                 <th class="p-4">Date</th>
-                                <th class="p-4">Items Count</th>
+                                <th class="p-4">Items</th>
                                 <th class="p-4">Total Amount</th>
-                                <th class="p-4 text-center">Status</th>
+                                <th class="p-4 text-center">Delivery Status</th>
                                 <th class="p-4 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
-                            @forelse($user->orders as $order)
+                            @forelse($displayOrders as $order)
                                 <tr class="hover:bg-slate-50/50 transition">
                                     <td class="p-4 font-bold text-pharma-navy">#{{ $order->id }}</td>
+                                    <td class="p-4">
+                                        <strong class="block text-slate-800 text-xs">{{ $order->customer_name }}</strong>
+                                        <span class="text-[11px] text-slate-400 block">{{ $order->phone }}</span>
+                                    </td>
                                     <td class="p-4 text-xs text-slate-500">{{ $order->created_at->format('d M Y, h:i A') }}</td>
                                     <td class="p-4 font-semibold text-slate-700">{{ count($order->items()) }} items</td>
                                     <td class="p-4 font-extrabold text-emerald-600">₹{{ number_format($order->total, 2) }}</td>
@@ -231,9 +274,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-12 text-slate-400">
+                                    <td colspan="7" class="text-center py-12 text-slate-400">
                                         <span class="text-3xl block mb-2">🛒</span>
-                                        <p class="text-sm font-semibold">No orders placed by this user yet.</p>
+                                        <p class="text-sm font-semibold">No orders found in this account.</p>
                                     </td>
                                 </tr>
                             @endforelse

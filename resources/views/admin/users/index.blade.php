@@ -81,7 +81,7 @@
                         <th class="p-4">Account Role</th>
                         <th class="p-4">Phone / Contact</th>
                         <th class="p-4">Assigned Salesman</th>
-                        <th class="p-4 text-center">Total Orders</th>
+                        <th class="p-4 text-center">Orders & Delivery Status</th>
                         <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-right">Actions</th>
                     </tr>
@@ -138,11 +138,30 @@
                                 @endif
                             </td>
 
-                            <!-- Orders Count -->
+                            <!-- Orders & Delivery Progress -->
                             <td class="p-4 text-center">
-                                <span class="inline-block px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-extrabold text-xs">
-                                    {{ $user->orders_count ?? 0 }}
-                                </span>
+                                @if(($user->role ?? '') === 'salesman')
+                                    @php $dStats = $user->delivery_stats; @endphp
+                                    <div class="inline-flex flex-col items-center space-y-1">
+                                        <span class="text-xs font-extrabold text-slate-900">{{ $dStats['total'] }} Orders</span>
+                                        <div class="flex items-center gap-1 text-[10px] font-bold">
+                                            <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200" title="Delivered Orders">
+                                                ✓ {{ $dStats['delivered'] }} Del.
+                                            </span>
+                                            <span class="text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200" title="Pending to Deliver">
+                                                ⏳ {{ $dStats['pending'] }} Pend.
+                                            </span>
+                                        </div>
+                                        <a href="{{ route('orders.index', ['salesman_id' => $user->id]) }}" 
+                                           class="text-[10px] font-bold text-sky-600 hover:text-sky-800 hover:underline">
+                                            View Orders &rarr;
+                                        </a>
+                                    </div>
+                                @else
+                                    <span class="inline-block px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-extrabold text-xs">
+                                        {{ $user->orders_count ?? 0 }}
+                                    </span>
+                                @endif
                             </td>
 
                             <!-- Active / Inactive Status -->
