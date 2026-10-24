@@ -7,6 +7,8 @@ class User {
   final String? companyName;
   final String? address;
   final int? salesmanId;
+  final String? dlNumber;
+  final String? gstNumber;
 
   User({
     required this.id,
@@ -17,6 +19,8 @@ class User {
     this.companyName,
     this.address,
     this.salesmanId,
+    this.dlNumber,
+    this.gstNumber,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -31,6 +35,8 @@ class User {
       salesmanId: json['salesman_id'] is int
           ? json['salesman_id']
           : int.tryParse(json['salesman_id']?.toString() ?? ''),
+      dlNumber: json['dl_number']?.toString(),
+      gstNumber: json['gst_number']?.toString(),
     );
   }
 
@@ -44,6 +50,8 @@ class User {
       'company_name': companyName,
       'address': address,
       'salesman_id': salesmanId,
+      'dl_number': dlNumber,
+      'gst_number': gstNumber,
     };
   }
 }

@@ -60,9 +60,10 @@ jobs:
           body: |
             ### Chitranshu Pharma Mobile App - Android Release Build
             Automated build for latest updates:
-            - Persistent shopping cart (retains items across restarts)
-            - Strip vs Box pricing based on pack calculations
-            - Frequently Ordered / Regular Items section on Catalog screen
+            - Real-time Push Notifications via Firebase Cloud Messaging (FCM)
+            - Order alerts for Admin, Biller, and Retailer
+            - Drug License (DL) mandatory validation and GST support for Retailers
+            - Persistent shopping cart & optimized ordering
             
             **Installation:** Download `app-release.apk` below and install on Android device.
           files: cpa_mobile/build/app/outputs/flutter-apk/app-release.apk

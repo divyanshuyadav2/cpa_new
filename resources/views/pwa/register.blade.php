@@ -53,6 +53,30 @@
                        class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
             </div>
 
+            <!-- Drug License (DL) Number (Required for Retailers) -->
+            <div x-show="role === 'retailer'">
+                <label for="dl_number" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                    Drug License (DL) Number <span class="text-rose-400">*</span>
+                </label>
+                <input type="text" name="dl_number" id="dl_number" value="{{ old('dl_number') }}" placeholder="e.g. DL-20B-123456 / 21B-123456"
+                       class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                @error('dl_number')
+                    <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- GST Number (Optional) -->
+            <div>
+                <label for="gst_number" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                    GST Number <span class="text-xs text-slate-400 font-normal lowercase">(optional)</span>
+                </label>
+                <input type="text" name="gst_number" id="gst_number" value="{{ old('gst_number') }}" placeholder="e.g. 09ABCDE1234F1Z5"
+                       class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 uppercase">
+                @error('gst_number')
+                    <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Address -->
             <div>
                 <label for="address" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Shop Address</label>

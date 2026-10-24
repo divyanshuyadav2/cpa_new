@@ -15,6 +15,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _ownerNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
+  final _dlNumberController = TextEditingController();
+  final _gstNumberController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _addressController = TextEditingController();
@@ -27,6 +29,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _ownerNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _dlNumberController.dispose();
+    _gstNumberController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _addressController.dispose();
@@ -44,6 +48,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       phone: _phoneController.text.trim(),
       companyName: _storeNameController.text.trim(),
       address: _addressController.text.trim(),
+      dlNumber: _dlNumberController.text.trim(),
+      gstNumber: _gstNumberController.text.trim().isNotEmpty ? _gstNumberController.text.trim() : null,
     );
 
     if (success && mounted) {
@@ -96,8 +102,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: const Color(0xFFE3F2FD),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Icon(Icons.local_pharmacy_rounded, color: Color(0xFF0D47A1), size: 36),
                         SizedBox(width: 14),
                         Expanded(
@@ -199,6 +205,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       return null;
                     },
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Drug License (DL) Number (Required)
+                  TextFormField(
+                    controller: _dlNumberController,
+                    textCapitalization: TextCapitalization.characters,
+                    decoration: InputDecoration(
+                      labelText: 'Drug License (DL) Number *',
+                      hintText: 'e.g. DL-20B-123456 / 21B-123456',
+                      prefixIcon: const Icon(Icons.verified_user_outlined),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      helperText: 'Mandatory for wholesale medicine purchase',
+                    ),
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Drug License (DL) Number is mandatory';
+                      }
+                      if (val.trim().length < 5) {
+                        return 'Please enter a valid Drug License Number';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 14),
+
+                  // GST Number (Optional)
+                  TextFormField(
+                    controller: _gstNumberController,
+                    textCapitalization: TextCapitalization.characters,
+                    decoration: InputDecoration(
+                      labelText: 'GST Number (Optional)',
+                      hintText: 'e.g. 09ABCDE1234F1Z5',
+                      prefixIcon: const Icon(Icons.receipt_long_outlined),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                   const SizedBox(height: 14),
 

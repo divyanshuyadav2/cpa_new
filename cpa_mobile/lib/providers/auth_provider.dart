@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import '../core/api/api_client.dart';
 import '../core/constants/api_constants.dart';
 import '../models/user_model.dart';
+import '../services/notification_service.dart';
 
 class AuthProvider with ChangeNotifier {
   User? _user;
@@ -27,6 +28,8 @@ class AuthProvider with ChangeNotifier {
     _token = prefs.getString('auth_token');
     if (_token != null) {
       await fetchUser();
+      // Sync FCM token upon session restore
+      NotificationService.instance.syncTokenWithBackend(role: _user?.role);
     }
     notifyListeners();
   }
@@ -66,6 +69,9 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', _token!);
 
+      // Sync device FCM push notification token with backend
+      NotificationService.instance.syncTokenWithBackend(role: backendRole);
+
       _isLoading = false;
       notifyListeners();
       return true;
@@ -89,6 +95,8 @@ class AuthProvider with ChangeNotifier {
     required String phone,
     required String companyName,
     required String address,
+    required String dlNumber,
+    String? gstNumber,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -104,6 +112,9 @@ class AuthProvider with ChangeNotifier {
           'phone': phone.trim(),
           'company_name': companyName.trim(),
           'address': address.trim(),
+          'dl_number': dlNumber.trim(),
+          if (gstNumber != null && gstNumber.trim().isNotEmpty)
+            'gst_number': gstNumber.trim().toUpperCase(),
           'role': 'retailer',
         },
       );
@@ -220,6 +231,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
+    final currentRole = _user?.role;
+    try {
+      await NotificationService.instance.removeToken(role: currentRole);
+    } catch (_) {}
+
     try {
       if (_token != null) {
         await ApiClient.instance.post(ApiConstants.logout);

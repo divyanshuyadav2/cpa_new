@@ -86,6 +86,10 @@ class PwaAuthController extends Controller
             'address' => 'nullable|string|max:500',
             'role' => 'required|in:retailer,salesman',
             'salesman_id' => 'nullable|exists:users,id',
+            'dl_number' => 'required_if:role,retailer|nullable|string|max:100',
+            'gst_number' => 'nullable|string|max:50',
+        ], [
+            'dl_number.required_if' => 'The Drug License (DL) number is required for retailer counter access.',
         ]);
 
         $data = [
@@ -94,7 +98,7 @@ class PwaAuthController extends Controller
             'password' => Hash::make($validated['password']),
         ];
 
-        foreach (['role', 'phone', 'company_name', 'address', 'is_active', 'salesman_id'] as $col) {
+        foreach (['role', 'phone', 'company_name', 'address', 'is_active', 'salesman_id', 'dl_number', 'gst_number'] as $col) {
             if (\Illuminate\Support\Facades\Schema::hasColumn('users', $col) && isset($validated[$col])) {
                 $data[$col] = $validated[$col];
             }

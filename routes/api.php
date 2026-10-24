@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\SalesmanController;
 use App\Http\Controllers\Api\AdminOrderController;
 use App\Http\Controllers\Api\BillerController;
+use App\Http\Controllers\Api\DeviceTokenController;
 
 // Authentication
 Route::post('/login', [AuthController::class, 'login']);
@@ -16,6 +17,10 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+
+    // Device FCM Token Management
+    Route::post('/device-token', [DeviceTokenController::class, 'store']);
+    Route::delete('/device-token', [DeviceTokenController::class, 'destroy']);
 
     // Catalog APIs
     Route::get('/companies', [CatalogController::class, 'companies']);

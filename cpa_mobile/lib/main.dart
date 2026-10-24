@@ -10,9 +10,17 @@ import 'providers/catalog_provider.dart';
 import 'providers/salesman_provider.dart';
 import 'providers/admin_provider.dart';
 import 'providers/biller_provider.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Safely initialize push notifications (handles background, tokens, permissions)
+  try {
+    await NotificationService.instance.initialize().timeout(const Duration(seconds: 4));
+  } catch (e) {
+    debugPrint('NotificationService init error: $e');
+  }
 
   final authProvider = AuthProvider();
   final cartProvider = CartProvider();
@@ -32,6 +40,20 @@ void main() async {
 
   // Inject active AuthProvider into GoRouter for reactive route guarding
   final router = AppRouter.createRouter(authProvider);
+
+  // Handle push notification tap navigation
+  NotificationService.instance.onNotificationOpened = (message) {
+    debugPrint('[FCM Navigation] Notification opened: ${message.data}');
+    if (authProvider.isAdmin) {
+      router.go('/admin');
+    } else if (authProvider.isSalesman) {
+      router.go('/salesman');
+    } else if (authProvider.isRetailer) {
+      router.go('/retailer');
+    } else if (authProvider.isBiller) {
+      router.go('/biller');
+    }
+  };
 
   runApp(
     MultiProvider(

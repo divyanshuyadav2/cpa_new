@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "692086520373",
+    "project_id": "chitranshupharma",
+    "storage_bucket": "chitranshupharma.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692086520373:android:5eb322ffaa7be36a940f7c",
+        "android_client_info": {
+          "package_name": "com.chitranshupharma.cpa_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfTGieebb4ZkXpDGxXCeoAd_FVj1OHVRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

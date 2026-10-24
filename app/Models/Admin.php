@@ -14,9 +14,15 @@ class Admin extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'fcm_token',
     ];
 
     protected $hidden = [
         'password',
     ];
+
+    public function deviceTokens()
+    {
+        return $this->morphMany(DeviceToken::class, 'tokenable');
+    }
 }

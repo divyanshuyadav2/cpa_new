@@ -28,6 +28,9 @@ class User extends Authenticatable
         'address',
         'is_active',
         'salesman_id',
+        'fcm_token',
+        'dl_number',
+        'gst_number',
     ];
 
     /**
@@ -52,6 +55,11 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function deviceTokens()
+    {
+        return $this->morphMany(DeviceToken::class, 'tokenable');
     }
 
     public function salesman()

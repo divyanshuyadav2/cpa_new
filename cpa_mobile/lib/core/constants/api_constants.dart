@@ -7,6 +7,7 @@ class ApiConstants {
   static const String register = '/register';
   static const String logout = '/logout';
   static const String user = '/user';
+  static const String deviceToken = '/device-token';
   
   // Catalog Endpoints
   static const String companies = '/companies';

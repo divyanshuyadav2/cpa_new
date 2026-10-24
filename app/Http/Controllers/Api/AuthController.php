@@ -66,6 +66,10 @@ class AuthController extends Controller
             'address' => 'nullable|string|max:500',
             'role' => 'required|in:retailer,salesman',
             'salesman_id' => 'nullable|exists:users,id',
+            'dl_number' => 'required_if:role,retailer|nullable|string|max:100',
+            'gst_number' => 'nullable|string|max:50',
+        ], [
+            'dl_number.required_if' => 'The Drug License (DL) number is required for retailer registration.',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
