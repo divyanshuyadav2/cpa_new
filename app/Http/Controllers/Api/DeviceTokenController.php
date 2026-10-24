@@ -82,4 +82,52 @@ class DeviceTokenController extends Controller
             'message' => 'Device token removed successfully',
         ]);
     }
+
+    /**
+     * Send a test push notification to the authenticated user's registered devices.
+     */
+    public function sendTestNotification(Request $request, \App\Contracts\PushNotificationServiceInterface $pushService)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        $tokens = [];
+        try {
+            $tokens = DeviceToken::where('tokenable_type', get_class($user))
+                ->where('tokenable_id', $user->id)
+                ->pluck('token')
+                ->toArray();
+        } catch (\Throwable $e) {
+            // Ignore DB issues
+        }
+
+        if (empty($tokens) && !empty($user->fcm_token)) {
+            $tokens[] = $user->fcm_token;
+        }
+
+        if (empty($tokens)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No FCM device tokens registered for this user yet. Please re-open the app or log in again.',
+            ], 404);
+        }
+
+        $result = $pushService->sendNotification(
+            $tokens,
+            '🔔 Chitranshu Pharma Test',
+            'Hello ' . ($user->name ?? 'User') . '! Push notifications are working perfectly on your device.',
+            ['type' => 'test_notification', 'timestamp' => (string)now()->timestamp]
+        );
+
+        return response()->json([
+            'success' => $result['success_count'] > 0,
+            'result' => $result,
+            'message' => $result['success_count'] > 0
+                ? 'Test notification dispatched successfully!'
+                : 'Failed to send notification. Please verify Firebase credentials on server.',
+        ]);
+    }
 }
+

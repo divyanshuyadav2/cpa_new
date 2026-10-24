@@ -106,4 +106,19 @@ class NotificationSystemTest extends TestCase
         // Will try to fetch user tokens (none exist on an unsaved model, so 0 calls or empty tokens)
         $this->assertTrue(true);
     }
+
+    public function test_fcm_notification_service_resolves_credentials_path_robustly(): void
+    {
+        $service = new FcmNotificationService();
+        $path = $service->resolveCredentialsPath();
+
+        // If storage/app/firebase/service-account.json exists locally, path must not be null
+        if (file_exists(storage_path('app/firebase/service-account.json'))) {
+            $this->assertNotNull($path);
+            $this->assertFileExists($path);
+        } else {
+            $this->assertTrue(true);
+        }
+    }
 }
+

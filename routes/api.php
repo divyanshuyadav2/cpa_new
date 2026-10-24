@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Device FCM Token Management
     Route::post('/device-token', [DeviceTokenController::class, 'store']);
     Route::delete('/device-token', [DeviceTokenController::class, 'destroy']);
+    Route::post('/test-notification', [DeviceTokenController::class, 'sendTestNotification']);
 
     // Catalog APIs
     Route::get('/companies', [CatalogController::class, 'companies']);

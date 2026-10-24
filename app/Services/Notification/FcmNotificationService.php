@@ -17,8 +17,45 @@ class FcmNotificationService implements PushNotificationServiceInterface
     public function __construct()
     {
         $this->projectId = config('services.firebase.project_id');
-        $this->credentialsPath = config('services.firebase.credentials_path');
+        $this->credentialsPath = $this->resolveCredentialsPath();
         $this->serverKey = config('services.firebase.server_key');
+
+        // Automatically extract project_id from service account if not configured in .env
+        if (empty($this->projectId) && $this->credentialsPath && file_exists($this->credentialsPath)) {
+            $json = json_decode(@file_get_contents($this->credentialsPath), true);
+            if (!empty($json['project_id'])) {
+                $this->projectId = $json['project_id'];
+            }
+        }
+    }
+
+    /**
+     * Resolve the credentials file path from config or multiple common fallback paths.
+     */
+    public function resolveCredentialsPath(): ?string
+    {
+        $configured = config('services.firebase.credentials_path');
+        if ($configured && file_exists($configured)) {
+            return $configured;
+        }
+
+        $candidates = [
+            storage_path('app/firebase/service-account.json'),
+            storage_path('app/firebase/google.json'),
+            storage_path('service-account.json'),
+            storage_path('google.json'),
+            storage_path('app/google.json'),
+            base_path('service-account.json'),
+            base_path('google.json'),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (file_exists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return $configured ?: null;
     }
 
     /**
@@ -46,10 +83,11 @@ class FcmNotificationService implements PushNotificationServiceInterface
             return $this->sendViaLegacyApi($tokens, $title, $body, $data);
         }
 
-        Log::info('[FCM] Notification skipped: Firebase credentials not configured yet.', [
+        Log::warning('[FCM] Notification skipped: Firebase credentials not configured or file not found.', [
+            'checked_path' => $this->credentialsPath,
+            'resolved_project_id' => $this->projectId,
             'tokens_count' => count($tokens),
             'title' => $title,
-            'body' => $body,
         ]);
 
         return [
