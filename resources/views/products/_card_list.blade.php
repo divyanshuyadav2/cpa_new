@@ -30,11 +30,23 @@
                 </div>
             @endif
 
+            <!-- Restricted Schedule Tag -->
+            @if($product->is_restricted_schedule)
+                <div class="mt-2">
+                    <span class="inline-flex items-center gap-1 text-[9px] font-bold text-rose-700 bg-rose-50 border border-rose-200/90 rounded-md px-1.5 py-0.5" title="Prescription Medicine - Retail Drug License Mandatory under Drugs and Cosmetics Act">
+                        <span>⚠️</span> Prescription Medicine - Retail D.L. Mandatory
+                    </span>
+                </div>
+            @endif
+
             <!-- Price & Cart Button -->
             <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
                 <div>
                     <span class="block text-[8px] uppercase font-bold text-slate-400">MRP Value</span>
                     <span class="text-base font-extrabold text-pharma-navy">₹{{ number_format($product->mrp, 2) }}</span>
+                    <span class="block text-[8px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 rounded px-1.5 py-0.5 mt-1 w-fit">
+                        For Licensed Retailers Only
+                    </span>
                 </div>
 
                 <form action="{{ route('cart.add') }}" method="POST" class="flex items-center space-x-1">

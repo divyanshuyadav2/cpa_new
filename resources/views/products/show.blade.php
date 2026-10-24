@@ -87,13 +87,29 @@
                         </div>
                     @endif
 
+                    <!-- Restricted Schedule Warning -->
+                    @if($product->is_restricted_schedule)
+                        <div class="mt-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-xs text-rose-900 leading-relaxed shadow-sm">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-rose-600 text-white font-extrabold text-[10px] uppercase tracking-wider shrink-0 mt-0.5">
+                                Schedule Drug
+                            </span>
+                            <div>
+                                <span class="font-bold block">[Prescription Medicine - Retail D.L. Mandatory]</span>
+                                <span class="text-rose-800">In compliance with the Drugs and Cosmetics Act, 1940, supply is strictly restricted to licensed pharmacies and healthcare institutions holding a valid Drug License (Form 20/21).</span>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Price Display (MRP Only) -->
-                    <div class="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                    <div class="mt-6 bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
                         <div>
                             <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Maximum Retail Price (MRP)</span>
-                            <div class="flex items-baseline gap-2 mt-1">
+                            <div class="flex items-baseline gap-2 mt-1 flex-wrap">
                                 <span class="text-3xl font-extrabold text-pharma-navy">₹{{ number_format($product->mrp, 2) }}</span>
                                 <span class="text-xs text-slate-500 font-semibold">(Inclusive of all taxes)</span>
+                                <span class="inline-flex items-center text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 rounded-md px-2 py-0.5">
+                                    For Licensed Retailers Only
+                                </span>
                             </div>
                         </div>
                         <div>
@@ -148,7 +164,10 @@
                                 <p class="text-xs text-slate-400 mt-1 italic">Packing: {{ $rel->packing }}</p>
                                 
                                 <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center mt-auto">
-                                    <span class="text-sm font-extrabold text-pharma-navy">₹{{ number_format($rel->mrp, 2) }}</span>
+                                    <div>
+                                        <span class="text-sm font-extrabold text-pharma-navy">₹{{ number_format($rel->mrp, 2) }}</span>
+                                        <span class="text-[8px] font-bold text-amber-700 block">For Licensed Retailers Only</span>
+                                    </div>
                                     <a href="{{ route('public.products.show', $rel->id) }}" class="text-xs font-bold text-pharma-accent hover:text-pharma-navy">
                                         View Details &rarr;
                                     </a>

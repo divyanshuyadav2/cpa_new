@@ -67,7 +67,17 @@
                     <h2 class="text-sm font-bold text-slate-900 leading-snug">{{ $product->name }}</h2>
                     <p class="text-xs text-slate-500 mt-1">{{ $product->company?->name }}</p>
                     @if($product->packing)<p class="text-xs text-slate-500">Pack: {{ $product->packing }}</p>@endif
-                    @if($product->mrp)<p class="text-sm font-extrabold text-pharma-navy mt-auto pt-2">MRP ₹{{ number_format($product->mrp, 2) }}</p>@endif
+                    @if($product->is_restricted_schedule)
+                        <span class="inline-flex items-center text-[9px] font-bold text-rose-700 bg-rose-50 border border-rose-200/90 rounded px-1.5 py-0.5 mt-1.5 w-fit">
+                            Prescription Medicine - Retail D.L. Mandatory
+                        </span>
+                    @endif
+                    @if($product->mrp)
+                        <div class="mt-auto pt-2">
+                            <p class="text-sm font-extrabold text-pharma-navy">MRP ₹{{ number_format($product->mrp, 2) }}</p>
+                            <span class="text-[8px] font-bold text-amber-700 block">For Licensed Retailers Only</span>
+                        </div>
+                    @endif
                 </a>
             @endforeach
         </div>

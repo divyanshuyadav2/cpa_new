@@ -78,8 +78,21 @@
         </div>
     </div>
 
-    <!-- Header Navigation -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <!-- Sticky Top Compliance & Navigation Bar Container -->
+    <div class="sticky top-0 z-40">
+        <!-- B2B Supply Notice Bar (Sticky Top Bar across website) -->
+        <div class="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-4 py-2 text-xs font-semibold shadow-sm border-b border-amber-600/30">
+            <div class="max-w-7xl mx-auto flex items-center justify-center text-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950 text-amber-300 text-[10px] font-black uppercase tracking-wider shrink-0">
+                    <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    B2B Notice
+                </span>
+                <span class="text-slate-950 font-bold">B2B Supply Only: This portal is exclusively for licensed chemists, pharmacies, and healthcare distributors. Orders are subject to Drug License verification.</span>
+            </div>
+        </div>
+
+        <!-- Header Navigation -->
+        <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20 sm:h-24">
                 <!-- Logo -->
@@ -184,6 +197,7 @@
             </div>
         </div>
     </header>
+    </div>
 
     <!-- Flash Messages Container -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
@@ -253,6 +267,21 @@
                     </address>
                 </div>
             </div>
+            <!-- Legal Disclaimer & Compliance Box -->
+            <div class="mt-10 p-5 rounded-2xl bg-slate-900/90 border border-slate-800 text-slate-300 text-xs leading-relaxed">
+                <div class="flex items-start gap-3">
+                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0 mt-0.5">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.789l1.599.799L9 4.323V3a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+                    </div>
+                    <div>
+                        <span class="font-bold text-white uppercase tracking-wider block text-[11px] mb-1 text-amber-400">Legal Disclaimer:</span>
+                        <p class="text-slate-300">
+                            We are a licensed wholesale drug distributor. We do not sell or deliver medicines to individual retail consumers or patients. All orders placed are inquiries from licensed retail pharmacies. Invoices and dispatches are processed strictly against valid Drug Licenses (Form 20/21) and GSTIN in compliance with the Drugs and Cosmetics Act, 1940.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-8 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
                 <p>&copy; {{ date('Y') }} {{ setting('company_name', 'Chitranshu Pharmaceuticals Agency') }}. All rights reserved.</p>
             </div>
@@ -312,6 +341,7 @@
                                         <h4 class="text-sm font-bold text-slate-800 leading-tight">{{ $item['name'] }}</h4>
                                         <p class="text-xs text-slate-500">{{ $item['packing'] }} | {{ $item['company'] }}</p>
                                         <p class="text-xs text-pharma-accent font-semibold mt-1">Composition: {{ Str::limit($item['composition'], 35) }}</p>
+                                        <span class="inline-block text-[8px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 rounded px-1.5 py-0.5 mt-1">For Licensed Retailers Only</span>
                                         
                                         <!-- Qty & Price -->
                                         <div class="flex justify-between items-center mt-2">
@@ -341,7 +371,7 @@
                         
                         <div class="grid grid-cols-2 gap-4">
                             <a href="{{ route('cart.view') }}" @click="cartOpen = false" class="block text-center py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition shadow-sm">Review Cart</a>
-                            <a href="{{ route('cart.view') }}#checkout" @click="cartOpen = false" class="block text-center py-3 bg-gradient-to-r from-pharma-accent to-pharma-navy rounded-xl text-sm font-bold text-white hover:opacity-95 transition shadow-md">Checkout Form</a>
+                            <a href="{{ route('cart.view') }}#checkout" @click="cartOpen = false" class="block text-center py-3 bg-gradient-to-r from-emerald-600 to-pharma-navy rounded-xl text-sm font-bold text-white hover:opacity-95 transition shadow-md">Proceed to Order</a>
                         </div>
                     </div>
                 @endif

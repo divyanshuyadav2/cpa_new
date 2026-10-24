@@ -26,6 +26,7 @@ class Product extends Model
         'stock_qty',
         'image',
         'is_active',
+        'schedule',
     ];
 
     protected $casts = [
@@ -52,5 +53,55 @@ class Product extends Model
     public function salt()
     {
         return $this->belongsTo(Salt::class);
+    }
+
+    /**
+     * Determine if product falls under Schedule H / H1 / X or requires Retail Drug License.
+     */
+    public function isRestrictedSchedule(): bool
+    {
+        $sched = $this->schedule ?? ($this->attributes['schedule'] ?? null);
+        if (!empty($sched)) {
+            $sched = strtoupper(trim((string) $sched));
+            return in_array($sched, ['H', 'H1', 'X', 'SCHEDULE H', 'SCHEDULE H1', 'SCHEDULE X', 'NRX', 'RX'], true);
+        }
+
+        $saltText = '';
+        if ($this->relationLoaded('salt') || $this->salt_id) {
+            $saltText = ($this->salt?->name ?? '') . ' ' . ($this->salt?->description ?? '');
+        }
+
+        $haystack = strtolower(trim(($this->name ?? '') . ' ' . ($this->composition ?? '') . ' ' . ($this->packing ?? '') . ' ' . $saltText));
+
+        // Check explicit schedule / prescription markings
+        if (preg_match('/\b(nrx|sched(ule)?[\s\-_.]*(h1?|x)|sch[\s\-_.]*(h1?|x)|rx\b)/i', $haystack)) {
+            return true;
+        }
+
+        // Common restricted Schedule H / H1 / X active ingredients (psychotropics, narcotics & critical antibiotics)
+        $restrictedPatterns = [
+            'clonazepam', 'alprazolam', 'diazepam', 'lorazepam', 'clobazam', 'chlordiazepoxide',
+            'tramadol', 'pregabalin', 'gabapentin', 'zolpidem', 'etizolam', 'tapentadol',
+            'paroxetine', 'duloxetine', 'sertraline', 'escitalopram', 'venlafaxine', 'fluoxetine',
+            'olanzapine', 'quetiapine', 'risperidone', 'haloperidol', 'amisulpride',
+            'divalproex', 'valproat', 'levetiracetam', 'carbamazepine', 'oxcarbazepine',
+            'codeine', 'buprenorphine', 'nitrazepam', 'midazolam', 'ketamine',
+            'azithromycin', 'amoxicillin', 'cefixime', 'ciprofloxacin', 'meropenem',
+            'levofloxacin', 'ceftriaxone', 'clarithromycin', 'moxifloxacin', 'cefpodoxime',
+            'piperacillin', 'linezolid', 'vancomycin', 'imipenem', 'colistin'
+        ];
+
+        foreach ($restrictedPatterns as $pattern) {
+            if (str_contains($haystack, $pattern)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getIsRestrictedScheduleAttribute(): bool
+    {
+        return $this->isRestrictedSchedule();
     }
 }
