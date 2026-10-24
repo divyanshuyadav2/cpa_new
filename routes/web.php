@@ -75,7 +75,7 @@ Route::get('/download-app', function() {
             'Content-Type' => 'application/vnd.android.package-archive',
         ]);
     }
-    abort(404, 'APK file not found');
+    return redirect()->away('https://github.com/divyanshuyadav2/cpa_new/releases/download/app-latest/app-release.apk');
 })->name('app.download');
 
 
